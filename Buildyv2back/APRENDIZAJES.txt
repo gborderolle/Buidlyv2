@@ -1,0 +1,39 @@
+﻿Temática: DTOs
+    /// UserDTO sirve de apoyo al IdentityUser
+    /// El UserID nunca va en los DTOs porque sería una vulnerabilidad del sistema
+    /// En el Context la tabla es .Users
+    // Para setear manualmente roles, por ej Admin => tabla AspNetUserClaims:   
+        Id	UserId	ClaimType	ClaimValue
+        4	c2ee6493-5a73-46f3-a3f2-46d1d11d7176	role	admin
+
+Así se toma el User logueado:
+    var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+    if (userId == null)
+    {
+        _logger.LogError($"Usuario no autorizado.");
+        _response.ErrorMessages = new List<string> { $"Usuario no autorizado." };
+        _response.IsSuccess = false;
+        _response.StatusCode = HttpStatusCode.Unauthorized;
+        return Unauthorized($"Usuario no autorizado.");
+    }
+
+    (o)
+
+    var emailClaim = HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
+    if (emailClaim != null)
+    {
+        var user = await _userManager.FindByEmailAsync(emailClaim);
+        if (user != null)
+        {
+            var userId = user.Id;
+            if (userId != null)
+            {
+            }
+        }
+    }
+
+Cuidado 1: User.Claims sólo funciona si el usuario está logueado!
+Cuidado 2: En la BD, si la tabla AspNetUserClaims está sucia, jode los Claims y no deja acceder al User logueado, hay que limpiarla.
+
+
+--
