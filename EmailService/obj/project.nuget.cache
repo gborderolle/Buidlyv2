@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BX/35l/UIx5qe16uqQVvwhWWVqnbQrV0V6b6Jesfn8yU4fPaGr+sI0DMNVRR2VPxIdeFlbM8jE76i+NQJ08muw==",
+  "dgSpecHash": "2kyC/x0eWTFtiSS9qilEZRCNGtia+faNeQw5mhPYTpYk7sAEJL2LdU9iIvyqiY/5xqVzZQKAvbA655QE42KsLA==",
   "success": true,
-  "projectFilePath": "D:\\GitHub\\Buidlyv2\\EmailService\\EmailService.csproj",
+  "projectFilePath": "D:\\Documents\\GitHub\\Buidlyv2\\EmailService\\EmailService.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Gonzalo\\.nuget\\packages\\bouncycastle.cryptography\\2.2.1\\bouncycastle.cryptography.2.2.1.nupkg.sha512",
     "C:\\Users\\Gonzalo\\.nuget\\packages\\mailkit\\3.2.0\\mailkit.3.2.0.nupkg.sha512",

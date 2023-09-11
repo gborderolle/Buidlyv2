@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Buildyv2.Models
 {
@@ -15,20 +15,22 @@ namespace Buildyv2.Models
 
         public DateTime Update { get; set; } = DateTime.Now;
 
-        public string? Comments { get; set; }
+        public string Comments { get; set; }
 
         // Uniques
 
-        public bool? RentIsEnded { get; set; }
+        public bool RentIsEnded { get; set; }
 
         #endregion
 
         #region External
-        
+
         /// <summary>
         /// No uso Entidad para no generar dependencia circular
         /// </summary>
+        [Required(ErrorMessage = "El campo {0} es requerido")] // n..0 (0=no existe este sin el padre)
         public int EstateId { get; set; }
+        public Estate Estate { get; set; }
 
         public Tenant Tenant { get; set; }
 

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Buildyv2.Models
 {
@@ -15,18 +15,20 @@ namespace Buildyv2.Models
 
         public DateTime Update { get; set; } = DateTime.Now;
 
-        public string? Comments { get; set; }
+        public string Comments { get; set; }
 
         // Uniques
-       
+
         public decimal? MonthlyValue { get; set; }
-        
+
         public string Duration { get; set; }
 
         public bool IsLUC { get; set; } = false;
-        
+
+        public List<string> ListPhotoURL { get; set; }
+
         public DateTime? Datetime_init { get; set; }
-        
+
         public DateTime? Datetime_end { get; set; }
 
         #endregion
@@ -35,11 +37,10 @@ namespace Buildyv2.Models
 
         public Rent Rent { get; set; }
 
-        public Notary? Notary { get; set; }
+        public int NotaryId { get; set; } // n..1 (1=sí existe este sin el padre)
+        public Notary Notary { get; set; }
 
-        public Warrant? Warrant { get; set; }
-
-        public List<Photo> ListPhotos { get; set; } = new ();
+        public Warrant Warrant { get; set; }
 
         #endregion
 

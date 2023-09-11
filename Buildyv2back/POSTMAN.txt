@@ -63,12 +63,20 @@ Viene del SeedData:
 
 ------> "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFAYS5jb20iLCJleHAiOjE3MjQ2OTg1MTZ9.cTBxqLs-Eiqpo1E8YUlNu-oDrhMOdwUqwPamHxDMFsk",
 
-Login genérico:
+Login usuarios Buildy:
+
+1) Admin:
 
 https://localhost:7015/api/accounts/login
 {
-	"email":"a@a.com",
-	"password":"A1234."
+	"email":"admin@buildy2.uy",
+	"password":"Aa1234."
+}
+
+2) Normal:
+{
+	"email":"normal@buildy2.uy",
+	"password":"Aa1234."
 }
 
 

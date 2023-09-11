@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using WebAPI_tutorial_peliculas.Validations;
 
 namespace Buildyv2.Models
 {
@@ -13,32 +14,36 @@ namespace Buildyv2.Models
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
         [StringLength(maximumLength: 100, ErrorMessage = "El campo {0} no puede tener más de {1} caracteres")]
+        [FirstCharCapitalValidation]
         public string Name { get; set; }
 
         public DateTime Creation { get; set; } = DateTime.Now;
 
         public DateTime Update { get; set; } = DateTime.Now;
 
-        public string? Comments { get; set; }
+        public string Comments { get; set; }
 
         // Uniques
 
         public string Address { get; set; }
-        
+
+        [FirstCharCapitalValidation]
         public string City { get; set; }
 
+        [FirstCharCapitalValidation]
         public string Province { get; set; }
 
+        [FirstCharCapitalValidation]
         public string Country { get; set; }
 
-        public string? GoogleMapsURL { get; set; }
+        public string GoogleMapsURL { get; set; }
 
         #endregion
 
         #region External
 
         public List<Report> ListReports { get; set; } = new();
-        
+
         public List<Job> ListJobs { get; set; } = new();
 
         public Rent PresentRent { get; set; } = new();
@@ -46,6 +51,7 @@ namespace Buildyv2.Models
         public List<Rent> ListRentsHistory { get; set; } = new();
 
         // N..N Owners --> OwnerEstate
+        public List<OwnerEstate> OwnerEstateList { get; set; } // n..n
 
         #endregion
     }

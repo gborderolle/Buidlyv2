@@ -19,7 +19,7 @@ namespace WebAPI_tutorial_peliculas.Controllers.V1
 
         #region Endpoints
 
-        [HttpGet(Name = "GetRootv1")]
+        [HttpGet("GetRootv1")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<DataHATEOAS>>> Get()
         {

@@ -1,18 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Buildyv2.ApiBehavior;
+using Buildyv2.Filters;
+using Buildyv2.Repository;
+using Buildyv2.Repository.Interfaces;
+using Buildyv2.Services;
+using Buildyv2.Utilities;
+using EmailService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NetTopologySuite;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
-using Buildyv2.ApiBehavior;
-using Buildyv2.Filters;
-using Buildyv2.Services;
-using Buildyv2.Utilities;
 using WebAPI_tutorial_peliculas.Context;
 using WebAPI_tutorial_peliculas.Filters;
 using WebAPI_tutorial_peliculas.Middlewares;
@@ -59,9 +63,9 @@ namespace WebAPI_tutorial_peliculas
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "WebAPI_tutorial_recursos",
+                    Title = "Buildy revolución",
                     Version = "v1",
-                    Description = "Este es un tutorial de Udemy: Autores y libros.",
+                    Description = "API de Buildy",
                     Contact = new OpenApiContact
                     {
                         Email = "gborderolle@gmail.com",
@@ -102,7 +106,7 @@ namespace WebAPI_tutorial_peliculas
             // Configuración de la base de datos
             services.AddDbContext<ContextDB>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("ConnectionString_WebAPI_tutorial"));
+                options.UseSqlServer(Configuration.GetConnectionString("ConnectionString_Buildyv2"));
             });
 
             services.AddAutoMapper(typeof(Startup));
@@ -113,29 +117,45 @@ namespace WebAPI_tutorial_peliculas
             // AddTransient: cambia dentro del contexto
             // AddScoped: se mantiene dentro del contexto (mejor para los servicios)
             // AddSingleton: no cambia nunca
-            //services.AddScoped<IAuthorRepository, AuthorRepository>();
-            //services.AddScoped<IBookRepository, BookRepository>();
-            //services.AddScoped<IReviewRepository, ReviewRepository>();
 
             // Repositorios
+            services.AddScoped<IContractRepository, ContractRepository>();
+            services.AddScoped<IEstateRepository, EstateRepository>();
+            services.AddScoped<IJobRepository, JobRepository>();
+            services.AddScoped<INotaryRepository, NotaryRepository>();
+            services.AddScoped<IOwnerRepository, OwnerRepository>();
+            services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+            services.AddScoped<IRentRepository, RentRepository>();
+            services.AddScoped<IReportRepository, ReportRepository>();
+            services.AddScoped<ITenantRepository, TenantRepository>();
+            services.AddScoped<IWarrantRepository, WarrantRepository>();
+            services.AddScoped<IWorkerRepository, WorkerRepository>();
 
             // Filtros
+            //services.AddScoped<MovieExistsAttribute>();
 
             // Servicios extra
+            services.AddSingleton(x => NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
 
             // Manejo de archivos en el servidor 
             services.AddSingleton<IFileStorage, FileStorageLocal>();
             services.AddHttpContextAccessor();
+
+            // Email Configuration
+            var emailConfig = Configuration.GetSection("NotificationEmail").Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+            services.AddScoped<IEmailSender, EmailSender>();
+            services.AddDetection();
 
             // --------------
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
             {
-                //ValidateIssuer = false,   // false para desarrollo y pruebas
-                //ValidateAudience = false, // false para desarrollo y pruebas
-                ValidateIssuer = true,
-                ValidateAudience = true,
+                ValidateIssuer = false,   // false para desarrollo y pruebas
+                ValidateAudience = false, // false para desarrollo y pruebas
+                //ValidateIssuer = true,
+                //ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
@@ -153,7 +173,7 @@ namespace WebAPI_tutorial_peliculas
             // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/27047710#notes
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("IsAdmin", policy => policy.RequireClaim("IsAdmin"));
+                options.AddPolicy("IsAdmin", policy => policy.RequireClaim("role", "admin"));
             });
 
             // Configuración CORS: para permitir recibir peticiones http desde un origen específico
@@ -200,7 +220,7 @@ namespace WebAPI_tutorial_peliculas
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI_tutorial_recursos v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Buildy revolución");
             });
 
             app.UseHttpsRedirection();

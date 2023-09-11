@@ -1,5 +1,9 @@
 ﻿Back:
 
-Relaciones de los modelos
-Repositorios de los modelos
-Controllers y endpoints
+**Relaciones de los modelos
+**Repositorios de los modelos
+**Controllers y endpoints -- Falta terminar
+** DTOs -- Falta terminar 
+
+Filtros: services.AddScoped<MovieExistsAttribute>();
+	Para cuando un elemento necesita el ID del padre en la URL, por ej.

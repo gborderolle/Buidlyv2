@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "3XIzpZ2I2UoxcLUUDKZD9BhVMbIht2KnB2dSduTYJdA=",
+  "Hash": "ZNZWoYkEs26+yoMrkaPnTLbpG9IjrdR5OBXEM/+HNZ4=",
   "Source": "Buildyv2",
   "BasePath": "_content/Buildyv2",
   "Mode": "Default",
@@ -10,7 +10,7 @@
     {
       "Name": "Buildyv2\\wwwroot",
       "Source": "Buildyv2",
-      "ContentRoot": "D:\\GitHub\\Buidlyv2\\Buildyv2back\\wwwroot\\",
+      "ContentRoot": "D:\\Documents\\GitHub\\Buidlyv2\\Buildyv2back\\wwwroot\\",
       "BasePath": "_content/Buildyv2",
       "Pattern": "**"
     }

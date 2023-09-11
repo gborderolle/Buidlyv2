@@ -22,6 +22,18 @@
             Clase 114: https://www.udemy.com/course/desarrollando-aplicaciones-en-react-y-aspnet-core/learn/lecture/25990184#overview
             </summary>
         </member>
+        <member name="T:Buildyv2.Migrations.migracion">
+            <inheritdoc />
+        </member>
+        <member name="M:Buildyv2.Migrations.migracion.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Buildyv2.Migrations.migracion.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Buildyv2.Migrations.migracion.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
         <member name="T:Buildyv2.Models.IId">
             <summary>
             Heredar todas las clases que tengan Id
@@ -41,20 +53,6 @@
             <summary>
             Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/20094958#notes
             </summary>
-        </member>
-        <member name="M:WebAPI_tutorial_peliculas.Controllers.V1.AccountsController.RenewToken">
-            <summary>
-            Renueva el token automáticamente
-            Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/27047668#notes
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:WebAPI_tutorial_peliculas.Controllers.V1.AccountsController.TokenSetup(WebAPI_tutorial_peliculas.Utilities.UserCredential)">
-            <summary>
-             APIResponse sólo va cuando es un método http expuesto (no un método local)
-            </summary>
-            <param name="userCredential"></param>
-            <returns></returns>
         </member>
         <member name="T:WebAPI_tutorial_peliculas.DTOs.PaginationDTO">
             <summary>
