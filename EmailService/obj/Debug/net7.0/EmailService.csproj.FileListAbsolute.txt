@@ -1,0 +1,12 @@
+D:\GitHub\Buidlyv2\EmailService\obj\Debug\net7.0\EmailService.csproj.AssemblyReference.cache
+D:\GitHub\Buidlyv2\EmailService\obj\Debug\net7.0\EmailService.GeneratedMSBuildEditorConfig.editorconfig
+D:\GitHub\Buidlyv2\EmailService\obj\Debug\net7.0\EmailService.AssemblyInfoInputs.cache
+D:\GitHub\Buidlyv2\EmailService\obj\Debug\net7.0\EmailService.AssemblyInfo.cs
+D:\GitHub\Buidlyv2\EmailService\obj\Debug\net7.0\EmailService.csproj.CoreCompileInputs.cache
+D:\GitHub\Buidlyv2\EmailService\bin\Debug\net7.0\EmailService.deps.json
+D:\GitHub\Buidlyv2\EmailService\bin\Debug\net7.0\EmailService.dll
+D:\GitHub\Buidlyv2\EmailService\bin\Debug\net7.0\EmailService.pdb
+D:\GitHub\Buidlyv2\EmailService\obj\Debug\net7.0\EmailService.dll
+D:\GitHub\Buidlyv2\EmailService\obj\Debug\net7.0\refint\EmailService.dll
+D:\GitHub\Buidlyv2\EmailService\obj\Debug\net7.0\EmailService.pdb
+D:\GitHub\Buidlyv2\EmailService\obj\Debug\net7.0\ref\EmailService.dll

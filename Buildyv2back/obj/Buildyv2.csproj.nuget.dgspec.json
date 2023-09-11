@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Gonzalo\\Documents\\GitHub\\Buidlyv2\\Buildyv2back\\Buildyv2.csproj": {}
+    "D:\\GitHub\\Buidlyv2\\Buildyv2back\\Buildyv2.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Gonzalo\\Documents\\GitHub\\Buidlyv2\\Buildyv2back\\Buildyv2.csproj": {
+    "D:\\GitHub\\Buidlyv2\\Buildyv2back\\Buildyv2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Gonzalo\\Documents\\GitHub\\Buidlyv2\\Buildyv2back\\Buildyv2.csproj",
+        "projectUniqueName": "D:\\GitHub\\Buidlyv2\\Buildyv2back\\Buildyv2.csproj",
         "projectName": "Buildyv2",
-        "projectPath": "C:\\Users\\Gonzalo\\Documents\\GitHub\\Buidlyv2\\Buildyv2back\\Buildyv2.csproj",
+        "projectPath": "D:\\GitHub\\Buidlyv2\\Buildyv2back\\Buildyv2.csproj",
         "packagesPath": "C:\\Users\\Gonzalo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Gonzalo\\Documents\\GitHub\\Buidlyv2\\Buildyv2back\\obj\\",
+        "outputPath": "D:\\GitHub\\Buidlyv2\\Buildyv2back\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

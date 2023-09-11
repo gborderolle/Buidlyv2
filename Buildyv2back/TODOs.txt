@@ -1,0 +1,5 @@
+﻿Back:
+
+Relaciones de los modelos
+Repositorios de los modelos
+Controllers y endpoints
