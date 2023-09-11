@@ -25,6 +25,12 @@ namespace Buildyv2.Models
 
         #region External
 
+        public Estate Estate { get; set; }
+
+        public Job? Job { get; set; } // dependencia circular?
+
+        public List<Photo> ListPhotos { get; set; } = new();
+
         #endregion
     }
 }

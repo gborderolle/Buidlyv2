@@ -33,6 +33,8 @@ namespace Buildyv2.Models
 
         #region External
 
+        public List<Contract>? ListContracts { get; set; } = new();
+
         #endregion
     }
 }

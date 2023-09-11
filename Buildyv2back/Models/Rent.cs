@@ -24,6 +24,15 @@ namespace Buildyv2.Models
         #endregion
 
         #region External
+        
+        /// <summary>
+        /// No uso Entidad para no generar dependencia circular
+        /// </summary>
+        public int EstateId { get; set; }
+
+        public Tenant Tenant { get; set; }
+
+        public Contract Contract { get; set; }
 
         #endregion
     }

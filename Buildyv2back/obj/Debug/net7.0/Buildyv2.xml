@@ -27,6 +27,16 @@
             Heredar todas las clases que tengan Id
             </summary>
         </member>
+        <member name="T:Buildyv2.Models.OwnerEstate">
+            <summary>
+            Navegación n..n
+            </summary>
+        </member>
+        <member name="P:Buildyv2.Models.Rent.EstateId">
+            <summary>
+            No uso Entidad para no generar dependencia circular
+            </summary>
+        </member>
         <member name="T:Buildyv2.Services.FileStorageLocal">
             <summary>
             Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/20094958#notes

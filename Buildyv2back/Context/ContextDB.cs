@@ -28,12 +28,17 @@ namespace WebAPI_tutorial_peliculas.Context
         public DbSet<Worker> Worker { get; set; }
         public DbSet<List_JobState> List_JobState { get; set; }
         public DbSet<List_WorkType> List_WorkType { get; set; }
+        public DbSet<OwnerEstate> OwnerEstate { get; set; }
 
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<OwnerEstate>()
+               .HasKey(v => new { v.OwnerId, v.EstateId });
+
         }
 
     }

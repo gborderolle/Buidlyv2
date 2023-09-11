@@ -31,6 +31,14 @@ namespace Buildyv2.Models
 
         #region External
 
+        public Estate Estate { get; set; }
+
+        public List<Report> ListReports { get; set; } = new();
+
+        public List<Worker> ListWorkers { get; set; } = new();
+
+        public List<Purchase> ListPurchases { get; set; } = new();
+
         #endregion
     }
 }

@@ -31,6 +31,10 @@ namespace Buildyv2.Models
 
         #region External
 
+        public Contract? Contract { get; set; }
+
+        public Report? Report { get; set; }
+
         #endregion
     }
 }

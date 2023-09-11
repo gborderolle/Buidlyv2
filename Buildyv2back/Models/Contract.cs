@@ -22,6 +22,8 @@ namespace Buildyv2.Models
         public decimal? MonthlyValue { get; set; }
         
         public string Duration { get; set; }
+
+        public bool IsLUC { get; set; } = false;
         
         public DateTime? Datetime_init { get; set; }
         
@@ -30,6 +32,14 @@ namespace Buildyv2.Models
         #endregion
 
         #region External
+
+        public Rent Rent { get; set; }
+
+        public Notary? Notary { get; set; }
+
+        public Warrant? Warrant { get; set; }
+
+        public List<Photo> ListPhotos { get; set; } = new ();
 
         #endregion
 

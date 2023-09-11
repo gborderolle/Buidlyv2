@@ -33,6 +33,9 @@ namespace Buildyv2.Models
 
         #region External
 
+        // N..N 
+        // N..N Estates --> OwnerEstate
+
         #endregion
     }
 }

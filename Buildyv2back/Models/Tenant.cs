@@ -33,6 +33,8 @@ namespace Buildyv2.Models
 
         #region External
 
+        public Rent? Rent { get; set; }
+
         #endregion
     }
 }

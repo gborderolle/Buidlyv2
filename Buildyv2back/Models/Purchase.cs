@@ -35,6 +35,8 @@ namespace Buildyv2.Models
 
         #region External
 
+        public Job Job { get; set; }
+
         #endregion
     }
 }
