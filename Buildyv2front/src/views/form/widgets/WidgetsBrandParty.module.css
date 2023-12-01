@@ -1,0 +1,12 @@
+.imgContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Asegura que la imagen no sobrepase el contenedor */
+}
+
+.imgContainer img {
+  max-width: 100%; /* La imagen ocupa como máximo el 100% del ancho del contenedor */
+  max-height: 100%; /* La imagen ocupa como máximo el 100% del alto del contenedor */
+  object-fit: contain; /* Asegura que la imagen mantenga sus proporciones */
+}

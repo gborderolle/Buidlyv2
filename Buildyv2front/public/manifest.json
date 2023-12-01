@@ -1,0 +1,20 @@
+{
+  "name": "Datalexion",
+  "short_name": "DX",
+  "dir": "ltr",
+  "lang": "es-UY",
+  "orientation": "portrait-primary",
+  "start_url": ".",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "display": "standalone",
+  "description": "Datalexion es un dashboard analítico para optimizar y procesar la información en tiempo real.",
+  "icons": [
+    {
+      "src": "datalexion.ico",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

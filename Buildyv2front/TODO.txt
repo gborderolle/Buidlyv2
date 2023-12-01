@@ -1,0 +1,30 @@
+PWA para React:
+https://www.youtube.com/watch?v=sFsRylCQblw&ab_channel=Fireship
+
+Formulario:
+
+Admin:
+- Dashboard de control de circuitos con votos y fotos
+
+Gráficas:
+- Mejorar y crear nuevas Gráficas
+
+Issues:
+- Corregir click en lateral que no funca de una.
+
+---------
+
+Funciones del Demo:
+- Login básico
+- Formulario de votos básico
+- Datos base dummy (partidos, etc.)
+- Sistema de gráficas básico
+- Mobile responsive
+- Deployed
+
+TODO para Producción:
+- Sistema de autenticación fuerte
+- Tokens para submits
+- Protección de rutas
+
+---> React Native para mobile.

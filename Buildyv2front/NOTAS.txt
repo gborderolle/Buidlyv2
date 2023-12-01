@@ -1,0 +1,57 @@
+npm doctor: verificar el estado de npm y node
+
+Este proyecto funciona sólo con:
+npm v10.2.1
+node v18.18.2
+
+--
+Guía de componentes del theme:
+https://coreui.io/react/docs/components/chart/
+
+/* ------------------------------------------------------------
+
+Usuario por defecto:
+const USER_DUMMY = {
+  email: 'usuario@testing.com',
+  password: 'Aa1234.',
+  //password: '1234',
+};
+
+Admin:
+gonzalo@datalexion.uy
+123456
+
+Delegado:
+diego@datalexion.uy
+123456
+
+/* ------------------------------------------------------------
+
+Diccionario:
+
+Party: partido político
+Wing: sector dentro del partido
+Province: departamento dentro del sector
+Slate: lista dentro del departamento
+
+/* ------------------------------------------------------------
+
+Gráficas (tortas)
+
+Agrupación geográfica:
+- Nacional
+- Departamentos
+- Circuitos
+
+Agrupación por partidos:
+
+Agrupación por listas propias:
+
+--> Rendimiento de circuitos (% de votación) = total votos / habilitados del circuito (circuitPopulation)
+--> Rendimiento del partido en el circuito (% de votación del partido) = total votos del partido / habilitados del circuito (circuitPopulation)
+
+--> Circuitos en mapa y rendimientos en el mapa
+
+Funcionalidades extras:
+- Buscador (deptos, circuitos)
+

@@ -1,0 +1,14 @@
+.cardBody {
+  max-width: 180px !important;
+}
+
+.cardItem {
+  width: 50%;
+  text-align: center;
+  display: block;
+  word-wrap: break-word;
+}
+
+.custom-input-group-text {
+  white-space: normal;
+}

@@ -1,0 +1,14 @@
+@media only screen and (max-width: 768px) {
+  /* isMoble */
+  .label {
+    /* display: none !important; */
+    /* font-size: x-small !important; */
+  }
+  .value:hover::after {
+    content: attr(data-label);
+  }
+
+  .value {
+    /* font-size: small !important; */
+  }
+}

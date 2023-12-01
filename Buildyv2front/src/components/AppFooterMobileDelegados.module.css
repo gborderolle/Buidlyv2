@@ -1,0 +1,36 @@
+.footer {
+  min-height: 9rem;
+  display: block;
+}
+
+.footerNoStepper {
+  min-height: 0;
+  display: block;
+}
+
+.fixedFooter {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 999;
+}
+
+.buttonContainer {
+  width: 100%;
+  margin: auto;
+}
+
+.customButton {
+  width: 100%;
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  height: 50px;
+}
+
+body {
+  padding-bottom: 40px;
+}
+
+/* ----------------------------------------- */

@@ -1,0 +1,85 @@
+.headerBadge {
+  font-size: medium;
+}
+
+.titles {
+  color: #4f5d73;
+}
+
+.bump {
+  animation: bump 300ms ease-out;
+}
+
+/* Efecto Bump menor */
+@keyframes bump {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.98);
+  }
+  80% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.radio-button-fade-in {
+  animation: fadeInEffect 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeInEffect {
+  from {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.page-link.active,
+.active > .page-link {
+  background-color: rgb(0 122 255);
+  border-color: #4f5d73;
+}
+
+.page-link {
+  color: #4f5d73;
+}
+
+.form-check-input:checked {
+  background-color: rgb(42, 113, 222);
+  border-color: rgb(42, 113, 222);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(80px); /* Comienza 20px más abajo */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* Termina en la posición original */
+  }
+}
+
+.classRadio > div {
+  margin-bottom: 10px !important;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.classRadio p {
+  margin-bottom: 0 !important;
+}
+
+.animate-items .radio-button-margin {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.animated-table {
+  animation: fadeInUp 0.5s ease-out;
+}

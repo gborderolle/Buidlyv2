@@ -1,0 +1,71 @@
+@media only screen and (max-width: 768px) {
+  .step-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 6rem; /* Ajusta el ancho según necesites */
+  }
+
+  .step-item:not(:first-child)::before {
+    content: "";
+    background-color: #e2e8f0; /* color de la línea */
+    position: absolute;
+    width: 100%; /* Ancho de la línea */
+    height: 2px; /* Altura de la línea */
+    top: 1.15rem; /* Posicionamiento vertical de la línea en el centro del círculo */
+    left: -50%; /* Posicionamiento horizontal de la línea */
+    transform: translateY(
+      -50%
+    ); /* Ajuste para centrar la línea verticalmente */
+    z-index: 1; /* Asegúrate de que la línea esté por encima de otros elementos */
+  }
+
+  .step {
+    width: 2.3rem;
+    height: 2.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: #4f5d73;
+    border-radius: 9999px;
+    font-weight: 600;
+    color: white;
+    font-size: large;
+    z-index: 2; /* Asegúrate de que el paso esté por encima de la línea */
+  }
+
+  .active .step {
+    background-color: #3399ff;
+  }
+
+  .complete .step {
+    background-color: #2eb85c;
+  }
+
+  .complete p {
+    color: #2eb85c;
+  }
+
+  .complete:not(:first-child)::before,
+  .active:not(:first-child)::before {
+    background-color: #2eb85c; /* color de la línea para pasos completos o activos */
+  }
+}
+
+/* Estilos adicionales si son necesarios */
+
+/* .RadioButtonStepper .step {
+  box-sizing: content-box;
+} */
+
+.radio-button-custom {
+  box-sizing: content-box !important; /* Esto anula border-box para esta clase */
+}
+
+.flex {
+  display: flex;
+  justify-content: center;
+}

@@ -1,0 +1,14 @@
+.icon-button {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  color: darkred;
+}
+
+.left-aligned-list {
+  text-align: left;
+}

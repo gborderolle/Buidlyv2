@@ -2,3 +2,14 @@
 Buildyv2back/bin/
 Buildyv2back/obj/
 Buildyv2back/.vs/
+
+# dependencies
+Buildyv2front/node_modules
+Buildyv2front/package-lock.json
+Buildyv2front/yarn.lock
+
+# testing
+Buildyv2front/coverage
+
+# production
+Buildyv2front/build

@@ -1,0 +1,56 @@
+/* ProfileCard.css */
+
+.profile-card-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #ccc; /* Agrega un borde gris claro */
+  padding: 10px; /* Espacio interior para que el contenido no toque el borde */
+  border-radius: 8px; /* Bordes redondeados para la tarjeta */
+  margin-bottom: 10px; /* Espacio debajo de cada tarjeta */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Opcional: sombra suave para dar profundidad */
+  background-color: #fff; /* Fondo blanco para la tarjeta */
+}
+.profile-card-image-container {
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 5px;
+}
+
+.profile-card-image {
+  width: 100%; /* Ajusta el ancho como necesario */
+  height: 100%; /* Ajusta la altura como necesario */
+  object-fit: cover; /* Mantiene la relación de aspecto de la imagen */
+  border-radius: 15px; /* Bordes curvos. Ajusta este valor según tus preferencias. */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave y curvada */
+  /* otros estilos necesarios */
+}
+
+.profile-card-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: right; /* Alinea el texto a la derecha */
+}
+
+.profile-card-votes,
+.profile-card-percentage {
+  text-align: right;
+}
+
+.profile-card-form-input {
+  text-align: right; /* Alinea el texto del input a la derecha */
+}
+
+.profile-card-alert {
+  /* Estilos para tu alerta */
+}
+
+.votacion-label {
+  text-align: right;
+  /* Otros estilos que desees aplicar */
+}

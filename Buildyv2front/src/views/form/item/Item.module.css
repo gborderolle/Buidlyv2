@@ -1,0 +1,20 @@
+.cardBody {
+  max-width: 180px !important;
+  min-width: 100px;
+}
+
+.cardBody input {
+  text-align: center !important;
+}
+
+.cardItem {
+  width: 50%;
+  text-align: center !important;
+  display: block;
+  word-wrap: break-word;
+}
+
+.inputText {
+  white-space: normal;
+  text-align: center !important;
+}
