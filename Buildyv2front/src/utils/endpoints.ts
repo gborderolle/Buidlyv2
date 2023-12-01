@@ -1,0 +1,11 @@
+const apiURL = process.env.REACT_APP_API_URL;
+export const urlAccounts = `${apiURL}/accounts`;
+export const urlContracts = `${apiURL}/contracts`;
+export const urlEstates = `${apiURL}/estates`;
+export const urlJobs = `${apiURL}/jobs`;
+export const urlMovies = `${apiURL}/notaries`;
+export const urlOwners = `${apiURL}/owners`;
+export const urlPurchases = `${apiURL}/purchases`;
+export const urlRents = `${apiURL}/rents`;
+export const urlWarrants = `${apiURL}/warrants`;
+export const urlWorkers = `${apiURL}/workers`;
