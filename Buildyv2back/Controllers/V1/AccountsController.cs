@@ -25,7 +25,7 @@ namespace WebAPI_tutorial_peliculas.Controllers.V1
     public class AccountsController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger<AccountsController> _logger; // Logger para registrar eventos.
+        private readonly ILogger<AccountsController> _logger; // Logger para registrar eventos. 
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
         private readonly IDetectionService _detectionService;
