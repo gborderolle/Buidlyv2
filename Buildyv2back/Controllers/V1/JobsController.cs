@@ -51,19 +51,11 @@ namespace Buildyv2.Controllers.V1
         {
             // 1..n
             var includes = new List<IncludePropertyConfiguration<Job>>
-            {
-                    new IncludePropertyConfiguration<Job>
-                    {
-                        IncludeExpression = b => b.ListReports
-                    },
+            {                   
                     new IncludePropertyConfiguration<Job>
                     {
                         IncludeExpression = b => b.ListWorkers
                     },
-                    new IncludePropertyConfiguration<Job>
-                    {
-                        IncludeExpression = b => b.ListPurchases
-                    }
                 };
             return await Get<Job, JobDTO>(includes: includes);
         }

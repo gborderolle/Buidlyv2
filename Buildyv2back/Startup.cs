@@ -119,16 +119,11 @@ namespace WebAPI_tutorial_peliculas
             // AddSingleton: no cambia nunca
 
             // Repositorios
-            services.AddScoped<IContractRepository, ContractRepository>();
             services.AddScoped<IEstateRepository, EstateRepository>();
             services.AddScoped<IJobRepository, JobRepository>();
-            services.AddScoped<INotaryRepository, NotaryRepository>();
-            services.AddScoped<IOwnerRepository, OwnerRepository>();
-            services.AddScoped<IPurchaseRepository, PurchaseRepository>();
             services.AddScoped<IRentRepository, RentRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<ITenantRepository, TenantRepository>();
-            services.AddScoped<IWarrantRepository, WarrantRepository>();
             services.AddScoped<IWorkerRepository, WorkerRepository>();
 
             // Filtros

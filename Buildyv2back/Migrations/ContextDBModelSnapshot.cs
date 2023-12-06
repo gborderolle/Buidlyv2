@@ -22,48 +22,6 @@ namespace Buildyv2.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Buildyv2.Models.Contract", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Creation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("Datetime_end")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("Datetime_init")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Duration")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsLUC")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal?>("MonthlyValue")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<int>("NotaryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Update")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NotaryId");
-
-                    b.ToTable("Contract");
-                });
-
             modelBuilder.Entity("Buildyv2.Models.Estate", b =>
                 {
                     b.Property<int>("Id")
@@ -87,6 +45,9 @@ namespace Buildyv2.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("EstateIsRented")
+                        .HasColumnType("bit");
+
                     b.Property<string>("GoogleMapsURL")
                         .HasColumnType("nvarchar(max)");
 
@@ -94,6 +55,9 @@ namespace Buildyv2.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("PresentRentId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Province")
                         .HasColumnType("nvarchar(max)");
@@ -131,9 +95,6 @@ namespace Buildyv2.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Problem")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Update")
                         .HasColumnType("datetime2");
 
@@ -144,293 +105,33 @@ namespace Buildyv2.Migrations
                     b.ToTable("Job");
                 });
 
-            modelBuilder.Entity("Buildyv2.Models.List_JobState", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("List_JobState");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "",
-                            Name = "Sin iniciar"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "",
-                            Name = "Iniciado"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "",
-                            Name = "Terminado"
-                        });
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.List_WorkType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("List_WorkType");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "",
-                            Name = "Albañil"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "",
-                            Name = "Electricista"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "",
-                            Name = "Carpintero"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "",
-                            Name = "Cerrajero"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "",
-                            Name = "Multitrabajo"
-                        });
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Notary", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Creation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IdentityDocument")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Phone1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Update")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Notary");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Owner", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Creation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IdentityDocument")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Phone1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Update")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Owner");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.OwnerEstate", b =>
-                {
-                    b.Property<int>("OwnerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EstateId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OwnerId", "EstateId");
-
-                    b.HasIndex("EstateId");
-
-                    b.ToTable("OwnerEstate");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Photo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Creation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileRelativePath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MimeType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ReportId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Update")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContractId");
-
-                    b.HasIndex("ReportId");
-
-                    b.ToTable("Photo");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Purchase", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Creation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Datetime_purchase")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("JobId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Supplier")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalCost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("Update")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JobId");
-
-                    b.ToTable("Purchase");
-                });
-
             modelBuilder.Entity("Buildyv2.Models.Rent", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<string>("Comments")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("Datetime_monthInit")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Duration")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("EstateId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EstateId1")
+                    b.Property<decimal?>("MonthlyValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("PrimaryTenantId")
                         .HasColumnType("int");
 
                     b.Property<bool>("RentIsEnded")
@@ -439,12 +140,12 @@ namespace Buildyv2.Migrations
                     b.Property<DateTime>("Update")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Warrant")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("EstateId")
-                        .IsUnique();
-
-                    b.HasIndex("EstateId1");
+                    b.HasIndex("EstateId");
 
                     b.ToTable("Rent");
                 });
@@ -466,9 +167,6 @@ namespace Buildyv2.Migrations
                     b.Property<int>("EstateId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("JobId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -480,8 +178,6 @@ namespace Buildyv2.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EstateId");
-
-                    b.HasIndex("JobId");
 
                     b.ToTable("Report");
                 });
@@ -512,12 +208,13 @@ namespace Buildyv2.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Phone1")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("RentId")
+                    b.Property<int>("RentId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Update")
@@ -525,47 +222,9 @@ namespace Buildyv2.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RentId")
-                        .IsUnique()
-                        .HasFilter("[RentId] IS NOT NULL");
+                    b.HasIndex("RentId");
 
                     b.ToTable("Tenant");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Warrant", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ContractId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Creation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Update")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContractId")
-                        .IsUnique();
-
-                    b.ToTable("Warrant");
                 });
 
             modelBuilder.Entity("Buildyv2.Models.Worker", b =>
@@ -597,6 +256,7 @@ namespace Buildyv2.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Phone1")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone2")
@@ -741,15 +401,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f3c71124-3ebe-43f6-a30f-61b7d6735282",
+                            ConcurrencyStamp = "59e14ce7-cc77-4347-97d0-3100a1b9d50d",
                             Email = "admin@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@buildy2.uy",
                             NormalizedUserName = "admin@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJrX7QAMHRO2Y5WHAltTlGWhUEE4U1nYe4MoZkHXzFJlGVAL1H+4Wj2afByTwIkFEQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMyXuDzlZswnprBtrtXzbZKgDqZNrTvRdGwXjnACXKPMX/b4oPaIoUSSbiyROnQzEg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ba28f355-62dd-499b-bb21-fd4bb25c0a6a",
+                            SecurityStamp = "97f69ced-bf30-435e-9be6-ea6d343151e3",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Admin"
                         },
@@ -757,15 +417,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "e0765c93-676c-4199-b7ee-d7877c471821",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fa4960f3-b6d9-403e-9004-480605167010",
+                            ConcurrencyStamp = "c446a74c-466d-4c16-901c-50353c990ebc",
                             Email = "normal@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "normal@buildy2.uy",
                             NormalizedUserName = "normal@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAY2lZQ7FbWmWUYBZh+0FNSXoiD9xe2KHIAI4pLSWhS4e7sZJKPGMsVLvwleN8hTSQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGNphMgnHehtU3gRBi23e7HJUPMhSgbvaDkYdGH+G6kCkoj/1UP7Ug3Srk4Cgv/oFg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8cb0f45e-87be-41a5-96ec-4994455e2e8b",
+                            SecurityStamp = "3f9c5491-06bf-4ad1-b9a3-fa45155baef4",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Normal"
                         });
@@ -861,15 +521,12 @@ namespace Buildyv2.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Buildyv2.Models.Contract", b =>
+            modelBuilder.Entity("System.Collections.Generic.List<string>", b =>
                 {
-                    b.HasOne("Buildyv2.Models.Notary", "Notary")
-                        .WithMany("ListContracts")
-                        .HasForeignKey("NotaryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
 
-                    b.Navigation("Notary");
+                    b.ToTable("List<string>");
                 });
 
             modelBuilder.Entity("Buildyv2.Models.Job", b =>
@@ -883,74 +540,13 @@ namespace Buildyv2.Migrations
                     b.Navigation("Estate");
                 });
 
-            modelBuilder.Entity("Buildyv2.Models.OwnerEstate", b =>
+            modelBuilder.Entity("Buildyv2.Models.Rent", b =>
                 {
                     b.HasOne("Buildyv2.Models.Estate", "Estate")
-                        .WithMany()
+                        .WithMany("ListRents")
                         .HasForeignKey("EstateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Buildyv2.Models.Owner", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Estate");
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Photo", b =>
-                {
-                    b.HasOne("Buildyv2.Models.Contract", "Contract")
-                        .WithMany("ListPhotos")
-                        .HasForeignKey("ContractId");
-
-                    b.HasOne("Buildyv2.Models.Report", "Report")
-                        .WithMany("ListPhotos")
-                        .HasForeignKey("ReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Contract");
-
-                    b.Navigation("Report");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Purchase", b =>
-                {
-                    b.HasOne("Buildyv2.Models.Job", "Job")
-                        .WithMany("ListPurchases")
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Job");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Rent", b =>
-                {
-                    b.HasOne("Buildyv2.Models.Estate", null)
-                        .WithOne("PresentRent")
-                        .HasForeignKey("Buildyv2.Models.Rent", "EstateId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("ForeignKey_Estate_PresentRent");
-
-                    b.HasOne("Buildyv2.Models.Estate", "Estate")
-                        .WithMany("ListRentsHistory")
-                        .HasForeignKey("EstateId1");
-
-                    b.HasOne("Buildyv2.Models.Contract", "Contract")
-                        .WithOne("Rent")
-                        .HasForeignKey("Buildyv2.Models.Rent", "Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("ForeignKey_Rent_Contract");
-
-                    b.Navigation("Contract");
 
                     b.Navigation("Estate");
                 });
@@ -963,34 +559,18 @@ namespace Buildyv2.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Buildyv2.Models.Job", "Job")
-                        .WithMany("ListReports")
-                        .HasForeignKey("JobId");
-
                     b.Navigation("Estate");
-
-                    b.Navigation("Job");
                 });
 
             modelBuilder.Entity("Buildyv2.Models.Tenant", b =>
                 {
                     b.HasOne("Buildyv2.Models.Rent", "Rent")
-                        .WithOne("Tenant")
-                        .HasForeignKey("Buildyv2.Models.Tenant", "RentId");
+                        .WithMany("ListTenants")
+                        .HasForeignKey("RentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Rent");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Warrant", b =>
-                {
-                    b.HasOne("Buildyv2.Models.Contract", "Contract")
-                        .WithOne("Warrant")
-                        .HasForeignKey("Buildyv2.Models.Warrant", "ContractId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("ForeignKey_Contract_Warrant");
-
-                    b.Navigation("Contract");
                 });
 
             modelBuilder.Entity("Buildyv2.Models.Worker", b =>
@@ -1055,48 +635,23 @@ namespace Buildyv2.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Buildyv2.Models.Contract", b =>
-                {
-                    b.Navigation("ListPhotos");
-
-                    b.Navigation("Rent");
-
-                    b.Navigation("Warrant");
-                });
-
             modelBuilder.Entity("Buildyv2.Models.Estate", b =>
                 {
                     b.Navigation("ListJobs");
 
-                    b.Navigation("ListRentsHistory");
+                    b.Navigation("ListRents");
 
                     b.Navigation("ListReports");
-
-                    b.Navigation("PresentRent");
                 });
 
             modelBuilder.Entity("Buildyv2.Models.Job", b =>
                 {
-                    b.Navigation("ListPurchases");
-
-                    b.Navigation("ListReports");
-
                     b.Navigation("ListWorkers");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Notary", b =>
-                {
-                    b.Navigation("ListContracts");
                 });
 
             modelBuilder.Entity("Buildyv2.Models.Rent", b =>
                 {
-                    b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("Buildyv2.Models.Report", b =>
-                {
-                    b.Navigation("ListPhotos");
+                    b.Navigation("ListTenants");
                 });
 #pragma warning restore 612, 618
         }

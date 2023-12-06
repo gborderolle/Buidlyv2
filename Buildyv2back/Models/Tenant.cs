@@ -37,8 +37,8 @@ namespace Buildyv2.Models
 
         #region External
 
-        [ForeignKey("RentId")]
-        public Rent Rent { get; set; }
+        public int RentId { get; set; } // n..1 (1=sí existe este sin el padre)
+        public Rent Rent{ get; set; }
 
         #endregion
     }

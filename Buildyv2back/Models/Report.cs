@@ -24,7 +24,8 @@ namespace Buildyv2.Models
         public string Comments { get; set; }
 
         // Uniques
-        public List<string> ListPhotoURL { get; set; }
+        [NotMapped]
+        public List<string> ListPhotosURL { get; set; }
 
         #endregion
 
@@ -33,9 +34,6 @@ namespace Buildyv2.Models
         [Required(ErrorMessage = "El campo {0} es requerido")] // n..0 (0=no existe este sin el padre)
         public int EstateId { get; set; }
         public Estate Estate { get; set; }
-
-        public Job Job { get; set; } // dependencia circular?
-
 
         #endregion
     }

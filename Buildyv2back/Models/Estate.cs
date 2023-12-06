@@ -38,6 +38,9 @@ namespace Buildyv2.Models
 
         public string GoogleMapsURL { get; set; }
 
+        public bool EstateIsRented { get; set; }
+
+
         #endregion
 
         #region External
@@ -46,12 +49,9 @@ namespace Buildyv2.Models
 
         public List<Job> ListJobs { get; set; } = new();
 
-        public Rent PresentRent { get; set; } = new();
-
-        public List<Rent> ListRentsHistory { get; set; } = new();
-
-        // N..N Owners --> OwnerEstate
-        public List<OwnerEstate> OwnerEstateList { get; set; } // n..n
+        public List<Rent> ListRents { get; set; } = new();
+        
+        public int PresentRentId { get; set; } = new();
 
         #endregion
     }

@@ -62,19 +62,10 @@ namespace Buildyv2.Controllers.V1
                     },
                     new IncludePropertyConfiguration<Estate>
                     {
-                        IncludeExpression = b => b.ListRentsHistory
+                        IncludeExpression = b => b.ListRents
                     }
                 };
-            // n..n
-            var thenIncludes = new List<ThenIncludePropertyConfiguration<Estate>>
-            {
-                    new ThenIncludePropertyConfiguration<Estate>
-                    {
-                        IncludeExpression = b => b.OwnerEstateList,
-                        ThenIncludeExpression = ab => ((OwnerEstate)ab).Owner
-                    }
-                };
-            return await Get<Estate, EstateDTO>(includes: includes, thenIncludes: thenIncludes);
+            return await Get<Estate, EstateDTO>(includes: includes);
         }
 
         [HttpDelete("{id:int}")]

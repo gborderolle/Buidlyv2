@@ -19,7 +19,18 @@ namespace Buildyv2.Models
 
         // Uniques
 
+        public string Warrant { get; set; }
+
+        public decimal? MonthlyValue { get; set; }
+
+        public DateTime? Datetime_monthInit { get; set; }
+
+        public string Duration { get; set; }
+
         public bool RentIsEnded { get; set; }
+
+        [NotMapped]
+        public List<string> ListContractPhotosURL { get; set; }
 
         #endregion
 
@@ -32,9 +43,9 @@ namespace Buildyv2.Models
         public int EstateId { get; set; }
         public Estate Estate { get; set; }
 
-        public Tenant Tenant { get; set; }
-
-        public Contract Contract { get; set; }
+        public List<Tenant> ListTenants { get; set; } = new();
+        
+        public int PrimaryTenantId { get; set; }
 
         #endregion
     }

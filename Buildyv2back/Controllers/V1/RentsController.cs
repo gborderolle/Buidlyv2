@@ -49,7 +49,15 @@ namespace Buildyv2.Controllers.V1
         [HttpGet("{id:int}")] // url completa: https://localhost:7003/api/Rents/1
         public async Task<ActionResult<APIResponse>> Get([FromRoute] int id)
         {
-            return await Get<Rent, RentDTO>();
+            // 1..n
+            var includes = new List<IncludePropertyConfiguration<Rent>>
+            {
+                    new IncludePropertyConfiguration<Rent>
+                    {
+                        IncludeExpression = b => b.ListTenants
+                    },
+                };
+            return await Get<Rent, RentDTO>(includes: includes);
         }
 
         [HttpDelete("{id:int}")]
