@@ -13,3 +13,6 @@ Buildyv2front/coverage
 
 # production
 Buildyv2front/build
+Buildyv2back/obj/Buildyv2.csproj.nuget.dgspec.json
+Buildyv2back/obj/*
+Buildyv2back/bin/*
