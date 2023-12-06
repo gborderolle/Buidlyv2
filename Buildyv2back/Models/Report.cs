@@ -24,8 +24,7 @@ namespace Buildyv2.Models
         public string Comments { get; set; }
 
         // Uniques
-        [NotMapped]
-        public List<string> ListPhotosURL { get; set; }
+        public List<Photo> ListPhotos { get; set; }
 
         #endregion
 

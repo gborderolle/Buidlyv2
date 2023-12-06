@@ -15,83 +15,79 @@ namespace Buildyv2.Controllers.V1
 {
     [ApiController]
     [HasHeader("x-version", "1")]
-    [Route("api/rents")]
+    [Route("api/reports")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class RentsController : CustomBaseController<Rent> // Notice <Rent> here
+    public class ReportsController : CustomBaseController<Report> // Notice <Report> here
     {
-        private readonly IRentRepository _rentRepository; // Servicio que contiene la lógica principal de negocio para Rents.
+        private readonly IReportRepository _reportRepository; // Servicio que contiene la lógica principal de negocio para Reports.
 
-        public RentsController(ILogger<RentsController> logger, IMapper mapper, IRentRepository rentRepository)
-        : base(mapper, logger, rentRepository)
+        public ReportsController(ILogger<ReportsController> logger, IMapper mapper, IReportRepository reportRepository)
+        : base(mapper, logger, reportRepository)
         {
             _response = new();
-            _rentRepository = rentRepository;
+            _reportRepository = reportRepository;
         }
 
         #region Endpoints genéricos
 
-        [HttpGet("GetRent")]
+        [HttpGet("GetReport")]
         public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
         {
-            return await Get<Rent, RentDTO>(paginationDTO: paginationDTO);
+            return await Get<Report, ReportDTO>(paginationDTO: paginationDTO);
         }
 
         [HttpGet("all")]
         [AllowAnonymous]
         public async Task<ActionResult<APIResponse>> All()
         {
-            var rents = await _rentRepository.GetAll();
-            _response.Result = _mapper.Map<List<RentDTO>>(rents);
+            var reports = await _reportRepository.GetAll();
+            _response.Result = _mapper.Map<List<ReportDTO>>(reports);
             _response.StatusCode = HttpStatusCode.OK;
             return _response;
         }
 
-        [HttpGet("{id:int}")] // url completa: https://localhost:7003/api/Rents/1
+        [HttpGet("{id:int}")] // url completa: https://localhost:7003/api/Reports/1
         public async Task<ActionResult<APIResponse>> Get([FromRoute] int id)
         {
             // 1..n
-            var includes = new List<IncludePropertyConfiguration<Rent>>
+            var includes = new List<IncludePropertyConfiguration<Report>>
             {
-                    new IncludePropertyConfiguration<Rent>
-                    {
-                        IncludeExpression = b => b.ListTenants
-                    },
-                new IncludePropertyConfiguration<Rent>
+                    new IncludePropertyConfiguration<Report>
                     {
                         IncludeExpression = b => b.ListPhotos
                     },
                 };
-            return await Get<Rent, RentDTO>(includes: includes);
+            return await Get<Report, ReportDTO>(includes: includes);
         }
 
         [HttpDelete("{id:int}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
-            return await Delete<Rent>(id);
+            return await Delete<Report>(id);
         }
 
         [HttpPut("{id:int}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] RentCreateDTO rentCreateDTO)
+        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] ReportCreateDTO reportCreateDTO)
         {
-            return await Put<RentCreateDTO, RentDTO, Rent>(id, rentCreateDTO);
+            return await Put<ReportCreateDTO, ReportDTO, Report>(id, reportCreateDTO);
         }
 
         [HttpPatch("{id:int}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Patch(int id, [FromBody] JsonPatchDocument<RentPatchDTO> patchDto)
+        public async Task<ActionResult<APIResponse>> Patch(int id, [FromBody] JsonPatchDocument<ReportPatchDTO> patchDto)
         {
-            return await Patch<Rent, RentPatchDTO>(id, patchDto);
+            return await Patch<Report, ReportPatchDTO>(id, patchDto);
         }
 
         #endregion
 
         #region Endpoints específicos
 
-        [HttpPost(Name = "CreateRent")]
+        [HttpPost(Name = "CreateReport")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Post([FromBody] RentCreateDTO rentCreateDto)
+        public async Task<ActionResult<APIResponse>> Post([FromBody] ReportCreateDTO reportCreateDto)
         {
             return Ok();
         }

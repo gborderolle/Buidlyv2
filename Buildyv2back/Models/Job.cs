@@ -27,8 +27,7 @@ namespace Buildyv2.Models
 
         public decimal LabourCost { get; set; }
 
-        [NotMapped]
-        public List<string> ListPhotosURL { get; set; }
+        public List<Photo> ListPhotos { get; set; }
 
         #endregion
 

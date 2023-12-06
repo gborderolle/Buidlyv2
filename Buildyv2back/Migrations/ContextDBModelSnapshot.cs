@@ -105,6 +105,44 @@ namespace Buildyv2.Migrations
                     b.ToTable("Job");
                 });
 
+            modelBuilder.Entity("Buildyv2.Models.Photo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReportId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("URL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Update")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("RentId");
+
+                    b.HasIndex("ReportId");
+
+                    b.ToTable("Photo");
+                });
+
             modelBuilder.Entity("Buildyv2.Models.Rent", b =>
                 {
                     b.Property<int>("Id")
@@ -255,11 +293,8 @@ namespace Buildyv2.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Phone1")
+                    b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone2")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Update")
@@ -401,15 +436,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "59e14ce7-cc77-4347-97d0-3100a1b9d50d",
+                            ConcurrencyStamp = "972dd449-80a4-4548-bcaa-7c03cf4a4415",
                             Email = "admin@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@buildy2.uy",
                             NormalizedUserName = "admin@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMyXuDzlZswnprBtrtXzbZKgDqZNrTvRdGwXjnACXKPMX/b4oPaIoUSSbiyROnQzEg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIPmCaBVSHA11j2pH8hy7Iaw1IhZmM8Z8IAPeGY0rwTv9PCehCWkIyLWpnpeVBbEbw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "97f69ced-bf30-435e-9be6-ea6d343151e3",
+                            SecurityStamp = "b2fd56a4-0e53-4831-bbd5-461ad8fe57fc",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Admin"
                         },
@@ -417,15 +452,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "e0765c93-676c-4199-b7ee-d7877c471821",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c446a74c-466d-4c16-901c-50353c990ebc",
+                            ConcurrencyStamp = "ea654fe8-b9d4-42d0-8d1d-1ce2fdd879e5",
                             Email = "normal@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "normal@buildy2.uy",
                             NormalizedUserName = "normal@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGNphMgnHehtU3gRBi23e7HJUPMhSgbvaDkYdGH+G6kCkoj/1UP7Ug3Srk4Cgv/oFg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAP+YaTADW/V96I01qudTgcN06nyRjeBv5aDPR+AApyqMgSMyn1MucJqosbol1e6ZQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3f9c5491-06bf-4ad1-b9a3-fa45155baef4",
+                            SecurityStamp = "a9928597-a934-44ff-87be-1e7d8f0668cb",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Normal"
                         });
@@ -521,14 +556,6 @@ namespace Buildyv2.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("System.Collections.Generic.List<string>", b =>
-                {
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
-                    b.ToTable("List<string>");
-                });
-
             modelBuilder.Entity("Buildyv2.Models.Job", b =>
                 {
                     b.HasOne("Buildyv2.Models.Estate", "Estate")
@@ -538,6 +565,21 @@ namespace Buildyv2.Migrations
                         .IsRequired();
 
                     b.Navigation("Estate");
+                });
+
+            modelBuilder.Entity("Buildyv2.Models.Photo", b =>
+                {
+                    b.HasOne("Buildyv2.Models.Job", null)
+                        .WithMany("ListPhotos")
+                        .HasForeignKey("JobId");
+
+                    b.HasOne("Buildyv2.Models.Rent", null)
+                        .WithMany("ListPhotos")
+                        .HasForeignKey("RentId");
+
+                    b.HasOne("Buildyv2.Models.Report", null)
+                        .WithMany("ListPhotos")
+                        .HasForeignKey("ReportId");
                 });
 
             modelBuilder.Entity("Buildyv2.Models.Rent", b =>
@@ -646,12 +688,21 @@ namespace Buildyv2.Migrations
 
             modelBuilder.Entity("Buildyv2.Models.Job", b =>
                 {
+                    b.Navigation("ListPhotos");
+
                     b.Navigation("ListWorkers");
                 });
 
             modelBuilder.Entity("Buildyv2.Models.Rent", b =>
                 {
+                    b.Navigation("ListPhotos");
+
                     b.Navigation("ListTenants");
+                });
+
+            modelBuilder.Entity("Buildyv2.Models.Report", b =>
+                {
+                    b.Navigation("ListPhotos");
                 });
 #pragma warning restore 612, 618
         }

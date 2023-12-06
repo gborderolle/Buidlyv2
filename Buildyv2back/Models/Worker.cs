@@ -22,9 +22,7 @@ namespace Buildyv2.Models
         public DateTime Update { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        public string Phone1 { get; set; }
-
-        public string Phone2 { get; set; }
+        public string Phone { get; set; }
 
         [EmailAddress]
         public string Email { get; set; }

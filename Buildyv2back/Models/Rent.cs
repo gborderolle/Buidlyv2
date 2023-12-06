@@ -29,8 +29,7 @@ namespace Buildyv2.Models
 
         public bool RentIsEnded { get; set; }
 
-        [NotMapped]
-        public List<string> ListContractPhotosURL { get; set; }
+        public List<Photo> ListPhotos { get; set; }
 
         #endregion
 
@@ -44,7 +43,7 @@ namespace Buildyv2.Models
         public Estate Estate { get; set; }
 
         public List<Tenant> ListTenants { get; set; } = new();
-        
+
         public int PrimaryTenantId { get; set; }
 
         #endregion

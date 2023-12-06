@@ -121,6 +121,7 @@ namespace WebAPI_tutorial_peliculas
             // Repositorios
             services.AddScoped<IEstateRepository, EstateRepository>();
             services.AddScoped<IJobRepository, JobRepository>();
+            services.AddScoped<IPhotoRepository, PhotoRepository>();
             services.AddScoped<IRentRepository, RentRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<ITenantRepository, TenantRepository>();

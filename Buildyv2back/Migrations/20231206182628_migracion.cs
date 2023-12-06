@@ -76,16 +76,6 @@ namespace Buildyv2.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "List<string>",
-                columns: table => new
-                {
-                    Capacity = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -275,8 +265,7 @@ namespace Buildyv2.Migrations
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Update = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Phone1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IdentityDocument = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -320,6 +309,39 @@ namespace Buildyv2.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Photo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Update = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    URL = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    JobId = table.Column<int>(type: "int", nullable: true),
+                    RentId = table.Column<int>(type: "int", nullable: true),
+                    ReportId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Photo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Photo_Job_JobId",
+                        column: x => x.JobId,
+                        principalTable: "Job",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Photo_Rent_RentId",
+                        column: x => x.RentId,
+                        principalTable: "Rent",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Photo_Report_ReportId",
+                        column: x => x.ReportId,
+                        principalTable: "Report",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
@@ -330,8 +352,8 @@ namespace Buildyv2.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "59e14ce7-cc77-4347-97d0-3100a1b9d50d", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEMyXuDzlZswnprBtrtXzbZKgDqZNrTvRdGwXjnACXKPMX/b4oPaIoUSSbiyROnQzEg==", null, false, "97f69ced-bf30-435e-9be6-ea6d343151e3", false, "Sr.Admin" },
-                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "c446a74c-466d-4c16-901c-50353c990ebc", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEGNphMgnHehtU3gRBi23e7HJUPMhSgbvaDkYdGH+G6kCkoj/1UP7Ug3Srk4Cgv/oFg==", null, false, "3f9c5491-06bf-4ad1-b9a3-fa45155baef4", false, "Sr.Normal" }
+                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "972dd449-80a4-4548-bcaa-7c03cf4a4415", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEIPmCaBVSHA11j2pH8hy7Iaw1IhZmM8Z8IAPeGY0rwTv9PCehCWkIyLWpnpeVBbEbw==", null, false, "b2fd56a4-0e53-4831-bbd5-461ad8fe57fc", false, "Sr.Admin" },
+                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "ea654fe8-b9d4-42d0-8d1d-1ce2fdd879e5", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEAP+YaTADW/V96I01qudTgcN06nyRjeBv5aDPR+AApyqMgSMyn1MucJqosbol1e6ZQ==", null, false, "a9928597-a934-44ff-87be-1e7d8f0668cb", false, "Sr.Normal" }
                 });
 
             migrationBuilder.InsertData(
@@ -384,6 +406,21 @@ namespace Buildyv2.Migrations
                 column: "EstateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Photo_JobId",
+                table: "Photo",
+                column: "JobId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Photo_RentId",
+                table: "Photo",
+                column: "RentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Photo_ReportId",
+                table: "Photo",
+                column: "ReportId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Rent_EstateId",
                 table: "Rent",
                 column: "EstateId");
@@ -423,10 +460,7 @@ namespace Buildyv2.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "List<string>");
-
-            migrationBuilder.DropTable(
-                name: "Report");
+                name: "Photo");
 
             migrationBuilder.DropTable(
                 name: "Tenant");
@@ -439,6 +473,9 @@ namespace Buildyv2.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Report");
 
             migrationBuilder.DropTable(
                 name: "Rent");
