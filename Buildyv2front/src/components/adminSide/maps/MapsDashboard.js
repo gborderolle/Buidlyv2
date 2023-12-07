@@ -32,12 +32,10 @@ import useBumpEffect from "../../../utils/useBumpEffect";
 import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
 import {
-  fetchPartyList,
-  fetchProvinceList,
-  fetchMunicipalityList,
-  fetchCircuitList,
-  fetchSlateList,
-  fetchCandidateList,
+  fetchEstates,
+  fetchJobs,
+  fetchRents,
+  fetchWorkers,
 } from "../../../store/generalData-actions";
 
 import CircuitMap from "./CircuitMap";
@@ -499,12 +497,10 @@ const MapsDashboard = () => {
 
     const fetchGeneralData = async () => {
       batch(() => {
-        dispatch(fetchPartyList());
-        dispatch(fetchProvinceList());
-        dispatch(fetchMunicipalityList());
-        dispatch(fetchCircuitList());
-        dispatch(fetchSlateList());
-        dispatch(fetchCandidateList());
+        dispatch(fetchEstates());
+        dispatch(fetchJobs());
+        dispatch(fetchRents());
+        dispatch(fetchWorkers());
       });
     };
     fetchGeneralData();

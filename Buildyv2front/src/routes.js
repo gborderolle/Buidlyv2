@@ -1,17 +1,35 @@
 import React from "react";
 
-const FormStart = React.lazy(() => import("./components/delegadosSide/steps/FormStart"));
-const FormParty1 = React.lazy(() => import("./components/delegadosSide/steps/FormParty1"));
-const FormSlate1 = React.lazy(() => import("./components/delegadosSide/steps/FormSlate1"));
-const FormExtras1 = React.lazy(() => import("./components/delegadosSide/steps/FormExtras1"));
-const FormSummary = React.lazy(() => import("./components/delegadosSide/steps/FormSummary"));
-const DataMenu = React.lazy(() => import("./views/admin/DataMenu"));
-const AdminMenu = React.lazy(() => import("./views/admin/AdminMenu"));
+const FormStart = React.lazy(() =>
+  import("./components/delegadosSide/steps/FormStart")
+);
+const FormParty1 = React.lazy(() =>
+  import("./components/delegadosSide/steps/FormParty1")
+);
+const FormSlate1 = React.lazy(() =>
+  import("./components/delegadosSide/steps/FormSlate1")
+);
+const FormExtras1 = React.lazy(() =>
+  import("./components/delegadosSide/steps/FormExtras1")
+);
+const FormSummary = React.lazy(() =>
+  import("./components/delegadosSide/steps/FormSummary")
+);
+const DataMenu = React.lazy(() =>
+  import("./components/adminSide/menu/DataMenu")
+);
+const AdminMenu = React.lazy(() =>
+  import("./components/adminSide/menu/AdminMenu")
+);
 const Dashboard = React.lazy(() =>
   import("./components/adminSide/dashboard/Dashboard")
 );
-const MapsDashboard = React.lazy(() => import("./components/adminSide/maps/MapsDashboard"));
-const DelegatesMenu = React.lazy(() => import("./components/adminSide/delegados/DelegatesMenu"));
+const MapsDashboard = React.lazy(() =>
+  import("./components/adminSide/maps/MapsDashboard")
+);
+const DelegatesMenu = React.lazy(() =>
+  import("./components/adminSide/delegados/DelegatesMenu")
+);
 const Colors = React.lazy(() => import("./views/theme/colors/Colors"));
 const Typography = React.lazy(() =>
   import("./views/theme/typography/Typography")

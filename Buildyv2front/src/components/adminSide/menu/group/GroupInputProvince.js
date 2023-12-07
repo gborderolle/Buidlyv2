@@ -24,7 +24,7 @@ import useFirebase from "../../../../hooks/use-firebase";
 
 // redux imports
 import { useDispatch } from "react-redux";
-import { fetchProvinceList } from "../../../../store/generalData-actions";
+// import { fetchProvinceList } from "../../../../store/generalData-actions";
 
 import "./GroupInput.css";
 
@@ -94,7 +94,7 @@ const GroupInputProvince = (props) => {
     );
 
     // Redux fetch DB
-    dispatch(fetchProvinceList()); // refresh DB data
+    // dispatch(fetchProvinceList()); // refresh DB data
 
     inputReset1();
     inputReset2();

@@ -31,12 +31,10 @@ import useBumpEffect from "../../../utils/useBumpEffect";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
 import {
-  fetchPartyList,
-  fetchProvinceList,
-  fetchMunicipalityList,
-  fetchCircuitList,
-  fetchSlateList,
-  fetchCandidateList,
+  fetchEstates,
+  fetchJobs,
+  fetchRents,
+  fetchWorkers,
 } from "../../../store/generalData-actions";
 
 import "./Dashboard.css";
@@ -706,12 +704,10 @@ const Dashboard = () => {
 
     const fetchGeneralData = async () => {
       batch(() => {
-        dispatch(fetchPartyList());
-        dispatch(fetchProvinceList());
-        dispatch(fetchMunicipalityList());
-        dispatch(fetchCircuitList());
-        dispatch(fetchSlateList());
-        dispatch(fetchCandidateList());
+        dispatch(fetchEstates());
+        dispatch(fetchJobs());
+        dispatch(fetchRents());
+        dispatch(fetchWorkers());
       });
     };
     fetchGeneralData();

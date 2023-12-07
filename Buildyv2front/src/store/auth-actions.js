@@ -1,6 +1,6 @@
 import { authActions } from "./auth-slice";
 import { loggedUserActions } from "./loggedUser-slice";
-import showToastMessage from "../UI/Messages/ShowSuccess";
+import showToastMessage from "../components/messages/ShowSuccess";
 
 import { database, FirebaseUrls } from "../utils/firebaseSetup";
 import { get, ref } from "firebase/database";

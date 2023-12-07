@@ -24,7 +24,7 @@ import useFirebase from "../../../../hooks/use-firebase";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchRoleList } from "../../../../store/generalData-actions";
+// import { fetchRoleList } from "../../../../store/generalData-actions";
 
 import "./GroupInput.css";
 
@@ -84,7 +84,7 @@ const GroupInputRole = (props) => {
     );
 
     // Redux fetch DB
-    dispatch(fetchRoleList()); // refresh DB data
+    // dispatch(fetchRoleList()); // refresh DB data
 
     inputReset1();
     inputReset2();

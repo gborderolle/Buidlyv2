@@ -10,11 +10,11 @@ import GroupInputCircuit from "./group/GroupInputCircuit";
 import GroupInputSlate from "./group/GroupInputSlate";
 import GroupInputCandidate from "./group/GroupInputCandidate";
 
-import { FirebaseUrls, getAutoIncrementedId } from "../../utils/firebaseSetup";
+import { FirebaseUrls, getAutoIncrementedId } from "../../../utils/firebaseSetup";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { authActions } from "../../store/auth-slice";
+import { authActions } from "../../../store/auth-slice";
 
 const DataMenu = () => {
   //#region Const ***********************************

@@ -22,7 +22,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
 import { liveSettingsActions } from "../../../store/liveSettings-slice";
 import { uiActions } from "../../../store/ui-slice";
-import { fetchCircuitList } from "../../../store/generalData-actions";
+// import { fetchCircuitList } from "../../../store/generalData-actions";
 
 import "./FormStart.css";
 
@@ -89,7 +89,7 @@ const FormStart = (props) => {
   }, [userRoleNumber, navigate, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchCircuitList());
+    // dispatch(fetchCircuitList());
     dispatch(uiActions.hideStepper());
     dispatch(uiActions.setStepsSubmittedEmpty());
 

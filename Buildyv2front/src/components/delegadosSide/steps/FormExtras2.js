@@ -33,7 +33,7 @@ import WidgetsBrandParty from "../widgets/WidgetsBrandParty";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCircuitList } from "../../../store/generalData-actions";
+// import { fetchCircuitList } from "../../../store/generalData-actions";
 import { liveSettingsActions } from "../../../store/liveSettings-slice";
 import { uiActions } from "../../../store/ui-slice";
 import { formActions } from "../../../store/form-slice";
@@ -307,7 +307,7 @@ const FormExtras2 = (props) => {
     props.setIsLoading(false); // Detiene el indicador de carga, independientemente del resultado
 
     // Redux fetch DB
-    await dispatch(fetchCircuitList()); // refresh DB data
+    // await dispatch(fetchCircuitList()); // refresh DB data
 
     const fixedCardsVotes = fixedCards.map((card) => ({
       id: card.cardId,

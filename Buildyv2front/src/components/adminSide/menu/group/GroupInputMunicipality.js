@@ -28,10 +28,10 @@ import useFirebase from "../../../../hooks/use-firebase";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchMunicipalityList,
-  fetchProvinceList,
-} from "../../../../store/generalData-actions";
+// import {
+//   fetchMunicipalityList,
+//   fetchProvinceList,
+// } from "../../../../store/generalData-actions";
 
 import "./GroupInput.css";
 
@@ -101,7 +101,7 @@ const GroupInputMunicipality = (props) => {
     );
 
     // Redux fetch DB
-    dispatch(fetchMunicipalityList()); // refresh DB data
+    // dispatch(fetchMunicipalityList()); // refresh DB data
 
     inputReset1();
     inputResetProvince();

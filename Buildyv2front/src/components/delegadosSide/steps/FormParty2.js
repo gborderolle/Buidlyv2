@@ -8,7 +8,7 @@ import WidgetsBrandParty from "../widgets/WidgetsBrandParty";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchPartyList } from "../../../store/generalData-actions";
+// import { fetchPartyList } from "../../../store/generalData-actions";
 import { uiActions } from "../../../store/ui-slice";
 import { formActions } from "../../../store/form-slice";
 
@@ -109,7 +109,7 @@ const FormParty2 = (props) => {
     setFilteredPartyList(getFilteredParties(partyList));
 
     // Redux fetch DB
-    dispatch(fetchPartyList()); // refresh DB data
+    // dispatch(fetchPartyList()); // refresh DB data
   };
 
   const validityHandlerParty = (index, isValid) => {

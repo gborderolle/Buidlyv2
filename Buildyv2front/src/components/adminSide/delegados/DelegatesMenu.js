@@ -22,10 +22,10 @@ import useBumpEffect from "../../../utils/useBumpEffect";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
 import {
-  fetchProvinceList,
-  fetchMunicipalityList,
-  fetchCircuitList,
-  fetchDelegateList,
+  fetchEstates,
+  fetchJobs,
+  fetchRents,
+  fetchWorkers,
 } from "../../../store/generalData-actions";
 
 import "./DelegatesMenu.css";
@@ -197,10 +197,10 @@ const DelegatesMenu = () => {
 
     const fetchGeneralData = async () => {
       batch(() => {
-        dispatch(fetchCircuitList());
-        dispatch(fetchDelegateList());
-        dispatch(fetchProvinceList());
-        dispatch(fetchMunicipalityList());
+        dispatch(fetchEstates());
+        dispatch(fetchJobs());
+        dispatch(fetchRents());
+        dispatch(fetchWorkers());
       });
     };
     fetchGeneralData();

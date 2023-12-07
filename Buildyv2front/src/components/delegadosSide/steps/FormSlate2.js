@@ -9,8 +9,7 @@ import ProfileCard from "../profileCard/ProfileCard"; // Asegúrate de que la ru
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchSlateList } from "../../../store/generalData-actions";
-import { fetchVotosTotal } from "../../../store/generalData-actions";
+// import { fetchSlateList, fetchVotosTotal } from "../../../store/generalData-actions";
 import { uiActions } from "../../../store/ui-slice";
 import { formActions } from "../../../store/form-slice";
 
@@ -49,7 +48,7 @@ const FormSlate2 = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       if (reduxSelectedCircuit) {
-        await dispatch(fetchVotosTotal(reduxSelectedCircuit));
+        // await dispatch(fetchVotosTotal(reduxSelectedCircuit));
       }
     };
 
@@ -118,7 +117,7 @@ const FormSlate2 = (props) => {
     dispatch(formActions.setVotosSlateTotalRedux(votosSlateTotal));
 
     // Redux fetch DB
-    dispatch(fetchSlateList()); // refresh DB data
+    // dispatch(fetchSlateList()); // refresh DB data
   };
 
   const validityHandlerSlate = (index, isValid) => {

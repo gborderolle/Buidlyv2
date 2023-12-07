@@ -27,7 +27,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCandidateList } from "../../../../store/generalData-actions";
+// import { fetchCandidateList } from "../../../../store/generalData-actions";
 
 import "./GroupInput.css";
 
@@ -112,7 +112,7 @@ const GroupInputCandidate = (props) => {
       );
 
       // Redux fetch DB
-      dispatch(fetchCandidateList()); // refresh DB data
+      // dispatch(fetchCandidateList()); // refresh DB data
 
       inputReset1();
 

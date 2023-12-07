@@ -7,7 +7,7 @@ import { CForm, CButton, CAlert, CRow, CCol } from "@coreui/react";
 import { useSelector, useDispatch } from "react-redux";
 import { uiActions } from "../../../store/ui-slice";
 
-import "../FormStart.css";
+import "../steps/FormStart.css";
 
 const buttonColor = "dark";
 

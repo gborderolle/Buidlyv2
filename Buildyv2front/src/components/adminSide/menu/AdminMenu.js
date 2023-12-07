@@ -6,11 +6,11 @@ import GroupInputDelegado from "./group/GroupInputDelegado";
 import GroupInputUser from "./group/GroupInputUser";
 import GroupInputRole from "./group/GroupInputRole";
 
-import { FirebaseUrls, getAutoIncrementedId } from "../../utils/firebaseSetup";
+import { FirebaseUrls, getAutoIncrementedId } from "../../../utils/firebaseSetup";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { authActions } from "../../store/auth-slice";
+import { authActions } from "../../../store/auth-slice";
 
 const AdminMenu = () => {
   //#region Const ***********************************

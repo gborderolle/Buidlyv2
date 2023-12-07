@@ -28,7 +28,7 @@ import useFirebase from "../../../../hooks/use-firebase";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCircuitList } from "../../../../store/generalData-actions";
+// import { fetchCircuitList } from "../../../../store/generalData-actions";
 
 import "./GroupInput.css";
 
@@ -53,7 +53,7 @@ const GroupInputCircuit = (props) => {
   );
 
   // Redux fetch DB
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const {
     value: circuitName,

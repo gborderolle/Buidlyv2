@@ -8,26 +8,22 @@ import {
   AppFooterMobileAdmin,
   AppFooterMobileDelegados,
   AppHeader,
-} from "../components/index";
+} from "../index";
 
 // Redux import
-import { authActions } from "../store/auth-slice";
+import { authActions } from "../../store/auth-slice";
 
 import classes from "./DefaultLayout.module.css";
 
 // Redux imports
 import { batch, useDispatch, useSelector } from "react-redux";
-import { fetchMyParty } from "../store/loggedUser-actions";
+import { fetchMyParty } from "../../store/loggedUser-actions";
 import {
-  fetchPartyList,
-  fetchProvinceList,
-  fetchMunicipalityList,
-  fetchCircuitList,
-  fetchSlateList,
-  fetchCandidateList,
-  fetchRoleList,
-  fetchDelegateList,
-} from "../store/generalData-actions";
+  fetchEstates,
+  fetchJobs,
+  fetchRents,
+  fetchWorkers,
+} from "../../store/generalData-actions";
 
 const DefaultLayout = () => {
   //#region Consts
@@ -80,14 +76,10 @@ const DefaultLayout = () => {
 
     const fetchGeneralData = async () => {
       batch(() => {
-        dispatch(fetchPartyList());
-        dispatch(fetchProvinceList());
-        dispatch(fetchMunicipalityList());
-        dispatch(fetchCircuitList());
-        dispatch(fetchSlateList());
-        dispatch(fetchCandidateList());
-        dispatch(fetchRoleList());
-        dispatch(fetchDelegateList());
+        dispatch(fetchEstates());
+        dispatch(fetchJobs());
+        dispatch(fetchRents());
+        dispatch(fetchWorkers());
       });
     };
     fetchLoggedUserData();
@@ -116,13 +108,13 @@ const DefaultLayout = () => {
         )}
         {userRoleNumber == 1 && isMobile && (
           <AppFooterMobileAdmin
-          userRoleNumber={userRoleNumber}
+            userRoleNumber={userRoleNumber}
             className={classes.AppFooter}
           />
         )}
         {userRoleNumber == 2 && (
           <AppFooterMobileDelegados
-          userRoleNumber={userRoleNumber}
+            userRoleNumber={userRoleNumber}
             className={classes.AppFooter}
           />
         )}

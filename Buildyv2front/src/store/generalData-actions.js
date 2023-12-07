@@ -2,17 +2,12 @@ import { generalDataActions } from "./generalData-slice";
 import { formActions } from "./form-slice";
 
 import {
-  urlContracts,
+  urlAccounts,
   urlEstates,
   urlJobs,
-  urlNotaries,
-  urlOwners,
-  urlPurchases,
   urlRents,
-  urlWarrants,
   urlWorkers,
-  // Importa las demás URLs aquí
-} from "./endpoints";
+} from "../utils/endpoints.ts";
 
 const fetchApi = async (url) => {
   try {
@@ -27,9 +22,8 @@ const fetchApi = async (url) => {
   }
 };
 
-export const fetchContracts = async () => {
-  return await fetchApi(urlContracts);
-  //dispatch(generalDataActions.setMunicipalityList(dataArray));
+export const fetchAccounts = async () => {
+  return await fetchApi(urlAccounts);
 };
 
 export const fetchEstates = async () => {
@@ -40,24 +34,8 @@ export const fetchJobs = async () => {
   return await fetchApi(urlJobs);
 };
 
-export const fetchNotaries = async () => {
-  return await fetchApi(urlNotaries);
-};
-
-export const fetchOwners = async () => {
-  return await fetchApi(urlOwners);
-};
-
-export const fetchPurchases = async () => {
-  return await fetchApi(urlPurchases);
-};
-
 export const fetchRents = async () => {
   return await fetchApi(urlRents);
-};
-
-export const fetchWarrants = async () => {
-  return await fetchApi(urlWarrants);
 };
 
 export const fetchWorkers = async () => {

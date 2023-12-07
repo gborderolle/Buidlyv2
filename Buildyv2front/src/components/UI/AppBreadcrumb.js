@@ -6,7 +6,7 @@ import { CBreadcrumb, CBreadcrumbItem } from "@coreui/react";
 // Redux imports
 import { useSelector, useDispatch } from "react-redux";
 
-import Clock from "./Clock1/Clock"; // Importa el componente Clock
+import Clock from "../clock/Clock"; // Importa el componente Clock
 
 import classes from "./AppBreadcrumb.module.css";
 
