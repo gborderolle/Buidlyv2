@@ -1,4 +1,5 @@
 .vs/
+.vs/*
 Buildyv2back/bin/
 Buildyv2back/obj/
 Buildyv2back/.vs/
@@ -16,3 +17,8 @@ Buildyv2front/build
 Buildyv2back/obj/Buildyv2.csproj.nuget.dgspec.json
 Buildyv2back/obj/*
 Buildyv2back/bin/*
+
+EmailService/bin/
+EmailService/bin/*
+EmailService/obj/
+EmailService/obj/*
