@@ -1,18 +1,18 @@
 import { get, set, ref } from "firebase/database";
-import { FirebaseUrls, database } from "../utils/firebaseSetup";
+// import { FirebaseUrls, database } from "../utils/firebaseSetup";
 import { loggedUserActions } from "./loggedUser-slice";
 
 export const fetchMyParty = () => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const dbRef = ref(database, "myParty");
-      const snapshot = await get(dbRef);
+      // const dbRef = ref(database, "myParty");
+      // const snapshot = await get(dbRef);
 
-      if (!snapshot.exists()) {
-        throw new Error("Error al obtener los datos.");
-      }
+      // if (!snapshot.exists()) {
+      //   throw new Error("Error al obtener los datos.");
+      // }
 
-      return snapshot.val();
+      // return snapshot.val();
     };
 
     try {
@@ -39,15 +39,15 @@ export const fetchMyParty = () => {
 export const sendMyParty = (myPartyData) => {
   return async (dispatch) => {
     const sendRequest = async () => {
-      const dbRef = ref(database, "myParty");
-      await set(dbRef, {
-        myPartyId: myPartyData.myPartyId || 0,
-        myPartyName: myPartyData.myPartyName || "",
-        myPartyImageURL: myPartyData.myPartyImageURL || "",
-        partyColor: myPartyData.myPartyColor || "",
-        userName: myPartyData.userName || "",
-        provinceId: myPartyData.provinceId || 0,
-      });
+      // const dbRef = ref(database, "myParty");
+      // await set(dbRef, {
+      //   myPartyId: myPartyData.myPartyId || 0,
+      //   myPartyName: myPartyData.myPartyName || "",
+      //   myPartyImageURL: myPartyData.myPartyImageURL || "",
+      //   partyColor: myPartyData.myPartyColor || "",
+      //   userName: myPartyData.userName || "",
+      //   provinceId: myPartyData.provinceId || 0,
+      // });
     };
 
     try {

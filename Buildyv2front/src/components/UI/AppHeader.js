@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { database, FirebaseUrls } from "../../utils/firebaseSetup";
+// import { database, FirebaseUrls } from "../../utils/firebaseSetup";
 import { get, ref } from "firebase/database";
 
 // redux imports
@@ -96,15 +96,15 @@ const AppHeader = () => {
 
   async function fetchCircuitData() {
     try {
-      const dbRef = ref(database, "circuitList");
-      const snapshot = await get(dbRef);
-      const circuitList = snapshot.val();
-      if (circuitList) {
-        const filteredCircuits = Object.values(circuitList).filter(
-          (circuit) => circuit.provinceId == userProvinceId
-        );
-        setCircuitList(filteredCircuits);
-      }
+      // const dbRef = ref(database, "circuitList");
+      // const snapshot = await get(dbRef);
+      // const circuitList = snapshot.val();
+      // if (circuitList) {
+      //   const filteredCircuits = Object.values(circuitList).filter(
+      //     (circuit) => circuit.provinceId == userProvinceId
+      //   );
+      //   setCircuitList(filteredCircuits);
+      // }
     } catch (e) {
       setError(e);
     } finally {
@@ -114,12 +114,12 @@ const AppHeader = () => {
 
   async function fetchSlateData() {
     try {
-      const dbRef = ref(database, "slateList");
-      const snapshot = await get(dbRef);
-      const slateList = snapshot.val();
-      if (slateList) {
-        setSlateList(Object.values(slateList));
-      }
+      // const dbRef = ref(database, "slateList");
+      // const snapshot = await get(dbRef);
+      // const slateList = snapshot.val();
+      // if (slateList) {
+      //   setSlateList(Object.values(slateList));
+      // }
     } catch (e) {
       setError(e);
     } finally {
@@ -129,12 +129,12 @@ const AppHeader = () => {
 
   async function fetchProvinceData() {
     try {
-      const dbRef = ref(database, "provinceList");
-      const snapshot = await get(dbRef);
-      const provinceList = snapshot.val();
-      if (provinceList) {
-        setProvinceList(Object.values(provinceList));
-      }
+      // const dbRef = ref(database, "provinceList");
+      // const snapshot = await get(dbRef);
+      // const provinceList = snapshot.val();
+      // if (provinceList) {
+      //   setProvinceList(Object.values(provinceList));
+      // }
     } catch (e) {
       setError(e);
     } finally {
