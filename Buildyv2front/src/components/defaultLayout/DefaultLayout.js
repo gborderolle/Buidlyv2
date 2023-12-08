@@ -17,7 +17,6 @@ import classes from "./DefaultLayout.module.css";
 
 // Redux imports
 import { batch, useDispatch, useSelector } from "react-redux";
-import { fetchMyParty } from "../../store/loggedUser-actions";
 import {
   fetchEstates,
   fetchJobs,
@@ -71,7 +70,7 @@ const DefaultLayout = () => {
     }
 
     const fetchLoggedUserData = async () => {
-      dispatch(fetchMyParty());
+      // dispatch(fetchMyParty());
     };
 
     const fetchGeneralData = async () => {

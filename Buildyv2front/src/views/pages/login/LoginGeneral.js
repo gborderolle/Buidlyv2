@@ -149,13 +149,13 @@ const LoginGeneral = () => {
                 <CCardBody>
                   <CForm onSubmit={submitHandler}>
                     <h1>Dashboard</h1>
-                    <p className="text-medium-emphasis">Analistas</p>
+                    <p className="text-medium-emphasis">Login</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
                       <CFormInput
-                        placeholder="Usuario"
+                        placeholder="Email"
                         onBlur={validateEmailHandler}
                         onChange={emailChangeHandler}
                         value={emailState.value}

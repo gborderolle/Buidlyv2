@@ -7,7 +7,7 @@ import {
   urlJobs,
   urlRents,
   urlWorkers,
-} from "../utils/endpoints";
+} from "../endpoints";
 
 const fetchApi = async (url) => {
   try {
