@@ -8,22 +8,18 @@ const getInitialState = () => {
     isLoggedIn = isLoggedInData.value;
   } else {
     localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("userProvinceId");
-    localStorage.removeItem("userMunicipalityId");
-    localStorage.removeItem("userRoleNumber");
     localStorage.removeItem("userFullname");
     localStorage.removeItem("userId");
     localStorage.removeItem("isMobile");
+    localStorage.removeItem("authToken");
   }
 
   return {
     isLoggedIn,
-    userProvinceId: localStorage.getItem("userProvinceId") || "",
-    userMunicipalityId: localStorage.getItem("userMunicipalityId") || "",
-    userRoleNumber: localStorage.getItem("userRoleNumber") || "",
     userFullname: localStorage.getItem("userFullname") || "",
     userId: localStorage.getItem("userId") || "",
     isMobile: Boolean(localStorage.getItem("isMobile")) || false,
+    authToken: localStorage.getItem("authToken") || "",
   };
 };
 
@@ -32,15 +28,12 @@ const authSlice = createSlice({
   initialState: getInitialState(),
   reducers: {
     login(state, action) {
-      // const expiry = new Date().getTime() + 5 * 1000; // 1 hora
       const expiry = new Date().getTime() + 1 * 60 * 60 * 1000; // 1 hora
       state.isLoggedIn = true;
-      state.userProvinceId = action.payload.userProvinceId;
-      state.userMunicipalityId = action.payload.userMunicipalityId;
-      state.userRoleNumber = action.payload.userRoleNumber;
       state.userFullname = action.payload.userFullname;
       state.userId = action.payload.userId;
       state.isMobile = action.payload.isMobile;
+      state.authToken = action.payload.authToken; // Agrega esta línea
 
       const data = {
         value: true,
@@ -54,6 +47,7 @@ const authSlice = createSlice({
       localStorage.setItem("userFullname", state.userFullname);
       localStorage.setItem("userId", state.userId);
       localStorage.setItem("isMobile", state.isMobile);
+      localStorage.setItem("authToken", state.authToken); // Almacenar el token en localStorage
     },
 
     logout(state) {
@@ -63,6 +57,7 @@ const authSlice = createSlice({
       state.userRoleNumber = "";
       state.userFullname = "";
       state.userId = "";
+      state.authToken = ""; // Limpia el token
 
       const data = {
         value: false,
@@ -76,6 +71,7 @@ const authSlice = createSlice({
       localStorage.removeItem("userFullname");
       localStorage.removeItem("userId");
       localStorage.removeItem("isMobile");
+      localStorage.removeItem("authToken"); // Remueve el token del localStorage
     },
 
     setIsMobile(state, action) {
@@ -93,31 +89,23 @@ const authSlice = createSlice({
         state.isLoggedIn = false;
       }
 
-      state.userRoleNumber = localStorage.getItem("userRoleNumber") || "";
       state.userFullname = localStorage.getItem("userFullname") || "";
       state.userId = localStorage.getItem("userId") || "";
-      state.userProvinceId = localStorage.getItem("userProvinceId") || "";
-      state.userMunicipalityId =
-        localStorage.getItem("userMunicipalityId") || "";
       state.isMobile =
         localStorage.getItem("isMobile") == "true" ? true : false;
+      state.authToken = localStorage.getItem("authToken") || ""; // Recupera el token del localStorage
     },
 
     resetAuthState(state) {
       localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("userRoleNumber");
       localStorage.removeItem("userFullname");
       localStorage.removeItem("userId");
-      localStorage.removeItem("userProvinceId");
-      localStorage.removeItem("userMunicipalityId");
       localStorage.removeItem("isMobile");
+      localStorage.removeItem("authToken");
 
       state.isLoggedIn = false;
-      state.userRoleNumber = null;
       state.userFullname = null;
       state.userId = null;
-      state.userProvinceId = null;
-      state.userMunicipalityId = null;
       state.isMobile = null;
     },
   },

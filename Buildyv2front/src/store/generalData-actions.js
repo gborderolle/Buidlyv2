@@ -1,43 +1,66 @@
+import axios from "axios";
 import { generalDataActions } from "./generalData-slice";
 import { formActions } from "./form-slice";
 
-import {
-  urlAccounts,
-  urlEstates,
-  urlJobs,
-  urlRents,
-  urlWorkers,
-} from "../endpoints";
+import { urlEstates, urlJobs, urlRents, urlWorkers } from "../endpoints";
 
 const fetchApi = async (url) => {
   try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return await response.json();
+    const authToken = localStorage.getItem("authToken");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${authToken}`, // Asegúrate de que tu API acepte este formato
+      },
+    };
+
+    const response = await axios.get(url, config);
+    return response.data;
   } catch (error) {
-    console.error("Fetch error:", error);
+    console.error("API error:", error);
     throw error;
   }
 };
 
-export const fetchAccounts = async () => {
-  return await fetchApi(urlAccounts);
+export const fetchEstates = () => {
+  return async (dispatch) => {
+    try {
+      const data = await fetchApi(urlEstates);
+      dispatch(generalDataActions.setEstates(data));
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
 };
 
-export const fetchEstates = async () => {
-  return await fetchApi(urlEstates);
+export const fetchJobs = () => {
+  return async (dispatch) => {
+    try {
+      const data = await fetchApi(urlJobs);
+      dispatch(generalDataActions.setJobs(data));
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
 };
 
-export const fetchJobs = async () => {
-  return await fetchApi(urlJobs);
+export const fetchRents = () => {
+  return async (dispatch) => {
+    try {
+      const data = await fetchApi(urlRents);
+      dispatch(generalDataActions.setRents(data));
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
 };
 
-export const fetchRents = async () => {
-  return await fetchApi(urlRents);
-};
-
-export const fetchWorkers = async () => {
-  return await fetchApi(urlWorkers);
+export const fetchWorkers = () => {
+  return async (dispatch) => {
+    try {
+      const data = await fetchApi(urlWorkers);
+      dispatch(generalDataActions.setWorkers(data));
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
 };

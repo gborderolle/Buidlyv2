@@ -37,10 +37,11 @@ export const loginGeneralHandler =
                 authActions.login({
                   userEmail: Number(user.userProvinceId),
                   isMobile: isMobileDevice(),
+                  authToken: token, // Agrega el token aquí
                 })
               );
 
-              navigate("/dashboard");
+              navigate("/estates");
             }, 500);
           },
         });

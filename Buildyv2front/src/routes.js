@@ -30,6 +30,9 @@ const MapsDashboard = React.lazy(() =>
 const DelegatesMenu = React.lazy(() =>
   import("./components/adminSide/delegados/DelegatesMenu")
 );
+const EstatesMenu = React.lazy(() =>
+  import("./components/adminSide/delegados/EstatesMenu")
+);
 const Colors = React.lazy(() => import("./views/theme/colors/Colors"));
 const Typography = React.lazy(() =>
   import("./views/theme/typography/Typography")
@@ -107,6 +110,8 @@ const Widgets = React.lazy(() => import("./views/widgets/Widgets"));
 
 const routes = [
   { path: "/", exact: true, name: "Home" },
+  { path: "/estates", name: "Propiedades", element: EstatesMenu },
+
   { path: "/formStart", name: "Formulario", element: FormStart },
   { path: "/formSlate1", name: "Formulario", element: FormSlate1 },
   { path: "/formParty1", name: "Formulario", element: FormParty1 },

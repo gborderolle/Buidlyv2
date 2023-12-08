@@ -5,7 +5,7 @@ import generalDataSlice from "./generalData-slice";
 import uiSlice from "./ui-slice";
 import authSlice from "./auth-slice";
 import formSlice from "./form-slice.js";
-// import formSlice from "./form-slice";
+import thunk from "redux-thunk";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +16,7 @@ const store = configureStore({
     auth: authSlice.reducer,
     form: formSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
 });
 
 export default store;
