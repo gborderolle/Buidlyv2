@@ -9,7 +9,8 @@ const fetchApi = async (url) => {
     const authToken = localStorage.getItem("authToken");
     const config = {
       headers: {
-        Authorization: `Bearer ${authToken}`, // Asegúrate de que tu API acepte este formato
+        Authorization: `Bearer ${authToken}`,
+        "x-version": "1",
       },
     };
 
@@ -24,7 +25,7 @@ const fetchApi = async (url) => {
 export const fetchEstates = () => {
   return async (dispatch) => {
     try {
-      const data = await fetchApi(urlEstates);
+      const data = await fetchApi(urlEstates + "/GetEstate");
       dispatch(generalDataActions.setEstates(data));
     } catch (error) {
       console.error("Fetch error:", error);
@@ -35,7 +36,7 @@ export const fetchEstates = () => {
 export const fetchJobs = () => {
   return async (dispatch) => {
     try {
-      const data = await fetchApi(urlJobs);
+      const data = await fetchApi(urlJobs + "/GetJob");
       dispatch(generalDataActions.setJobs(data));
     } catch (error) {
       console.error("Fetch error:", error);
@@ -46,7 +47,7 @@ export const fetchJobs = () => {
 export const fetchRents = () => {
   return async (dispatch) => {
     try {
-      const data = await fetchApi(urlRents);
+      const data = await fetchApi(urlRents + "/GetRent");
       dispatch(generalDataActions.setRents(data));
     } catch (error) {
       console.error("Fetch error:", error);
@@ -57,7 +58,7 @@ export const fetchRents = () => {
 export const fetchWorkers = () => {
   return async (dispatch) => {
     try {
-      const data = await fetchApi(urlWorkers);
+      const data = await fetchApi(urlWorkers + "/GetWorker");
       dispatch(generalDataActions.setWorkers(data));
     } catch (error) {
       console.error("Fetch error:", error);

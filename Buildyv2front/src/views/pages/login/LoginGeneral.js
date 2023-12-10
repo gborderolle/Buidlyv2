@@ -25,6 +25,10 @@ import {
 import CIcon from "@coreui/icons-react";
 import { cilLockLocked, cilUser } from "@coreui/icons";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+
 import logo from "src/assets/images/datalexion-logo-big.png";
 import { sygnet } from "src/assets/brand/sygnet";
 
@@ -70,6 +74,7 @@ const buttonColor = "dark";
 const LoginGeneral = () => {
   //#region Consts
 
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isMobile] = useState(isMobileDevice());
 
   const navigate = useNavigate();
@@ -132,9 +137,12 @@ const LoginGeneral = () => {
 
   const submitHandler = (event) => {
     event.preventDefault();
+    setIsLoggingIn(true); // Activar el spinner
     dispatch(
       loginGeneralHandler(emailState.value, passwordState.value, navigate)
-    );
+    ).then(() => {
+      setIsLoggingIn(false); // Desactivar el spinner una vez completado el login
+    });
   };
 
   //#endregion Functions
@@ -183,6 +191,11 @@ const LoginGeneral = () => {
                           type="submit"
                           className="px-4"
                         >
+                          {isLoggingIn ? (
+                            <FontAwesomeIcon icon={faSpinner} spin /> // Mostrar spinner cuando `isLoggingIn` es true
+                          ) : (
+                            <FontAwesomeIcon icon={faCheck} /> // Mostrar check cuando `isLoggingIn` es false
+                          )}
                           Login
                         </CButton>
                       </CCol>

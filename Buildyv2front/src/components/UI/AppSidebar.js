@@ -57,12 +57,6 @@ const AppSidebar = () => {
 
   //#region Methods
 
-  const filterByRoleId = (roleId) => {
-    return navigation.filter((item) => {
-      return Array.isArray(item.roles) && item.roles.includes(roleId);
-    });
-  };
-
   const handleVisibilityChange = (visible) => {
     if (sidebarShow !== visible) {
       // dispatch({ type: "set", sidebarShow: visible });
@@ -70,8 +64,6 @@ const AppSidebar = () => {
   };
 
   //#endregion Methods
-
-  const filteredNavigation = filterByRoleId(userRoleNumber);
 
   return (
     <CSidebar
@@ -92,7 +84,7 @@ const AppSidebar = () => {
       </CSidebarBrand>
       <CSidebarNav>
         <SimpleBar>
-          <AppSidebarNav items={filteredNavigation} />
+          <AppSidebarNav items={navigation} />
         </SimpleBar>
       </CSidebarNav>
       <CSidebarToggler

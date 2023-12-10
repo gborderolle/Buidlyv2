@@ -9,20 +9,30 @@ import {
   CTable,
   CPagination,
   CPaginationItem,
+  CButton,
 } from "@coreui/react";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+
 import useBumpEffect from "../../../utils/useBumpEffect";
+
+// redux imports
 import { batch, useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
 import { fetchEstates } from "../../../store/generalData-actions";
+
 import "./EstatesMenu.css";
+
+const buttonColor = "dark";
 
 const EstatesMenu = () => {
   //#region Consts ***********************************
 
   const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
+
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth.authToken);
 
@@ -31,7 +41,7 @@ const EstatesMenu = () => {
     useSelector((state) => state.generalData.estateList) || [];
 
   useEffect(() => {
-    setEstateList(reduxEstateList);
+    // setEstateList(reduxEstateList);
   }, [reduxEstateList]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,7 +68,7 @@ const EstatesMenu = () => {
   });
 
   useEffect(() => {
-    setPageCount(Math.ceil(filteredEstateList.length / itemsPerPage));
+    // setPageCount(Math.ceil(filteredEstateList.length / itemsPerPage));
   }, [filteredEstateList]);
 
   const handleSearchChange = (event) => {
@@ -72,6 +82,12 @@ const EstatesMenu = () => {
   const bumpHandler = () => {
     triggerBump();
     dispatch(fetchEstates());
+
+    setTimeout(() => {
+      navigate("/add-estate");
+    }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
+
+
   };
 
   //#endregion Hooks ***********************************
@@ -123,21 +139,24 @@ const EstatesMenu = () => {
               alignItems: "center",
             }}
           >
-            Panel de Propiedades
-            <CFormInput
-              type="text"
-              placeholder="Buscar..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              style={{ maxWidth: "300px" }}
-            />
-            <button
-              onClick={bumpHandler}
-              style={{ border: "none", background: "none" }}
-              className={isBumped ? "bump" : ""}
-            >
-              <FontAwesomeIcon icon={faRefresh} color="#697588" />
-            </button>
+            Panel de propiedades
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <CFormInput
+                type="text"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                style={{ maxWidth: "300px" }}
+              />
+              &nbsp;
+              <button
+                onClick={bumpHandler}
+                style={{ border: "none", background: "none" }}
+                className={isBumped ? "bump" : ""}
+              >
+                <FontAwesomeIcon icon={faPlus} color="#697588" />
+              </button>
+            </div>
           </div>
         </CCardHeader>
         <CCardBody>
