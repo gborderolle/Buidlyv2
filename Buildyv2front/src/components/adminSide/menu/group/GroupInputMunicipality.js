@@ -24,7 +24,7 @@ import {
   CAccordionBody,
 } from "@coreui/react";
 import useInput from "../../../../hooks/use-input";
-import useFirebase from "../../../../hooks/use-firebase";
+import useFirebase from "../../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";

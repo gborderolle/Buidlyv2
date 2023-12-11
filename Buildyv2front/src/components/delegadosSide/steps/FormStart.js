@@ -84,7 +84,7 @@ const FormStart = (props) => {
   useEffect(() => {
     if (userRoleNumber != 2) {
       dispatch(authActions.logout());
-      navigate("/login-general");
+      navigate("/login");
     }
   }, [userRoleNumber, navigate, dispatch]);
 

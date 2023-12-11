@@ -20,48 +20,33 @@ import {
   CAccordionBody,
 } from "@coreui/react";
 import useInput from "../../../../hooks/use-input";
-import useFirebase from "../../../../hooks/use-firebase";
+import useAPI from "../../../../hooks/use-API";
 
 // redux imports
 import { useDispatch } from "react-redux";
-// import { fetchProvinceList } from "../../../../store/generalData-actions";
+import { fetchEstates } from "../../../../store/generalData-actions";
+import { urlEstates } from "../../../../endpoints";
 
 import "./GroupInput.css";
 
-const GroupInputProvince = (props) => {
+const EstateCreate = (props) => {
   //#region Consts ***********************************
 
   const [isValidForm, setIsValidForm] = useState(true); // Declarar e inicializar isValidForm
 
-  const { isLoading, isSuccess, uploadData } = useFirebase();
+  const { isLoading, isSuccess, error, uploadData } = useAPI();
 
   // Redux fetch DB
   const dispatch = useDispatch();
 
   const {
-    value: provinceName,
+    value: estateName,
     isValid: inputIsValid1,
     hasError: inputHasError1,
     valueChangeHandler: inputChangeHandler1,
     inputBlurHandler: inputBlurHandler1,
     reset: inputReset1,
   } = useInput((value) => value.trim() !== "");
-
-  const {
-    value: provinceCenter,
-    isValid: inputIsValid2,
-    hasError: inputHasError2,
-    valueChangeHandler: inputChangeHandler2,
-    inputBlurHandler: inputBlurHandler2,
-    reset: inputReset2,
-  } = useInput((value) => {
-    const trimmedValue = value.trim();
-    if (trimmedValue === "") {
-      return true; // Ingreso vacío permitido
-    }
-    const regex = /^-?\d+\.\d+,\s*-?\d+\.\d+$/;
-    return regex.test(trimmedValue); // Comprobar el patrón de latitud y longitud
-  });
 
   //#endregion Consts ***********************************
 
@@ -73,31 +58,21 @@ const GroupInputProvince = (props) => {
 
   const formSubmitHandler = async (event) => {
     event.preventDefault();
-
-    setIsValidForm(inputIsValid1 && inputIsValid2); // Actualizar la validez del formulario
+    setIsValidForm(inputIsValid1);
 
     if (!isValidForm) {
       return;
     }
 
-    // Asignar valor por defecto si inputValue3 está vacío
+    const dataToUpload = { Name: estateName };
 
-    const dataToUpload = await props.createDataToUpload(
-      provinceName,
-      provinceCenter
-    );
-
-    await uploadData(
-      dataToUpload,
-      props.firebaseUrlFinal,
-      props.firebaseUrlClean
-    );
-
-    // Redux fetch DB
-    // dispatch(fetchProvinceList()); // refresh DB data
-
-    inputReset1();
-    inputReset2();
+    try {
+      await uploadData(dataToUpload, urlEstates);
+      dispatch(fetchEstates());
+      inputReset1();
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+    }
   };
 
   //#endregion Events ***********************************
@@ -119,7 +94,7 @@ const GroupInputProvince = (props) => {
                 className="cardItem"
                 onChange={inputChangeHandler1}
                 onBlur={inputBlurHandler1}
-                value={provinceName}
+                value={estateName}
               />
               {inputHasError1 && (
                 <CAlert color="danger" className="w-100">
@@ -128,23 +103,6 @@ const GroupInputProvince = (props) => {
               )}
             </CInputGroup>
             <br />
-            <CInputGroup>
-              <CInputGroupText className="cardItem custom-input-group-text">
-                {props.labelCenter}
-              </CInputGroupText>
-              <CFormInput
-                type="text"
-                className="cardItem"
-                onChange={inputChangeHandler2}
-                onBlur={inputBlurHandler2}
-                value={provinceCenter}
-              />
-              {inputHasError2 && (
-                <CAlert color="danger" className="w-100">
-                  Entrada inválida
-                </CAlert>
-              )}
-            </CInputGroup>
             <CRow className="justify-content-center">
               {isLoading && (
                 <div className="text-center">
@@ -169,6 +127,11 @@ const GroupInputProvince = (props) => {
                   Datos ingresados correctamente
                 </CAlert>
               )}
+              {error && (
+                <CAlert color="danger" className="w-100">
+                  {error}
+                </CAlert>
+              )}
             </CCardFooter>
           </CAccordionBody>
         </CAccordionItem>
@@ -177,4 +140,4 @@ const GroupInputProvince = (props) => {
   );
 };
 
-export default GroupInputProvince;
+export default EstateCreate;

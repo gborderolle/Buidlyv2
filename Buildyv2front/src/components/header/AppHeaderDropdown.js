@@ -39,7 +39,7 @@ const AppHeaderDropdown = () => {
 
   const logoutHandler = () => {
     dispatch(authActions.logout()); // Usamos authActions para acceder a la acción de logout
-    navigate("/login-general");
+    navigate("/login");
   };
 
   //#endregion Function

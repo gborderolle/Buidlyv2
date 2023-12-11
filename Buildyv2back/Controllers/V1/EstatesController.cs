@@ -46,7 +46,7 @@ namespace Buildyv2.Controllers.V1
             return _response;
         }
 
-        [HttpGet("{id:int}")] // url completa: https://localhost:7003/api/Estates/1
+        [HttpGet("{id}", Name = "GetEstateById")] // url completa: https://localhost:7003/api/Estates/1
         public async Task<ActionResult<APIResponse>> Get([FromRoute] int id)
         {
             // 1..n
@@ -77,9 +77,9 @@ namespace Buildyv2.Controllers.V1
 
         [HttpPut("{id:int}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] EstateCreateDTO estateCreateDTO)
+        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] EstateCreateDTO estateCreateDto)
         {
-            return await Put<EstateCreateDTO, EstateDTO, Estate>(id, estateCreateDTO);
+            return await Put<EstateCreateDTO, EstateDTO, Estate>(id, estateCreateDto);
         }
 
         [HttpPatch("{id:int}")]
@@ -97,7 +97,48 @@ namespace Buildyv2.Controllers.V1
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromBody] EstateCreateDTO estateCreateDto)
         {
-            return Ok();
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
+                if (await _estateRepository.Get(v => v.Name.ToLower() == estateCreateDto.Name.ToLower()) != null)
+                {
+                    _logger.LogError($"El nombre {estateCreateDto.Name} ya existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"El nombre {estateCreateDto.Name} ya existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    ModelState.AddModelError("NameAlreadyExists", $"El nombre {estateCreateDto.Name} ya existe en el sistema.");
+                    return BadRequest(ModelState);
+                }
+
+                Estate modelo = _mapper.Map<Estate>(estateCreateDto);
+                modelo.Creation = DateTime.Now;
+                modelo.Update = DateTime.Now;
+
+                await _estateRepository.Create(modelo);
+                _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
+
+                _response.Result = _mapper.Map<EstateDTO>(modelo);
+                _response.StatusCode = HttpStatusCode.Created;
+
+                // CreatedAtRoute -> Nombre de la ruta (del método): GetEstateById
+                // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816172#notes
+                return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return _response;
         }
 
         #endregion

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 // Redux imports
 import { useDispatch, useSelector } from "react-redux";
-import { loginGeneralHandler } from "../../../store/auth-actions";
+import { loginHandler } from "../../../store/auth-actions";
 import { authActions } from "../../../store/auth-slice";
 
 import {
@@ -32,7 +32,7 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import logo from "src/assets/images/datalexion-logo-big.png";
 import { sygnet } from "src/assets/brand/sygnet";
 
-import classes from "./LoginGeneral.module.css";
+import classes from "./Login.module.css";
 
 //#region Functions
 
@@ -71,7 +71,7 @@ const isMobileDevice = () => {
 
 const buttonColor = "dark";
 
-const LoginGeneral = () => {
+const Login = () => {
   //#region Consts
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -139,7 +139,7 @@ const LoginGeneral = () => {
     event.preventDefault();
     setIsLoggingIn(true); // Activar el spinner
     dispatch(
-      loginGeneralHandler(emailState.value, passwordState.value, navigate)
+      loginHandler(emailState.value, passwordState.value, navigate)
     ).then(() => {
       setIsLoggingIn(false); // Desactivar el spinner una vez completado el login
     });
@@ -245,4 +245,4 @@ const LoginGeneral = () => {
   );
 };
 
-export default LoginGeneral;
+export default Login;

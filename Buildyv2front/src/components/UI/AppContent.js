@@ -18,7 +18,7 @@ const AppContent = () => {
     // 2: "form",
     2: "formSlate1",
   };
-  const defaultRoute = routeMap[userRoleNumber] || "login-general";
+  const defaultRoute = routeMap[userRoleNumber] || "login";
 
   //#endregion Consts ***********************************
 

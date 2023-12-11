@@ -2,12 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { CCol, CRow } from "@coreui/react";
-import GroupInputProvince from "../menu/group/GroupInputProvince";
-
-import {
-  FirebaseUrls,
-  getAutoIncrementedId,
-} from "../../../utils/firebaseSetup";
+import EstateCreate from "../menu/group/EstateCreate";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
@@ -21,28 +16,22 @@ const AddEstate = () => {
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
-  const userRoleNumber = useSelector((state) => state.auth.userRoleNumber);
+  const userEmail = useSelector((state) => state.auth.userEmail);
   useEffect(() => {
-    const USER_ROLE_ID = 1;
-    if (userRoleNumber != USER_ROLE_ID) {
+    if (!userEmail) {
       dispatch(authActions.logout());
-      navigate("/login-general");
+      navigate("/login");
     }
-  }, [userRoleNumber, navigate, dispatch]);
+  }, [userEmail, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
 
   //#endregion Const ***********************************
 
   //#region Functions ***********************************
 
-  const provinceData = async (provinceName, provinceCenter) => {
-    const id = await getAutoIncrementedId(FirebaseUrls.provinceFinal);
+  const data = async (name) => {
     return {
-      provinceId: id,
-      provinceName,
-      provinceDescription: "",
-      provinceCenter,
-      provinceZoom: 13,
+      estateName: name,
     };
   };
 
@@ -51,13 +40,10 @@ const AddEstate = () => {
   return (
     <CRow>
       <CCol xs>
-        <GroupInputProvince
-          title="1. Departamentos"
+        <EstateCreate
+          title="Propiedad"
           labelName="Nombre"
-          labelCenter="Centro (Lat, Long)"
-          firebaseUrlClean={FirebaseUrls.provinceClean}
-          firebaseUrlFinal={FirebaseUrls.provinceFinal}
-          createDataToUpload={provinceData}
+          createDataToUpload={data}
         />
         <br />
         <br />

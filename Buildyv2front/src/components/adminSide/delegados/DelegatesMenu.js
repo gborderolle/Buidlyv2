@@ -46,7 +46,7 @@ const DelegatesMenu = () => {
     const USER_ROLE_ID = 1;
     if (userRoleNumber != USER_ROLE_ID) {
       dispatch(authActions.logout());
-      navigate("/login-general");
+      navigate("/login");
     }
   }, [userRoleNumber, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA

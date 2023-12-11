@@ -48,7 +48,7 @@ const DefaultLayout = () => {
       const isLoggedInData = JSON.parse(localStorage.getItem("isLoggedIn"));
       if (!isLoggedInData || new Date().getTime() >= isLoggedInData.expiry) {
         dispatch(authActions.logout());
-        navigate("/login-general");
+        navigate("/login");
       }
     };
 

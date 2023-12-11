@@ -6,7 +6,10 @@ import GroupInputDelegado from "./group/GroupInputDelegado";
 import GroupInputUser from "./group/GroupInputUser";
 import GroupInputRole from "./group/GroupInputRole";
 
-import { FirebaseUrls, getAutoIncrementedId } from "../../../utils/firebaseSetup";
+import {
+  FirebaseUrls,
+  getAutoIncrementedId,
+} from "../../../utils/firebaseSetup";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
@@ -25,7 +28,7 @@ const AdminMenu = () => {
     const USER_ROLE_ID = 1;
     if (userRoleNumber != USER_ROLE_ID) {
       dispatch(authActions.logout());
-      navigate("/login-general");
+      navigate("/login");
     }
   }, [userRoleNumber, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA

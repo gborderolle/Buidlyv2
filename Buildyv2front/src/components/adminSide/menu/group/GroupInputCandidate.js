@@ -20,7 +20,7 @@ import {
   CAccordionBody,
 } from "@coreui/react";
 import useInput from "../../../../hooks/use-input";
-import useFirebase from "../../../../hooks/use-firebase";
+import useFirebase from "../../../../hooks/use-API";
 
 import { format } from "date-fns";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
