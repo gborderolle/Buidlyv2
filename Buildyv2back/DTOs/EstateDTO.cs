@@ -1,7 +1,4 @@
 ﻿using Buildyv2.Models;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using WebAPI_tutorial_peliculas.Validations;
 
 namespace Buildyv2.DTOs
 {
@@ -23,18 +20,17 @@ namespace Buildyv2.DTOs
 
         public string Address { get; set; }
 
-        [FirstCharCapitalValidation]
         public string City { get; set; }
 
-        [FirstCharCapitalValidation]
         public string Province { get; set; }
 
-        [FirstCharCapitalValidation]
         public string Country { get; set; }
 
         public string GoogleMapsURL { get; set; }
 
         public bool EstateIsRented { get; set; }
+
+        public string LatLong { get; set; }
 
 
         #endregion
@@ -48,6 +44,7 @@ namespace Buildyv2.DTOs
         public List<Rent> ListRents { get; set; } = new();
 
         public int PresentRentId { get; set; } = new();
+
 
         #endregion
     }

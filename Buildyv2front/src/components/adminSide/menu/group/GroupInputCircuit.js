@@ -136,7 +136,6 @@ const GroupInputCircuit = (props) => {
 
     // Verificar si se seleccionó una provincia
     const inputIsValidProvince = ddlSelectedCircuitProvince !== null;
-
     if (!inputIsValidProvince) {
       setInputHasErrorProvince(true);
       return;

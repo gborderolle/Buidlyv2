@@ -40,6 +40,7 @@ namespace Buildyv2.Models
 
         public bool EstateIsRented { get; set; }
 
+        public string LatLong { get; set; }
 
         #endregion
 

@@ -20,6 +20,9 @@ namespace WebAPI_tutorial_peliculas.Context
         public DbSet<Report> Report { get; set; }
         public DbSet<Tenant> Tenant { get; set; }
         public DbSet<Worker> Worker { get; set; }
+        public DbSet<CityDS> CityDS { get; set; }
+        public DbSet<ProvinceDS> ProvinceDS { get; set; }
+        public DbSet<CountryDS> CountryDS { get; set; }
 
         #endregion
 

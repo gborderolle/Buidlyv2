@@ -3,23 +3,35 @@ import { createSlice } from "@reduxjs/toolkit";
 const generalDataSlice = createSlice({
   name: "generalData",
   initialState: {
-    estates: [],
-    jobs: [],
-    rents: [],
-    workers: [],
+    estateList: [],
+    jobList: [],
+    rentList: [],
+    workerList: [],
+    countryList: [],
+    provinceList: [],
+    cityList: [],
   },
   reducers: {
-    setEstates: (state, action) => {
-      state.estates = action.payload;
+    setEstateList: (state, action) => {
+      state.estateList = action.payload;
     },
-    setJobs: (state, action) => {
-      state.jobs = action.payload;
+    setJobList: (state, action) => {
+      state.jobList = action.payload;
     },
-    setRents: (state, action) => {
-      state.rents = action.payload;
+    setRentList: (state, action) => {
+      state.rentList = action.payload;
     },
-    setWorkers: (state, action) => {
-      state.workers = action.payload;
+    setWorkerList: (state, action) => {
+      state.workerList = action.payload;
+    },
+    setCountryList: (state, action) => {
+      state.countryList = action.payload;
+    },
+    setProvinceList: (state, action) => {
+      state.provinceList = action.payload;
+    },
+    setCityList: (state, action) => {
+      state.cityList = action.payload;
     },
   },
 });
