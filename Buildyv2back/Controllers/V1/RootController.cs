@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI_tutorial_peliculas.Utilities.HATEOAS;
+using Buildyv2.Utilities.HATEOAS;
 
-namespace WebAPI_tutorial_peliculas.Controllers.V1
+namespace Buildyv2.Controllers.V1
 {
     [ApiController]
     [Route("api/v1")]

@@ -1,4 +1,4 @@
-﻿namespace WebAPI_tutorial_peliculas.DTOs
+﻿namespace Buildyv2.DTOs
 {
     /// <summary>
     /// Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/20232284#overview

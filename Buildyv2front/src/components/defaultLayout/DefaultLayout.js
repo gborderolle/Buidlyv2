@@ -18,10 +18,13 @@ import classes from "./DefaultLayout.module.css";
 // Redux imports
 import { batch, useDispatch, useSelector } from "react-redux";
 import {
-  fetchEstates,
-  fetchJobs,
-  fetchRents,
-  fetchWorkers,
+  fetchEstateList,
+  fetchJobList,
+  fetchRentList,
+  fetchWorkerList,
+  fetchCountryList,
+  fetchProvinceList,
+  fetchCityList,
 } from "../../store/generalData-actions";
 
 const DefaultLayout = () => {
@@ -75,10 +78,13 @@ const DefaultLayout = () => {
 
     const fetchGeneralData = async () => {
       batch(() => {
-        dispatch(fetchEstates());
-        dispatch(fetchJobs());
-        dispatch(fetchRents());
-        dispatch(fetchWorkers());
+        dispatch(fetchEstateList());
+        dispatch(fetchJobList());
+        dispatch(fetchRentList());
+        dispatch(fetchWorkerList());
+        dispatch(fetchCountryList());
+        dispatch(fetchProvinceList());
+        dispatch(fetchCityList());
       });
     };
     fetchLoggedUserData();

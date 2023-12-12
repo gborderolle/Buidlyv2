@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebAPI_tutorial_peliculas.DTOs
+namespace Buildyv2.DTOs
 {
     public class EditAdminDTO
     {

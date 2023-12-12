@@ -29,8 +29,8 @@ import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchEstates } from "../../../store/generalData-actions";
-import { urlEstates } from "../../../endpoints";
+import { fetchEstateList } from "../../../store/generalData-actions";
+import { urlEstate } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
 
 const EstateCreate = () => {
@@ -164,8 +164,8 @@ const EstateCreate = () => {
     };
 
     try {
-      await uploadData(dataToUpload, urlEstates);
-      dispatch(fetchEstates());
+      await uploadData(dataToUpload, urlEstate);
+      dispatch(fetchEstateList());
 
       inputResetName();
       inputResetAddress();
@@ -272,16 +272,18 @@ const EstateCreate = () => {
                     {ddlSelectedCity ? ddlSelectedCity.cityName : "Seleccionar"}
                   </CDropdownToggle>
                   <CDropdownMenu>
-                    {cityList.map((city) => (
-                      <CDropdownItem
-                        key={city.cityId}
-                        onClick={() => handleSelectDdlCity(city)}
-                        style={{ cursor: "pointer" }}
-                        value={city.cityId}
-                      >
-                        {city.cityName}
-                      </CDropdownItem>
-                    ))}
+                    {cityList &&
+                      cityList.length > 0 &&
+                      cityList.map((city) => (
+                        <CDropdownItem
+                          key={city.cityId}
+                          onClick={() => handleSelectDdlCity(city)}
+                          style={{ cursor: "pointer" }}
+                          value={city.cityId}
+                        >
+                          {city.cityName}
+                        </CDropdownItem>
+                      ))}
                   </CDropdownMenu>
                 </CDropdown>
                 <CButton onClick={handleOpenAddCityModal} color="primary">
@@ -369,16 +371,18 @@ const EstateCreate = () => {
                     : "Seleccionar"}
                 </CDropdownToggle>
                 <CDropdownMenu>
-                  {provinceList.map((province) => (
-                    <CDropdownItem
-                      key={province.provinceId}
-                      onClick={() => handleSelectDdlProvince(province)}
-                      style={{ cursor: "pointer" }}
-                      value={province.provinceId}
-                    >
-                      {province.provinceName}
-                    </CDropdownItem>
-                  ))}
+                  {provinceList &&
+                    provinceList.length > 0 &&
+                    provinceList.map((province) => (
+                      <CDropdownItem
+                        key={province.provinceId}
+                        onClick={() => handleSelectDdlProvince(province)}
+                        style={{ cursor: "pointer" }}
+                        value={province.provinceId}
+                      >
+                        {province.provinceName}
+                      </CDropdownItem>
+                    ))}
                 </CDropdownMenu>
               </CDropdown>
               <CButton onClick={handleOpenAddProvinceModal} color="primary">
@@ -442,16 +446,18 @@ const EstateCreate = () => {
                     : "Seleccionar"}
                 </CDropdownToggle>
                 <CDropdownMenu>
-                  {countryList.map((country) => (
-                    <CDropdownItem
-                      key={country.countryId}
-                      onClick={() => handleSelectDdlCountry(country)}
-                      style={{ cursor: "pointer" }}
-                      value={country.countryId}
-                    >
-                      {country.countryName}
-                    </CDropdownItem>
-                  ))}
+                  {countryList &&
+                    countryList.length > 0 &&
+                    countryList.map((country) => (
+                      <CDropdownItem
+                        key={country.countryId}
+                        onClick={() => handleSelectDdlCountry(country)}
+                        style={{ cursor: "pointer" }}
+                        value={country.countryId}
+                      >
+                        {country.countryName}
+                      </CDropdownItem>
+                    ))}
                 </CDropdownMenu>
               </CDropdown>
               <CButton onClick={handleOpenAddCountryModal} color="primary">

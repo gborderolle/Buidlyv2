@@ -1,5 +1,5 @@
 ﻿using Buildyv2.Models;
-using WebAPI_tutorial_peliculas.Repository.Interfaces;
+using Buildyv2.Repository.Interfaces;
 
 namespace Buildyv2.Repository.Interfaces
 {

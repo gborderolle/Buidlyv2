@@ -1,14 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using WebAPI_tutorial_peliculas.Validations;
-using Buildyv2.Models;
+using Buildyv2.Validations;
 
 namespace Buildyv2.DTOs
 {
-    public class CityCreateDS
+    public class CountryDSCreateDTO
     {
-        #region Internal
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -21,14 +18,6 @@ namespace Buildyv2.DTOs
         public DateTime Creation { get; set; } = DateTime.Now;
 
         public DateTime Update { get; set; } = DateTime.Now;
-
-        #endregion
-
-        #region External
-
-        public int ProvinceDSId { get; set; }
-
-        #endregion
 
     }
 }

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
-using WebAPI_tutorial_peliculas;
+using Buildyv2;
 
 var builder = WebApplication.CreateBuilder(args);
 

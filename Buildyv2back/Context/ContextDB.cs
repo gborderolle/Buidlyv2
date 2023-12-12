@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebAPI_tutorial_peliculas.Context
+namespace Buildyv2.Context
 {
     public class ContextDB : IdentityDbContext
     {

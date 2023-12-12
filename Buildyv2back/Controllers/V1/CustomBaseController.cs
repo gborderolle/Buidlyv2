@@ -5,9 +5,9 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Security.Cryptography;
 using Buildyv2.Models;
-using WebAPI_tutorial_peliculas.DTOs;
-using WebAPI_tutorial_peliculas.Models;
-using WebAPI_tutorial_peliculas.Repository.Interfaces;
+using Buildyv2.DTOs;
+using Buildyv2.Models;
+using Buildyv2.Repository.Interfaces;
 
 namespace Buildyv2.Controllers.V1
 {

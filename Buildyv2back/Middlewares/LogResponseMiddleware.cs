@@ -1,6 +1,6 @@
-﻿using WebAPI_tutorial_peliculas.Utilities;
+﻿using Buildyv2.Utilities;
 
-namespace WebAPI_tutorial_peliculas.Middlewares
+namespace Buildyv2.Middlewares
 {
     public static class LogResponseMiddlewareExtensions
     {

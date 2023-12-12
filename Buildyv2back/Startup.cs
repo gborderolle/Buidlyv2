@@ -17,13 +17,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
-using WebAPI_tutorial_peliculas.Context;
-using WebAPI_tutorial_peliculas.Filters;
-using WebAPI_tutorial_peliculas.Middlewares;
-using WebAPI_tutorial_peliculas.Services;
+using Buildyv2.Context;
+using Buildyv2.Filters;
+using Buildyv2.Middlewares;
+using Buildyv2.Services;
 
 [assembly: ApiConventionType(typeof(DefaultApiConventions))] // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/27148912#notes
-namespace WebAPI_tutorial_peliculas
+namespace Buildyv2
 {
     public class Startup
     {
@@ -126,6 +126,9 @@ namespace WebAPI_tutorial_peliculas
             services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<ITenantRepository, TenantRepository>();
             services.AddScoped<IWorkerRepository, WorkerRepository>();
+            services.AddScoped<ICountryDSRepository, CountryDSRepository>();
+            services.AddScoped<IProvinceDSRepository, ProvinceDSRepository>();
+            services.AddScoped<ICityDSRepository, CityDSRepository>();
 
             // Filtros
             //services.AddScoped<MovieExistsAttribute>();

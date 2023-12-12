@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPI_tutorial_peliculas.Services
+namespace Buildyv2.Services
 {
     public class GenerateLinks
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebAPI_tutorial_peliculas.Validations
+namespace Buildyv2.Validations
 {
     public class FirstCharCapitalValidation : ValidationAttribute
     {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using WebAPI_tutorial_peliculas.DTOs;
-using WebAPI_tutorial_peliculas.Repository.Interfaces;
-using WebAPI_tutorial_peliculas.Utilities;
-using WebAPI_tutorial_peliculas.Context;
+using Buildyv2.DTOs;
+using Buildyv2.Repository.Interfaces;
+using Buildyv2.Utilities;
+using Buildyv2.Context;
 
-namespace WebAPI_tutorial_peliculas.Repository
+namespace Buildyv2.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {

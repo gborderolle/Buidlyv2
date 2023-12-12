@@ -53,6 +53,21 @@ namespace Buildyv2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CountryDS",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Update = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CountryDS", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Estate",
                 columns: table => new
                 {
@@ -68,6 +83,7 @@ namespace Buildyv2.Migrations
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GoogleMapsURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EstateIsRented = table.Column<bool>(type: "bit", nullable: false),
+                    LatLong = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PresentRentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -182,6 +198,27 @@ namespace Buildyv2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProvinceDS",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Update = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CountryDSId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProvinceDS", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProvinceDS_CountryDS_CountryDSId",
+                        column: x => x.CountryDSId,
+                        principalTable: "CountryDS",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Job",
                 columns: table => new
                 {
@@ -254,6 +291,27 @@ namespace Buildyv2.Migrations
                         principalTable: "Estate",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CityDS",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Update = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ProvinceDSId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CityDS", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CityDS_ProvinceDS_ProvinceDSId",
+                        column: x => x.ProvinceDSId,
+                        principalTable: "ProvinceDS",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -352,8 +410,8 @@ namespace Buildyv2.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "972dd449-80a4-4548-bcaa-7c03cf4a4415", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEIPmCaBVSHA11j2pH8hy7Iaw1IhZmM8Z8IAPeGY0rwTv9PCehCWkIyLWpnpeVBbEbw==", null, false, "b2fd56a4-0e53-4831-bbd5-461ad8fe57fc", false, "Sr.Admin" },
-                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "ea654fe8-b9d4-42d0-8d1d-1ce2fdd879e5", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEAP+YaTADW/V96I01qudTgcN06nyRjeBv5aDPR+AApyqMgSMyn1MucJqosbol1e6ZQ==", null, false, "a9928597-a934-44ff-87be-1e7d8f0668cb", false, "Sr.Normal" }
+                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "8a8f98bf-0533-4338-883f-1005d6bcef1b", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEP4kkfSjU2Bw6Hixqc5cGaS1UEKzyztanprULALl2wMB12dHFQV0XQJzUOxepVI3Ag==", null, false, "816c3a38-8171-4df5-8fd5-549fa58a02ec", false, "Sr.Admin" },
+                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "e5d6d276-9b4c-4862-814d-7a794285fc23", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEI3Jrisd71Pp3lreu7uc51sK+DgsJ+KPQfaa7BPIfzUdJfzn/e19eYwl4scT7eCr5w==", null, false, "7b48b1c6-817d-444a-9c38-886645f06d0b", false, "Sr.Normal" }
                 });
 
             migrationBuilder.InsertData(
@@ -401,6 +459,11 @@ namespace Buildyv2.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CityDS_ProvinceDSId",
+                table: "CityDS",
+                column: "ProvinceDSId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Job_EstateId",
                 table: "Job",
                 column: "EstateId");
@@ -419,6 +482,11 @@ namespace Buildyv2.Migrations
                 name: "IX_Photo_ReportId",
                 table: "Photo",
                 column: "ReportId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProvinceDS_CountryDSId",
+                table: "ProvinceDS",
+                column: "CountryDSId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rent_EstateId",
@@ -460,6 +528,9 @@ namespace Buildyv2.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CityDS");
+
+            migrationBuilder.DropTable(
                 name: "Photo");
 
             migrationBuilder.DropTable(
@@ -475,6 +546,9 @@ namespace Buildyv2.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "ProvinceDS");
+
+            migrationBuilder.DropTable(
                 name: "Report");
 
             migrationBuilder.DropTable(
@@ -482,6 +556,9 @@ namespace Buildyv2.Migrations
 
             migrationBuilder.DropTable(
                 name: "Job");
+
+            migrationBuilder.DropTable(
+                name: "CountryDS");
 
             migrationBuilder.DropTable(
                 name: "Estate");

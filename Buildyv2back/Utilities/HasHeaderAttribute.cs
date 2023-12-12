@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ActionConstraints;
 
-namespace WebAPI_tutorial_peliculas.Utilities
+namespace Buildyv2.Utilities
 {
     public class HasHeaderAttribute : Attribute, IActionConstraint
     {

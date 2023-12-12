@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace WebAPI_tutorial_peliculas.Models
+namespace Buildyv2.Models
 {
     public class APIResponse
     {

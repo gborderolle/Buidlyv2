@@ -1,7 +1,10 @@
 import React from "react";
 
-const EstatesMenu = React.lazy(() =>
-  import("./components/adminSide/estate/EstatesMenu")
+const EstateMenu = React.lazy(() =>
+  import("./components/adminSide/estate/EstateMenu")
+);
+const DataMenu = React.lazy(() =>
+  import("./components/adminSide/data/DataMenu")
 );
 
 const EstateCreate = React.lazy(() =>
@@ -10,12 +13,13 @@ const EstateCreate = React.lazy(() =>
 
 const routes = [
   { path: "/", exact: true, name: "Home" },
-  { path: "/estates", name: "Propiedades", element: EstatesMenu },
+  { path: "/estates", name: "Propiedades", element: EstateMenu },
   { path: "/add-estate", name: "Agregar propiedades", element: EstateCreate },
-  { path: "/reports", name: "Reportes", element: EstatesMenu },
-  { path: "/jobs", name: "Obras", element: EstatesMenu },
-  { path: "/tenants", name: "Inquilinos", element: EstatesMenu },
-  { path: "/workers", name: "Trabajadores", element: EstatesMenu },
+  { path: "/reports", name: "Reportes", element: EstateMenu },
+  { path: "/jobs", name: "Obras", element: EstateMenu },
+  { path: "/tenants", name: "Inquilinos", element: EstateMenu },
+  { path: "/workers", name: "Trabajadores", element: EstateMenu },
+  { path: "/data", name: "Datos", element: DataMenu },
 ];
 
 export default routes;

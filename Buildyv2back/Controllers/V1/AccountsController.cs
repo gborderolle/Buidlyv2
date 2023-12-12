@@ -12,12 +12,12 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using Wangkanai.Detection.Services;
-using WebAPI_tutorial_peliculas.Context;
-using WebAPI_tutorial_peliculas.DTOs;
-using WebAPI_tutorial_peliculas.Models;
-using WebAPI_tutorial_peliculas.Utilities;
+using Buildyv2.Context;
+using Buildyv2.DTOs;
+using Buildyv2.Models;
+using Buildyv2.Utilities;
 
-namespace WebAPI_tutorial_peliculas.Controllers.V1
+namespace Buildyv2.Controllers.V1
 {
     [ApiController]
     [HasHeader("x-version", "1")] // Agregar header: "x-version": "1"

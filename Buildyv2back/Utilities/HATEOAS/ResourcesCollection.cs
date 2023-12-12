@@ -1,4 +1,4 @@
-﻿namespace WebAPI_tutorial_peliculas.Utilities.HATEOAS
+﻿namespace Buildyv2.Utilities.HATEOAS
 {
     public class ResourcesCollection<T> : Resource where T : Resource
     {

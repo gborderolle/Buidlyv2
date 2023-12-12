@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace WebAPI_tutorial_peliculas.Filters
+namespace Buildyv2.Filters
 {
     public class ExceptionFilter : ExceptionFilterAttribute
     {

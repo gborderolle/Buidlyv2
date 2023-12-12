@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPI_tutorial_peliculas.Utilities.HATEOAS
+namespace Buildyv2.Utilities.HATEOAS
 {
     public class HATEOASFilterAttribute : ResultFilterAttribute
     {

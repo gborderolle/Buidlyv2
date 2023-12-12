@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using WebAPI_tutorial_peliculas.Validations;
+using Buildyv2.Validations;
 using Buildyv2.Models;
 
 namespace Buildyv2.DTOs

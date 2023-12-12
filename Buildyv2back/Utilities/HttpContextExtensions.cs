@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace WebAPI_tutorial_peliculas.Utilities
+namespace Buildyv2.Utilities
 {
     public static class HttpContextExtensions
     {

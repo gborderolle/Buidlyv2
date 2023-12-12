@@ -1,8 +1,8 @@
 ﻿using Buildyv2.Models;
 using Buildyv2.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using WebAPI_tutorial_peliculas.Context;
-using WebAPI_tutorial_peliculas.Repository;
+using Buildyv2.Context;
+using Buildyv2.Repository;
 
 namespace Buildyv2.Repository
 {

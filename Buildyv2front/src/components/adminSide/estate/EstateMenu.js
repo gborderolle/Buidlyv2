@@ -20,19 +20,18 @@ import useBumpEffect from "../../../utils/useBumpEffect";
 // redux imports
 import { batch, useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
-import { fetchEstates } from "../../../store/generalData-actions";
+import { fetchEstateList } from "../../../store/generalData-actions";
 
 import "./EstatesMenu.css";
 
 const buttonColor = "dark";
 
-const EstatesMenu = () => {
+const EstateMenu = () => {
   //#region Consts ***********************************
 
   const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth.authToken);
 
@@ -47,6 +46,17 @@ const EstatesMenu = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [pageCount, setPageCount] = useState(0);
+
+  //#region RUTA PROTEGIDA
+  const navigate = useNavigate();
+  const userEmail = useSelector((state) => state.auth.userEmail);
+  useEffect(() => {
+    if (!userEmail) {
+      dispatch(authActions.logout());
+      navigate("/login");
+    }
+  }, [userEmail, navigate, dispatch]);
+  //#endregion RUTA PROTEGIDA
 
   //#endregion Consts ***********************************
 
@@ -81,13 +91,11 @@ const EstatesMenu = () => {
 
   const bumpHandler = () => {
     triggerBump();
-    dispatch(fetchEstates());
+    dispatch(fetchEstateList());
 
     setTimeout(() => {
       navigate("/add-estate");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
-
-
   };
 
   //#endregion Hooks ***********************************
@@ -204,4 +212,4 @@ const EstatesMenu = () => {
   );
 };
 
-export default EstatesMenu;
+export default EstateMenu;

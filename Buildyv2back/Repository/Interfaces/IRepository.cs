@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
-using WebAPI_tutorial_peliculas.DTOs;
+using Buildyv2.DTOs;
 
-namespace WebAPI_tutorial_peliculas.Repository.Interfaces
+namespace Buildyv2.Repository.Interfaces
 {
     public interface IRepository<T> where T : class
     {

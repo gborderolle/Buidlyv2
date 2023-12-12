@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace WebAPI_tutorial_peliculas.Utilities
+namespace Buildyv2.Utilities
 {
     public static class GlobalServices
     {

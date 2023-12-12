@@ -1,6 +1,6 @@
-﻿using WebAPI_tutorial_peliculas.DTOs;
+﻿using Buildyv2.DTOs;
 
-namespace WebAPI_tutorial_peliculas.Utilities
+namespace Buildyv2.Utilities
 {
     public static class IQueryableExtensions
     {
