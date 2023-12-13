@@ -16,6 +16,7 @@ import {
   CCardBody,
   CCardFooter,
   CDropdown,
+  CDropdownItem,
   CDropdownToggle,
   CDropdownMenu,
   CModal,
@@ -269,19 +270,19 @@ const EstateCreate = () => {
                 {/*  */}
                 <CDropdown>
                   <CDropdownToggle id="ddCity" color="secondary">
-                    {ddlSelectedCity ? ddlSelectedCity.cityName : "Seleccionar"}
+                    {ddlSelectedCity ? ddlSelectedCity.name : "Seleccionar"}
                   </CDropdownToggle>
                   <CDropdownMenu>
                     {cityList &&
                       cityList.length > 0 &&
                       cityList.map((city) => (
                         <CDropdownItem
-                          key={city.cityId}
+                          key={city.id}
                           onClick={() => handleSelectDdlCity(city)}
                           style={{ cursor: "pointer" }}
-                          value={city.cityId}
+                          value={city.id}
                         >
-                          {city.cityName}
+                        {city.id}: {city.name}
                         </CDropdownItem>
                       ))}
                   </CDropdownMenu>
@@ -367,7 +368,7 @@ const EstateCreate = () => {
               <CDropdown>
                 <CDropdownToggle id="ddProvince" color="secondary">
                   {ddlSelectedProvince
-                    ? ddlSelectedProvince.provinceName
+                    ? ddlSelectedProvince.name
                     : "Seleccionar"}
                 </CDropdownToggle>
                 <CDropdownMenu>
@@ -375,12 +376,12 @@ const EstateCreate = () => {
                     provinceList.length > 0 &&
                     provinceList.map((province) => (
                       <CDropdownItem
-                        key={province.provinceId}
+                        key={province.id}
                         onClick={() => handleSelectDdlProvince(province)}
                         style={{ cursor: "pointer" }}
-                        value={province.provinceId}
+                        value={province.id}
                       >
-                        {province.provinceName}
+                        {province.id}: {province.name}
                       </CDropdownItem>
                     ))}
                 </CDropdownMenu>
@@ -441,21 +442,19 @@ const EstateCreate = () => {
               {/*  */}
               <CDropdown>
                 <CDropdownToggle id="ddCountry" color="secondary">
-                  {ddlSelectedCountry
-                    ? ddlSelectedCountry.countryName
-                    : "Seleccionar"}
+                  {ddlSelectedCountry ? ddlSelectedCountry.name : "Seleccionar"}
                 </CDropdownToggle>
                 <CDropdownMenu>
                   {countryList &&
                     countryList.length > 0 &&
                     countryList.map((country) => (
                       <CDropdownItem
-                        key={country.countryId}
+                        key={country.id}
                         onClick={() => handleSelectDdlCountry(country)}
                         style={{ cursor: "pointer" }}
-                        value={country.countryId}
+                        value={country.id}
                       >
-                        {country.countryName}
+                        {country.id}: {country.name}
                       </CDropdownItem>
                     ))}
                 </CDropdownMenu>
