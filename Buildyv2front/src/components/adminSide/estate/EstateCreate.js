@@ -19,11 +19,6 @@ import {
   CDropdownItem,
   CDropdownToggle,
   CDropdownMenu,
-  CModal,
-  CModalBody,
-  CModalHeader,
-  CModalTitle,
-  CModalFooter,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
@@ -40,17 +35,10 @@ const EstateCreate = () => {
   const [isValidForm, setIsValidForm] = useState(true);
   const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
 
-  const [ddlSelectedCountry, setDdlSelectedCountry] = useState(null);
-  const [ddlSelectedProvince, setDdlSelectedProvince] = useState(null);
   const [ddlSelectedCity, setDdlSelectedCity] = useState(null);
-
-  const [inputHasErrorCountry, setInputHasErrorCountry] = useState(false);
-  const [inputHasErrorProvince, setInputHasErrorProvince] = useState(false);
   const [inputHasErrorCity, setInputHasErrorCity] = useState(false);
 
-  const [showAddCityModal, setShowAddCityModal] = useState(false);
-  const [showAddProvinceModal, setShowAddProvinceModal] = useState(false);
-  const [showAddCountryModal, setShowAddCountryModal] = useState(false);
+  const [latLong, setLatLong] = useState({ lat: null, lon: null });
 
   // redux
   const dispatch = useDispatch();
@@ -96,41 +84,7 @@ const EstateCreate = () => {
     valueChangeHandler: inputChangeHandlerComments,
     inputBlurHandler: inputBlurHandlerComments,
     reset: inputResetComments,
-  } = useInput((value) => value.trim() !== "");
-
-  const {
-    value: cityName,
-    isValid: inputIsValidCityName,
-    hasError: inputHasErrorCityName,
-    valueChangeHandler: inputChangeHandlerCityName,
-    inputBlurHandler: inputBlurHandlerCityName,
-    reset: inputResetCityName,
-  } = useInput((value) => value.trim() !== "");
-  const {
-    value: provinceName,
-    isValid: inputIsValidProvinceName,
-    hasError: inputHasErrorProvinceName,
-    valueChangeHandler: inputChangeHandlerProvinceName,
-    inputBlurHandler: inputBlurHandlerProvinceName,
-    reset: inputResetProvinceName,
-  } = useInput((value) => value.trim() !== "");
-  const {
-    value: countryName,
-    isValid: inputIsValidCountryName,
-    hasError: inputHasErrorCountryName,
-    valueChangeHandler: inputChangeHandlerCountryName,
-    inputBlurHandler: inputBlurHandlerCountryName,
-    reset: inputResetCountryName,
-  } = useInput((value) => value.trim() !== "");
-
-  const handleOpenAddCityModal = () => setShowAddCityModal(true);
-  const handleCloseAddCityModal = () => setShowAddCityModal(false);
-
-  const handleOpenAddProvinceModal = () => setShowAddProvinceModal(true);
-  const handleCloseAddProvinceModal = () => setShowAddProvinceModal(false);
-
-  const handleOpenAddCountryModal = () => setShowAddCountryModal(true);
-  const handleCloseAddCountryModal = () => setShowAddCountryModal(false);
+  } = useInput(() => true); // No se necesita
 
   //#endregion Const ***********************************
 
@@ -157,12 +111,18 @@ const EstateCreate = () => {
       return;
     }
 
+    await verifyAddress(); // Verificar dirección y obtener latitud y longitud
+    console.log("latLong después de verifyAddress:", latLong);
+
     const dataToUpload = {
       Name: estateName,
       Address: estateAddress,
       Comments: estateComments,
-      CityId: ddlSelectedCity.cityId,
+      CityDSId: ddlSelectedCity.id,
+      LatLong: `${latLong.lat},${latLong.lon}`,
+      GoogleMapsURL: `https://www.google.com/maps/search/${latLong.lat},${latLong.lon}`,
     };
+    console.log("dataToUpload:", dataToUpload);
 
     try {
       await uploadData(dataToUpload, urlEstate);
@@ -184,19 +144,65 @@ const EstateCreate = () => {
   //#endregion Events ***********************************
 
   //#region Functions ***********************************
-  const inputResetCountry = () => {
-    setDdlSelectedCountry(null);
-    setInputHasErrorCountry(false);
-  };
-
   const inputResetCity = () => {
     setDdlSelectedCity(null);
     setInputHasErrorCity(false);
   };
 
-  const inputResetProvince = () => {
-    setDdlSelectedProvince(null);
-    setInputHasErrorProvince(false);
+  const verifyAddress = () => {
+    return new Promise(async (resolve, reject) => {
+      if (!ddlSelectedCity) {
+        console.error("Ciudad no seleccionada");
+        reject("Ciudad no seleccionada");
+        return;
+      }
+
+      let citycode = ddlSelectedCity.nominatimCityCode;
+      let countrycode = "";
+      const selectedProvince = provinceList.find(
+        (p) => p.id === ddlSelectedCity.provinceDSId
+      );
+      if (selectedProvince) {
+        const selectedCountry = countryList.find(
+          (c) => c.id === selectedProvince.countryDSId
+        );
+        if (selectedCountry) {
+          countrycode = selectedCountry.nominatimCountryCode;
+        }
+      }
+
+      if (!citycode || !countrycode) {
+        console.error("Códigos de ciudad o país no encontrados");
+        reject("Códigos de ciudad o país no encontrados");
+        return;
+      }
+
+      try {
+        const query = `${estateAddress}, ${citycode}, ${countrycode}`;
+        const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&citycode=${encodeURIComponent(
+          citycode
+        )}&countrycode=${encodeURIComponent(
+          countrycode
+        )}&q=${encodeURIComponent(query)}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Error en la solicitud: ${response.status}`);
+        }
+        const data = await response.json();
+        if (data.length === 0) {
+          reject("Dirección no encontrada.");
+          return;
+        }
+        const { lat, lon } = data[0];
+        console.log("Coordenadas obtenidas:", lat, lon);
+
+        setLatLong({ lat, lon });
+        resolve({ lat, lon });
+      } catch (error) {
+        console.error("Error al verificar la dirección:", error);
+        reject(error);
+      }
+    });
   };
 
   //#endregion Functions ***********************************
@@ -282,14 +288,11 @@ const EstateCreate = () => {
                           style={{ cursor: "pointer" }}
                           value={city.id}
                         >
-                        {city.id}: {city.name}
+                          {city.id}: {city.name}
                         </CDropdownItem>
                       ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <CButton onClick={handleOpenAddCityModal} color="primary">
-                  Agregar
-                </CButton>
 
                 {/*  */}
                 {inputHasErrorCity && (
@@ -334,187 +337,6 @@ const EstateCreate = () => {
         </CForm>
         <br />
         <br />
-
-        {/* Modal para agregar ciudad */}
-        <CModal visible={showAddCityModal} onClose={handleCloseAddCityModal}>
-          <CModalHeader>
-            <CModalTitle>Nueva ciudad</CModalTitle>
-          </CModalHeader>
-          <CModalBody>
-            <CInputGroup>
-              <CInputGroupText className="cardItem custom-input-group-text">
-                Nombre ciudad
-              </CInputGroupText>
-              <CFormInput
-                type="text"
-                className="cardItem"
-                onChange={inputChangeHandlerCityName}
-                onBlur={inputBlurHandlerCityName}
-                value={cityName}
-              />
-              {inputHasErrorCity && (
-                <CAlert color="danger" className="w-100">
-                  Entrada inválida
-                </CAlert>
-              )}
-            </CInputGroup>
-            <br />
-
-            <CInputGroup>
-              <CInputGroupText className="cardItem custom-input-group-text">
-                Departamento
-              </CInputGroupText>
-              {/*  */}
-              <CDropdown>
-                <CDropdownToggle id="ddProvince" color="secondary">
-                  {ddlSelectedProvince
-                    ? ddlSelectedProvince.name
-                    : "Seleccionar"}
-                </CDropdownToggle>
-                <CDropdownMenu>
-                  {provinceList &&
-                    provinceList.length > 0 &&
-                    provinceList.map((province) => (
-                      <CDropdownItem
-                        key={province.id}
-                        onClick={() => handleSelectDdlProvince(province)}
-                        style={{ cursor: "pointer" }}
-                        value={province.id}
-                      >
-                        {province.id}: {province.name}
-                      </CDropdownItem>
-                    ))}
-                </CDropdownMenu>
-              </CDropdown>
-              <CButton onClick={handleOpenAddProvinceModal} color="primary">
-                Agregar
-              </CButton>
-
-              {/*  */}
-              {inputHasErrorProvince && (
-                <CAlert color="danger" className="w-100">
-                  Entrada inválida
-                </CAlert>
-              )}
-            </CInputGroup>
-            <br />
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="primary">Guardar</CButton>
-            <CButton color="secondary" onClick={handleCloseAddCityModal}>
-              Cancelar
-            </CButton>
-          </CModalFooter>
-        </CModal>
-
-        {/* Modal para agregar departamento */}
-        <CModal
-          visible={showAddProvinceModal}
-          onClose={handleCloseAddProvinceModal}
-        >
-          <CModalHeader>
-            <CModalTitle>Nuevo departamento</CModalTitle>
-          </CModalHeader>
-          <CModalBody>
-            <CInputGroup>
-              <CInputGroupText className="cardItem custom-input-group-text">
-                Nombre departamento
-              </CInputGroupText>
-              <CFormInput
-                type="text"
-                className="cardItem"
-                onChange={inputChangeHandlerProvinceName}
-                onBlur={inputBlurHandlerProvinceName}
-                value={provinceName}
-              />
-              {inputHasErrorProvince && (
-                <CAlert color="danger" className="w-100">
-                  Entrada inválida
-                </CAlert>
-              )}
-            </CInputGroup>
-            <br />
-
-            <CInputGroup>
-              <CInputGroupText className="cardItem custom-input-group-text">
-                País
-              </CInputGroupText>
-              {/*  */}
-              <CDropdown>
-                <CDropdownToggle id="ddCountry" color="secondary">
-                  {ddlSelectedCountry ? ddlSelectedCountry.name : "Seleccionar"}
-                </CDropdownToggle>
-                <CDropdownMenu>
-                  {countryList &&
-                    countryList.length > 0 &&
-                    countryList.map((country) => (
-                      <CDropdownItem
-                        key={country.id}
-                        onClick={() => handleSelectDdlCountry(country)}
-                        style={{ cursor: "pointer" }}
-                        value={country.id}
-                      >
-                        {country.id}: {country.name}
-                      </CDropdownItem>
-                    ))}
-                </CDropdownMenu>
-              </CDropdown>
-              <CButton onClick={handleOpenAddCountryModal} color="primary">
-                Agregar
-              </CButton>
-
-              {/*  */}
-              {inputHasErrorCountry && (
-                <CAlert color="danger" className="w-100">
-                  Entrada inválida
-                </CAlert>
-              )}
-            </CInputGroup>
-            <br />
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="primary">Guardar</CButton>
-            <CButton color="secondary" onClick={handleCloseAddProvinceModal}>
-              Cancelar
-            </CButton>
-          </CModalFooter>
-        </CModal>
-
-        {/* Modal para agregar país */}
-        <CModal
-          visible={showAddCountryModal}
-          onClose={handleCloseAddCountryModal}
-        >
-          <CModalHeader>
-            <CModalTitle>Nuevo país</CModalTitle>
-          </CModalHeader>
-          <CModalBody>
-            <CInputGroup>
-              <CInputGroupText className="cardItem custom-input-group-text">
-                Nombre país
-              </CInputGroupText>
-              <CFormInput
-                type="text"
-                className="cardItem"
-                onChange={inputChangeHandlerCountryName}
-                onBlur={inputBlurHandlerCountryName}
-                value={countryName}
-              />
-              {inputHasErrorCountry && (
-                <CAlert color="danger" className="w-100">
-                  Entrada inválida
-                </CAlert>
-              )}
-            </CInputGroup>
-            <br />
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="primary">Guardar</CButton>
-            <CButton color="secondary" onClick={handleCloseAddCountryModal}>
-              Cancelar
-            </CButton>
-          </CModalFooter>
-        </CModal>
       </CCol>
     </CRow>
   );

@@ -44,6 +44,15 @@ const GroupInputCountry = (props) => {
     reset: inputReset1,
   } = useInput((value) => value.trim() !== "");
 
+  const {
+    value: nominatimCode,
+    isValid: inputIsValid2,
+    hasError: inputHasError2,
+    valueChangeHandler: inputChangeHandler2,
+    inputBlurHandler: inputBlurHandler2,
+    reset: inputReset2,
+  } = useInput((value) => true);
+
   //#endregion Consts ***********************************
 
   //#region Functions ***********************************
@@ -55,7 +64,7 @@ const GroupInputCountry = (props) => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
-    setIsValidForm(inputIsValid1);
+    setIsValidForm(inputIsValid1 && inputIsValid2);
 
     if (!isValidForm) {
       return;
@@ -63,6 +72,7 @@ const GroupInputCountry = (props) => {
 
     const dataToUpload = {
       Name: countryName,
+      NominatimCountryCode: nominatimCode,
     };
 
     try {
@@ -70,6 +80,7 @@ const GroupInputCountry = (props) => {
       dispatch(fetchCountryList());
 
       inputReset1();
+      inputReset2();
       // setErrorMessage(""); // Resetear el mensaje de error en caso de éxito
     } catch (error) {
       console.error("Error al enviar los datos:", error);
@@ -99,6 +110,24 @@ const GroupInputCountry = (props) => {
                 value={countryName}
               />
               {inputHasError1 && (
+                <CAlert color="danger" className="w-100">
+                  Entrada inválida
+                </CAlert>
+              )}
+            </CInputGroup>
+            <br />
+            <CInputGroup>
+              <CInputGroupText className="cardItem custom-input-group-text">
+                {props.nominatimCode}
+              </CInputGroupText>
+              <CFormInput
+                type="text"
+                className="cardItem"
+                onChange={inputChangeHandler2}
+                onBlur={inputBlurHandler2}
+                value={nominatimCode}
+              />
+              {inputHasError2 && (
                 <CAlert color="danger" className="w-100">
                   Entrada inválida
                 </CAlert>

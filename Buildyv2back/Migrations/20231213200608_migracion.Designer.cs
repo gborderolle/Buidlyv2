@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildyv2.Migrations
 {
     [DbContext(typeof(ContextDB))]
-    [Migration("20231213060613_migracion")]
+    [Migration("20231213200608_migracion")]
     partial class migracion
     {
         /// <inheritdoc />
@@ -40,6 +40,9 @@ namespace Buildyv2.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NominatimCityCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ProvinceDSId")
                         .HasColumnType("int");
@@ -70,6 +73,9 @@ namespace Buildyv2.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("NominatimCountryCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Update")
                         .HasColumnType("datetime2");
 
@@ -89,7 +95,7 @@ namespace Buildyv2.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CityId")
+                    b.Property<int?>("CityDSId")
                         .HasColumnType("int");
 
                     b.Property<string>("Comments")
@@ -120,7 +126,7 @@ namespace Buildyv2.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CityId");
+                    b.HasIndex("CityDSId");
 
                     b.ToTable("Estate");
                 });
@@ -216,6 +222,9 @@ namespace Buildyv2.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NominatimProvinceCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Update")
                         .HasColumnType("datetime2");
@@ -520,15 +529,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2a6f177d-e9b3-48ea-b692-34398c5ecdb4",
+                            ConcurrencyStamp = "611bf88a-a08c-40f8-a72f-93d8aa9c8fe4",
                             Email = "admin@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@buildy2.uy",
                             NormalizedUserName = "admin@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAb6lHFSPUOR5qqCpazv/r1OhxQg6lohqoAl74AkhiDd23BhG6cQa0czGn/Y8U3PzQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPQcm1YN3QaVOI5aVxpjsG6EMKJsyyXVF3ibkgYktnW9ZXwpBFYoZImAe9lToC23ng==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e0b3b56d-7282-4a0b-b000-2f68d4817fba",
+                            SecurityStamp = "78f277fb-7a9f-4320-b21e-031311570c53",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Admin"
                         },
@@ -536,15 +545,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "e0765c93-676c-4199-b7ee-d7877c471821",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c5e42102-991b-453c-8aa0-e0cc37952f92",
+                            ConcurrencyStamp = "e8feecfa-e733-47a6-aa4c-8263e0d3d1f7",
                             Email = "normal@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "normal@buildy2.uy",
                             NormalizedUserName = "normal@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEF+GH2gvPZz9oBAMiVkiWH0PowMxmAll30v7PdI8yvW5Zpz/5/SaLt7xrarOluXtcQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJjMOLik03S17PzuevO4jqbaIGLLDy+DRvIXsu+Hn7WJXrOzMoinmvGI6tu+LPhOAg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0d06fd5f-a25f-42b1-bd3a-bf0d1383a90f",
+                            SecurityStamp = "751d20dc-3f1e-4ea5-82d9-f46c62ed0ac3",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Normal"
                         });
@@ -651,11 +660,11 @@ namespace Buildyv2.Migrations
 
             modelBuilder.Entity("Buildyv2.Models.Estate", b =>
                 {
-                    b.HasOne("Buildyv2.Models.CityDS", "City")
+                    b.HasOne("Buildyv2.Models.CityDS", "CityDS")
                         .WithMany()
-                        .HasForeignKey("CityId");
+                        .HasForeignKey("CityDSId");
 
-                    b.Navigation("City");
+                    b.Navigation("CityDS");
                 });
 
             modelBuilder.Entity("Buildyv2.Models.Job", b =>

@@ -10,6 +10,7 @@ using System.Net;
 using Buildyv2.DTOs;
 using Buildyv2.Models;
 using Buildyv2.Utilities;
+using Buildyv2.Context;
 
 namespace Buildyv2.Controllers.V1
 {
@@ -20,12 +21,14 @@ namespace Buildyv2.Controllers.V1
     public class EstatesController : CustomBaseController<Estate> // Notice <Estate> here
     {
         private readonly IEstateRepository _estateRepository; // Servicio que contiene la lógica principal de negocio para Estates.
+        private readonly ContextDB _dbContext;
 
-        public EstatesController(ILogger<EstatesController> logger, IMapper mapper, IEstateRepository estateRepository)
+        public EstatesController(ILogger<EstatesController> logger, IMapper mapper, IEstateRepository estateRepository, ContextDB dbContext)
         : base(mapper, logger, estateRepository)
         {
             _response = new();
             _estateRepository = estateRepository;
+            _dbContext = dbContext;
         }
 
         #region Endpoints genéricos
@@ -117,7 +120,19 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(ModelState);
                 }
 
+                var city = await _dbContext.CityDS.FindAsync(estateCreateDto.CityDSId);
+                if (city == null)
+                {
+                    _logger.LogError($"La ciudad ID={estateCreateDto.CityDSId} no existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"La ciudad ID={estateCreateDto.CityDSId} no existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    ModelState.AddModelError("NameAlreadyExists", $"La ciudad ID={estateCreateDto.CityDSId} no existe en el sistema.");
+                    return BadRequest(ModelState);
+                }
+
                 Estate modelo = _mapper.Map<Estate>(estateCreateDto);
+                modelo.CityDS = city; // Asigna el objeto CountryDS resuelto
                 modelo.Creation = DateTime.Now;
                 modelo.Update = DateTime.Now;
 

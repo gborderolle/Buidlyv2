@@ -59,18 +59,21 @@ const DataMenu = () => {
         <GroupInputCity
           title="Agregar ciudad"
           inputName="Nombre"
+          nominatimCode="Código Nominatim"
           createDataToUpload={cityData}
         />
         <br />
         <GroupInputProvince
           title="Agregar departamento"
           inputName="Nombre"
+          nominatimCode="Código Nominatim"
           createDataToUpload={provinceData}
         />
         <br />
         <GroupInputCountry
           title="Agregar país"
           inputName="Nombre"
+          nominatimCode="Código Nominatim"
           createDataToUpload={countryData}
         />
         <br />

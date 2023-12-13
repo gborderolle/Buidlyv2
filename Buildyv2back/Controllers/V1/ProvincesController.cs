@@ -38,7 +38,14 @@ namespace Buildyv2.Controllers.V1
         [HttpGet("GetProvince")]
         public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
         {
-            return await Get<ProvinceDS, ProvinceDSDTO>(paginationDTO: paginationDTO);
+            var includes = new List<IncludePropertyConfiguration<ProvinceDS>>
+            {
+                    new IncludePropertyConfiguration<ProvinceDS>
+                    {
+                        IncludeExpression = b => b.CountryDS
+                    },
+                };
+            return await Get<ProvinceDS, ProvinceDSDTO>(paginationDTO: paginationDTO, includes: includes);
         }
 
         [HttpGet("all")]

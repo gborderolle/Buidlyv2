@@ -27,6 +27,8 @@ namespace Buildyv2.Models
 
         public ProvinceDS ProvinceDS { get; set; }
 
+        public string NominatimCityCode { get; set; }
+
         #endregion
 
     }

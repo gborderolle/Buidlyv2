@@ -21,6 +21,8 @@ namespace Buildyv2.Models
 
         public DateTime Update { get; set; } = DateTime.Now;
 
+        public string NominatimCountryCode { get; set; }
+
         #endregion
 
         #region External

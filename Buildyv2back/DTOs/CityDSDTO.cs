@@ -13,6 +13,7 @@ namespace Buildyv2.DTOs
         public string Name { get; set; }
         public DateTime Creation { get; set; } = DateTime.Now;
         public DateTime Update { get; set; } = DateTime.Now;
+        public string NominatimCityCode { get; set; }
 
         #endregion
 

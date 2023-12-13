@@ -18,6 +18,7 @@ namespace Buildyv2.DTOs
         public DateTime Creation { get; set; } = DateTime.Now;
 
         public DateTime Update { get; set; } = DateTime.Now;
+        public string NominatimCountryCode { get; set; }
 
     }
 }

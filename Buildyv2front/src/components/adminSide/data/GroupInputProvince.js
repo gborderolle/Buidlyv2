@@ -54,6 +54,15 @@ const GroupInputProvince = (props) => {
     reset: inputReset1,
   } = useInput((value) => value.trim() !== "");
 
+  const {
+    value: nominatimCode,
+    isValid: inputIsValid2,
+    hasError: inputHasError2,
+    valueChangeHandler: inputChangeHandler2,
+    inputBlurHandler: inputBlurHandler2,
+    reset: inputReset2,
+  } = useInput((value) => true);
+
   //#endregion Consts ***********************************
 
   //#region Functions ***********************************
@@ -77,7 +86,7 @@ const GroupInputProvince = (props) => {
       return;
     }
 
-    setIsValidForm(inputIsValid1);
+    setIsValidForm(inputIsValid1 && inputIsValid2);
 
     if (!isValidForm) {
       return;
@@ -85,6 +94,7 @@ const GroupInputProvince = (props) => {
 
     const dataToUpload = {
       Name: provinceName,
+      NominatimProvinceCode: nominatimCode,
       CountryDSId: ddlSelectedCountry.id,
     };
 
@@ -93,6 +103,7 @@ const GroupInputProvince = (props) => {
       dispatch(fetchProvinceList());
 
       inputReset1();
+      inputReset2();
       inputResetCountry();
     } catch (error) {
       console.error("Error al enviar los datos:", error);
@@ -131,6 +142,24 @@ const GroupInputProvince = (props) => {
               )}
             </CInputGroup>
             <br />
+            <CInputGroup>
+              <CInputGroupText className="cardItem custom-input-group-text">
+                {props.nominatimCode}
+              </CInputGroupText>
+              <CFormInput
+                type="text"
+                className="cardItem"
+                onChange={inputChangeHandler2}
+                onBlur={inputBlurHandler2}
+                value={nominatimCode}
+              />
+              {inputHasError2 && (
+                <CAlert color="danger" className="w-100">
+                  Entrada inválida
+                </CAlert>
+              )}
+            </CInputGroup>
+            <br />
 
             <CInputGroup>
               <CInputGroupText className="cardItem custom-input-group-text">
@@ -139,9 +168,7 @@ const GroupInputProvince = (props) => {
               {/*  */}
               <CDropdown>
                 <CDropdownToggle id="ddlCountry" color="secondary">
-                  {ddlSelectedCountry
-                    ? ddlSelectedCountry.name
-                    : "Seleccionar"}
+                  {ddlSelectedCountry ? ddlSelectedCountry.name : "Seleccionar"}
                 </CDropdownToggle>
                 <CDropdownMenu>
                   {countryList &&

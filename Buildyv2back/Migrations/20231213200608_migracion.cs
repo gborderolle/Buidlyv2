@@ -60,7 +60,8 @@ namespace Buildyv2.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Update = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Update = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NominatimCountryCode = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -182,6 +183,7 @@ namespace Buildyv2.Migrations
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Update = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NominatimProvinceCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CountryDSId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -203,7 +205,8 @@ namespace Buildyv2.Migrations
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Update = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProvinceDSId = table.Column<int>(type: "int", nullable: true)
+                    ProvinceDSId = table.Column<int>(type: "int", nullable: true),
+                    NominatimCityCode = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -229,15 +232,15 @@ namespace Buildyv2.Migrations
                     LatLong = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GoogleMapsURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EstateIsRented = table.Column<bool>(type: "bit", nullable: false),
-                    CityId = table.Column<int>(type: "int", nullable: true),
+                    CityDSId = table.Column<int>(type: "int", nullable: true),
                     PresentRentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Estate", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Estate_CityDS_CityId",
-                        column: x => x.CityId,
+                        name: "FK_Estate_CityDS_CityDSId",
+                        column: x => x.CityDSId,
                         principalTable: "CityDS",
                         principalColumn: "Id");
                 });
@@ -413,8 +416,8 @@ namespace Buildyv2.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "2a6f177d-e9b3-48ea-b692-34398c5ecdb4", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEAb6lHFSPUOR5qqCpazv/r1OhxQg6lohqoAl74AkhiDd23BhG6cQa0czGn/Y8U3PzQ==", null, false, "e0b3b56d-7282-4a0b-b000-2f68d4817fba", false, "Sr.Admin" },
-                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "c5e42102-991b-453c-8aa0-e0cc37952f92", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEF+GH2gvPZz9oBAMiVkiWH0PowMxmAll30v7PdI8yvW5Zpz/5/SaLt7xrarOluXtcQ==", null, false, "0d06fd5f-a25f-42b1-bd3a-bf0d1383a90f", false, "Sr.Normal" }
+                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "611bf88a-a08c-40f8-a72f-93d8aa9c8fe4", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEPQcm1YN3QaVOI5aVxpjsG6EMKJsyyXVF3ibkgYktnW9ZXwpBFYoZImAe9lToC23ng==", null, false, "78f277fb-7a9f-4320-b21e-031311570c53", false, "Sr.Admin" },
+                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "e8feecfa-e733-47a6-aa4c-8263e0d3d1f7", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEJjMOLik03S17PzuevO4jqbaIGLLDy+DRvIXsu+Hn7WJXrOzMoinmvGI6tu+LPhOAg==", null, false, "751d20dc-3f1e-4ea5-82d9-f46c62ed0ac3", false, "Sr.Normal" }
                 });
 
             migrationBuilder.InsertData(
@@ -467,9 +470,9 @@ namespace Buildyv2.Migrations
                 column: "ProvinceDSId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Estate_CityId",
+                name: "IX_Estate_CityDSId",
                 table: "Estate",
-                column: "CityId");
+                column: "CityDSId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Job_EstateId",

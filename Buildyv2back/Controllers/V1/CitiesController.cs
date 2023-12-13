@@ -39,7 +39,14 @@ namespace Buildyv2.Controllers.V1
         [HttpGet("GetCity")]
         public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
         {
-            return await Get<CityDS, CityDSDTO>(paginationDTO: paginationDTO);
+            var includes = new List<IncludePropertyConfiguration<CityDS>>
+            {
+                    new IncludePropertyConfiguration<CityDS>
+                    {
+                        IncludeExpression = b => b.ProvinceDS
+                    },
+                };
+            return await Get<CityDS, CityDSDTO>(paginationDTO: paginationDTO, includes: includes);
         }
 
         [HttpGet("all")]
@@ -55,7 +62,15 @@ namespace Buildyv2.Controllers.V1
         [HttpGet("{id:int}")] // url completa: https://localhost:7003/api/Cities/1
         public async Task<ActionResult<APIResponse>> Get([FromRoute] int id)
         {
-            return await Get<CityDS, CityDSDTO>();
+            // n..1
+            var includes = new List<IncludePropertyConfiguration<CityDS>>
+            {
+                    new IncludePropertyConfiguration<CityDS>
+                    {
+                        IncludeExpression = b => b.ProvinceDS
+                    },
+                };
+            return await Get<CityDS, CityDSDTO>(includes: includes);
         }
 
         [HttpDelete("{id:int}")]
@@ -106,7 +121,6 @@ namespace Buildyv2.Controllers.V1
                     ModelState.AddModelError("NameAlreadyExists", $"El nombre {cityCreateDto.Name} ya existe en el sistema.");
                     return BadRequest(ModelState);
                 }
-
 
                 var province = await _dbContext.ProvinceDS.FindAsync(cityCreateDto.ProvinceDSId);
                 if (province == null)
