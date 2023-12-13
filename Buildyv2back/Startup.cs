@@ -130,6 +130,9 @@ namespace Buildyv2
             services.AddScoped<IProvinceDSRepository, ProvinceDSRepository>();
             services.AddScoped<ICityDSRepository, CityDSRepository>();
 
+            services.AddScoped<ICountryResolver, CountryResolver>();
+            services.AddScoped<CountryResolverService>();
+
             // Filtros
             //services.AddScoped<MovieExistsAttribute>();
 

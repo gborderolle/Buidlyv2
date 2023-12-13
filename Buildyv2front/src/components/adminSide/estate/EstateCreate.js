@@ -37,7 +37,7 @@ const EstateCreate = () => {
   //#region Const ***********************************
 
   const [isValidForm, setIsValidForm] = useState(true);
-  const { isLoading, isSuccess, error, uploadData } = useAPI();
+  const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
 
   const [ddlSelectedCountry, setDdlSelectedCountry] = useState(null);
   const [ddlSelectedProvince, setDdlSelectedProvince] = useState(null);
@@ -322,9 +322,9 @@ const EstateCreate = () => {
                     Datos ingresados correctamente
                   </CAlert>
                 )}
-                {error && (
+                {errorAPI && (
                   <CAlert color="danger" className="w-100">
-                    {error}
+                    {errorAPI}
                   </CAlert>
                 )}
               </CCardFooter>

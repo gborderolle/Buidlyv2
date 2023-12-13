@@ -4,9 +4,6 @@ import showToastMessage from "../components/messages/ShowSuccess";
 
 import { urlAccount } from "../endpoints"; // Asegúrate de ajustar la ruta relativa según sea necesario
 
-// import { database, FirebaseUrls } from "../utils/firebaseSetup";
-// import { get, ref } from "firebase/database";
-
 export const loginHandler = (email, password, navigate) => async (dispatch) => {
   try {
     const response = await axios.post(
@@ -22,7 +19,7 @@ export const loginHandler = (email, password, navigate) => async (dispatch) => {
       }
     );
     // Aquí, asumimos que la API devuelve un objeto con un token y posiblemente más datos
-    const { token, ...user } = response.data.result;
+    const { token } = response.data.result;
 
     // Lógica para manejar la respuesta de la API
     if (token) {

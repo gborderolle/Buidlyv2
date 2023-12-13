@@ -34,7 +34,7 @@ const GroupInputProvince = (props) => {
   //#region Consts ***********************************
 
   const [isValidForm, setIsValidForm] = useState(true); // Declarar e inicializar isValidForm
-  const { isLoading, isSuccess, uploadData } = useAPI();
+  const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
 
   const [ddlSelectedCountry, setDdlSelectedCountry] = useState(null);
   const [inputHasErrorCountry, setInputHasErrorCountry] = useState(false);
@@ -84,10 +84,8 @@ const GroupInputProvince = (props) => {
     }
 
     const dataToUpload = {
-      Name: estateName,
-      Address: estateAddress,
-      Comments: estateComments,
-      CountryId: ddlSelectedCountry.countryId,
+      Name: provinceName,
+      CountryDSId: ddlSelectedCountry.id,
     };
 
     try {
@@ -142,7 +140,7 @@ const GroupInputProvince = (props) => {
               <CDropdown>
                 <CDropdownToggle id="ddlCountry" color="secondary">
                   {ddlSelectedCountry
-                    ? ddlSelectedCountry.countryName
+                    ? ddlSelectedCountry.name
                     : "Seleccionar"}
                 </CDropdownToggle>
                 <CDropdownMenu>
@@ -150,12 +148,12 @@ const GroupInputProvince = (props) => {
                     countryList.length > 0 &&
                     countryList.map((country) => (
                       <CDropdownItem
-                        key={country.countryId}
+                        key={country.id}
                         onClick={() => handleSelectDdlCountry(country)}
                         style={{ cursor: "pointer" }}
-                        value={country.countryId}
+                        value={country.id}
                       >
-                        {country.countryName}
+                        {country.id}: {country.name}
                       </CDropdownItem>
                     ))}
                 </CDropdownMenu>
@@ -191,6 +189,11 @@ const GroupInputProvince = (props) => {
               {isSuccess && (
                 <CAlert color="success" className="w-100">
                   Datos ingresados correctamente
+                </CAlert>
+              )}
+              {errorAPI && (
+                <CAlert color="danger" className="w-100">
+                  {errorAPI}
                 </CAlert>
               )}
             </CCardFooter>

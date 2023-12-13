@@ -6,14 +6,11 @@ import {
   CButton,
   CCardFooter,
   CSpinner,
-  CCardTitle,
-  CCardBody,
   CFormInput,
   CInputGroup,
   CInputGroupText,
   CAlert,
   CForm,
-  CCard,
   CAccordion,
   CAccordionItem,
   CAccordionHeader,
@@ -23,7 +20,7 @@ import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
 
 // redux imports
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchCountryList } from "../../../store/generalData-actions";
 import { urlCountry } from "../../../endpoints";
 
@@ -33,9 +30,7 @@ const GroupInputCountry = (props) => {
   //#region Consts ***********************************
 
   const [isValidForm, setIsValidForm] = useState(true); // Declarar e inicializar isValidForm
-  const { isLoading, isSuccess, uploadData } = useAPI();
-
-  const [errorMessage, setErrorMessage] = useState('');
+  const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
 
   // Redux fetch DB
   const dispatch = useDispatch();
@@ -73,15 +68,15 @@ const GroupInputCountry = (props) => {
     try {
       await uploadData(dataToUpload, urlCountry);
       dispatch(fetchCountryList());
-  
+
       inputReset1();
-      setErrorMessage(''); // Resetear el mensaje de error en caso de éxito
+      // setErrorMessage(""); // Resetear el mensaje de error en caso de éxito
     } catch (error) {
       console.error("Error al enviar los datos:", error);
-      setErrorMessage(error.message || 'Error al enviar los datos'); // Establecer mensaje de error
+      // setErrorMessage(error.message || "Error al enviar los datos"); // Establecer mensaje de error
     }
   };
-  
+
   //#endregion Events ***********************************
 
   return (
@@ -133,6 +128,11 @@ const GroupInputCountry = (props) => {
               {isSuccess && (
                 <CAlert color="success" className="w-100">
                   Datos ingresados correctamente
+                </CAlert>
+              )}
+              {errorAPI && (
+                <CAlert color="danger" className="w-100">
+                  {errorAPI}
                 </CAlert>
               )}
             </CCardFooter>

@@ -12,6 +12,8 @@ using Buildyv2.DTOs;
 using Buildyv2.Models;
 using Buildyv2.Utilities;
 using Buildyv2.Repository;
+using Microsoft.EntityFrameworkCore;
+using Buildyv2.Context;
 
 namespace Buildyv2.Controllers.V1
 {
@@ -22,12 +24,14 @@ namespace Buildyv2.Controllers.V1
     public class CitiesController : CustomBaseController<CityDS> // Notice <CityDS> here
     {
         private readonly ICityDSRepository _cityRepository; // Servicio que contiene la lógica principal de negocio para Cities.
+        private readonly ContextDB _dbContext;
 
-        public CitiesController(ILogger<CitiesController> logger, IMapper mapper, ICityDSRepository workerRepository)
+        public CitiesController(ILogger<CitiesController> logger, IMapper mapper, ICityDSRepository workerRepository, ContextDB dbContext)
         : base(mapper, logger, workerRepository)
         {
             _response = new();
             _cityRepository = workerRepository;
+            _dbContext = dbContext;
         }
 
         #region Endpoints genéricos
@@ -103,7 +107,20 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(ModelState);
                 }
 
+
+                var province = await _dbContext.ProvinceDS.FindAsync(cityCreateDto.ProvinceDSId);
+                if (province == null)
+                {
+                    _logger.LogError($"El departamento ID={cityCreateDto.ProvinceDSId} no existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"El departamento ID={cityCreateDto.ProvinceDSId} no existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    ModelState.AddModelError("NameAlreadyExists", $"El departamento ID={cityCreateDto.ProvinceDSId} no existe en el sistema.");
+                    return BadRequest(ModelState);
+                }
+
                 CityDS modelo = _mapper.Map<CityDS>(cityCreateDto);
+                modelo.ProvinceDS = province; // Asigna el objeto CountryDS resuelto
                 modelo.Creation = DateTime.Now;
                 modelo.Update = DateTime.Now;
 

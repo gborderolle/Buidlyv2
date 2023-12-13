@@ -21,7 +21,7 @@ import {
   CDropdownItem,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
-import useFirebase from "../../../hooks/use-API";
+import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
@@ -34,7 +34,7 @@ const GroupInputCity = (props) => {
   //#region Consts ***********************************
 
   const [isValidForm, setIsValidForm] = useState(true); // Declarar e inicializar isValidForm
-  const { isLoading, isSuccess, uploadData } = useFirebase();
+  const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
 
   const [ddlSelectedProvince, setDdlSelectedProvince] = useState(null);
   const [inputHasErrorProvince, setInputHasErrorProvince] = useState(false);
@@ -85,7 +85,7 @@ const GroupInputCity = (props) => {
 
     const dataToUpload = {
       Name: cityName,
-      ProvinceId: ddlSelectedProvince.provinceId,
+      ProvinceDSId: ddlSelectedProvince.id,
     };
 
     try {
@@ -140,7 +140,7 @@ const GroupInputCity = (props) => {
               <CDropdown>
                 <CDropdownToggle id="ddlProvince" color="secondary">
                   {ddlSelectedProvince
-                    ? ddlSelectedProvince.provinceName
+                    ? ddlSelectedProvince.name
                     : "Seleccionar"}
                 </CDropdownToggle>
                 <CDropdownMenu>
@@ -148,12 +148,12 @@ const GroupInputCity = (props) => {
                     provinceList.length > 0 &&
                     provinceList.map((province) => (
                       <CDropdownItem
-                        key={province.provinceId}
+                        key={province.id}
                         onClick={() => handleSelectDdlProvince(province)}
                         style={{ cursor: "pointer" }}
-                        value={province.provinceId}
+                        value={province.id}
                       >
-                        {province.provinceName}
+                        {province.id}: {province.name}
                       </CDropdownItem>
                     ))}
                 </CDropdownMenu>
@@ -189,6 +189,11 @@ const GroupInputCity = (props) => {
               {isSuccess && (
                 <CAlert color="success" className="w-100">
                   Datos ingresados correctamente
+                </CAlert>
+              )}
+              {errorAPI && (
+                <CAlert color="danger" className="w-100">
+                  {errorAPI}
                 </CAlert>
               )}
             </CCardFooter>
