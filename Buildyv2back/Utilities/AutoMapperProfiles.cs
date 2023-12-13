@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Buildyv2.DTOs;
 using Buildyv2.Models;
-using Buildyv2.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace Buildyv2.Utilities
 {
@@ -13,7 +12,9 @@ namespace Buildyv2.Utilities
             CreateMap<IdentityUser, UserDTO>();
 
             CreateMap<Estate, EstateDTO>().ReverseMap();
-            CreateMap<EstateCreateDTO, Estate>().ReverseMap();
+            CreateMap<EstateCreateDTO, Estate>()
+                .ForMember(dest => dest.CityDS, opt => opt.Ignore()) // Ignorar este campo
+                .ReverseMap();
 
             CreateMap<CountryDS, CountryDSDTO>().ReverseMap();
             CreateMap<CountryDSCreateDTO, CountryDS>().ReverseMap();
@@ -25,9 +26,8 @@ namespace Buildyv2.Utilities
 
             CreateMap<CityDS, CityDSDTO>().ReverseMap();
             CreateMap<CityDSCreateDTO, CityDS>()
-    .ForMember(dest => dest.ProvinceDS, opt => opt.Ignore()) // Ignorar este campo
-    .ReverseMap();
-
+            .ForMember(dest => dest.ProvinceDS, opt => opt.Ignore()) // Ignorar este campo
+        .ReverseMap();
         }
     }
 }

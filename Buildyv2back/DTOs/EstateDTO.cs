@@ -20,22 +20,18 @@ namespace Buildyv2.DTOs
 
         public string Address { get; set; }
 
-        public string City { get; set; }
-
-        public string Province { get; set; }
-
-        public string Country { get; set; }
-
         public string GoogleMapsURL { get; set; }
 
-        public bool EstateIsRented { get; set; }
-
         public string LatLong { get; set; }
+
+        public bool EstateIsRented { get; set; }
 
 
         #endregion
 
         #region External
+
+        public CityDS CityDS { get; set; }
 
         public List<Report> ListReports { get; set; } = new();
 

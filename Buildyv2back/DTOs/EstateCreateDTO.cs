@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Buildyv2.Validations;
+using Buildyv2.Models;
 
 namespace Buildyv2.DTOs
 {
@@ -17,19 +18,16 @@ namespace Buildyv2.DTOs
         [FirstCharCapitalValidation]
         public string Name { get; set; }
 
+        [Required(ErrorMessage = "El campo {0} es requerido")]
         public string Address { get; set; }
+        public string LatLong { get; set; }
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        public string City { get; set; }
+        public int CityDSId { get; set; }
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        public string Province { get; set; }
-        [Required(ErrorMessage = "El campo {0} es requerido")]
-        public string Country { get; set; }
         public string GoogleMapsURL { get; set; }
         public bool EstateIsRented { get; set; }
         public string Comments { get; set; }
         public int PresentRentId { get; set; }
-        [Required(ErrorMessage = "El campo {0} es requerido")]
-        public string LatLong { get; set; }
 
         #endregion
 

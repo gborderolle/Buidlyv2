@@ -27,24 +27,17 @@ namespace Buildyv2.Models
 
         public string Address { get; set; }
 
-        [FirstCharCapitalValidation]
-        public string City { get; set; }
-
-        [FirstCharCapitalValidation]
-        public string Province { get; set; }
-
-        [FirstCharCapitalValidation]
-        public string Country { get; set; }
+        public string LatLong { get; set; }
 
         public string GoogleMapsURL { get; set; }
 
         public bool EstateIsRented { get; set; }
 
-        public string LatLong { get; set; }
-
         #endregion
 
         #region External
+
+        public CityDS CityDS { get; set; }
 
         public List<Report> ListReports { get; set; } = new();
 
