@@ -39,6 +39,7 @@ const EstateCreate = () => {
   const [inputHasErrorCity, setInputHasErrorCity] = useState(false);
 
   const [latLong, setLatLong] = useState({ lat: null, lon: null });
+  const [addressError, setAddressError] = useState("");
 
   // redux
   const dispatch = useDispatch();
@@ -111,29 +112,39 @@ const EstateCreate = () => {
       return;
     }
 
+    setAddressError(""); // Limpiar errores previos
+
     await verifyAddress(); // Verificar dirección y obtener latitud y longitud
     console.log("latLong después de verifyAddress:", latLong);
 
-    const dataToUpload = {
-      Name: estateName,
-      Address: estateAddress,
-      Comments: estateComments,
-      CityDSId: ddlSelectedCity.id,
-      LatLong: `${latLong.lat},${latLong.lon}`,
-      GoogleMapsURL: `https://www.google.com/maps/search/${latLong.lat},${latLong.lon}`,
-    };
-    console.log("dataToUpload:", dataToUpload);
+    if (latLong && latLong.lat) {
+      const dataToUpload = {
+        Name: estateName,
+        Address: estateAddress,
+        Comments: estateComments,
+        CityDSId: ddlSelectedCity.id,
+        LatLong: `${latLong.lat},${latLong.lon}`,
+        GoogleMapsURL: `https://www.google.com/maps/search/${latLong.lat},${latLong.lon}`,
+      };
+      console.log("dataToUpload:", dataToUpload);
 
-    try {
-      await uploadData(dataToUpload, urlEstate);
-      dispatch(fetchEstateList());
+      try {
+        await uploadData(dataToUpload, urlEstate);
+        dispatch(fetchEstateList());
 
-      inputResetName();
-      inputResetAddress();
-      inputResetComments();
-      inputResetCity();
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
+        inputResetName();
+        inputResetAddress();
+        inputResetComments();
+        inputResetCity();
+      } catch (error) {
+        console.error("Error al enviar los datos:", error);
+        if (error === "Dirección no encontrada.") {
+          setInputHasErrorAddress(true);
+        }
+      }
+    } else {
+      console.error("Error al enviar los datos");
+      setInputHasErrorAddress(true);
     }
   };
 
@@ -190,7 +201,8 @@ const EstateCreate = () => {
         }
         const data = await response.json();
         if (data.length === 0) {
-          reject("Dirección no encontrada.");
+          setAddressError("Dirección no encontrada.");
+          // reject("Dirección no encontrada.");
           return;
         }
         const { lat, lon } = data[0];
@@ -200,7 +212,8 @@ const EstateCreate = () => {
         resolve({ lat, lon });
       } catch (error) {
         console.error("Error al verificar la dirección:", error);
-        reject(error);
+        setAddressError("Error al verificar la dirección");
+        // reject("Error al verificar la dirección");
       }
     });
   };
@@ -244,9 +257,9 @@ const EstateCreate = () => {
                   onBlur={inputBlurHandlerAddress}
                   value={estateAddress}
                 />
-                {inputHasErrorAddress && (
+                {addressError && (
                   <CAlert color="danger" className="w-100">
-                    Entrada inválida
+                    {addressError}
                   </CAlert>
                 )}
               </CInputGroup>
