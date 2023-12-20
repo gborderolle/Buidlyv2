@@ -12,8 +12,10 @@ namespace Buildyv2.Utilities
             CreateMap<IdentityUser, UserDTO>();
 
             CreateMap<Estate, EstateDTO>()
-                .ForMember(dest => dest.CityDS,
-                           opt => opt.MapFrom(src => src.CityDS.Id))
+    .ForMember(dest => dest.CityDS, opt => opt.MapFrom(src => src.CityDS))
+                .ForMember(dest => dest.ListReports, opt => opt.MapFrom(src => src.ListReports))
+                .ForMember(dest => dest.ListJobs, opt => opt.MapFrom(src => src.ListJobs))
+                .ForMember(dest => dest.ListRents, opt => opt.MapFrom(src => src.ListRents))
                 .ReverseMap();
             CreateMap<EstateCreateDTO, Estate>()
                 .ForMember(dest => dest.CityDS, opt => opt.Ignore()) // Ignorar este campo

@@ -36,7 +36,26 @@ namespace Buildyv2.Controllers.V1
         [HttpGet("GetEstate")]
         public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
         {
-            return await Get<Estate, EstateDTO>(paginationDTO: paginationDTO);
+            var includes = new List<IncludePropertyConfiguration<Estate>>
+            {
+                    new IncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.CityDS
+                    },
+                    new IncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.ListReports
+                    },
+                    new IncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.ListJobs
+                    },
+                    new IncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.ListRents
+                    }
+                };
+            return await Get<Estate, EstateDTO>(paginationDTO: paginationDTO, includes: includes);
         }
 
         [HttpGet("all")]
@@ -55,6 +74,10 @@ namespace Buildyv2.Controllers.V1
             // 1..n
             var includes = new List<IncludePropertyConfiguration<Estate>>
             {
+                 new IncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.CityDS
+                    },
                     new IncludePropertyConfiguration<Estate>
                     {
                         IncludeExpression = b => b.ListReports

@@ -139,12 +139,12 @@ const EstateCreate = () => {
       } catch (error) {
         console.error("Error al enviar los datos:", error);
         if (error === "Dirección no encontrada.") {
-          setInputHasErrorAddress(true);
+          setAddressError(true);
         }
       }
     } else {
       console.error("Error al enviar los datos");
-      setInputHasErrorAddress(true);
+      setAddressError(true);
     }
   };
 

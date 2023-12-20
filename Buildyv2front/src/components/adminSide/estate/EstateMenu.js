@@ -9,7 +9,6 @@ import {
   CTable,
   CPagination,
   CPaginationItem,
-  CButton,
 } from "@coreui/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -40,7 +39,7 @@ const EstateMenu = () => {
     useSelector((state) => state.generalData.estateList) || [];
 
   useEffect(() => {
-    // setEstateList(reduxEstateList);
+    setEstateList(reduxEstateList);
   }, [reduxEstateList]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,17 +62,19 @@ const EstateMenu = () => {
   //#region Hooks ***********************************
 
   const filteredEstateList = estateList.filter((estate) => {
-    // Asumiendo que las propiedades tienen nombre, dirección y estado
     const nameMatch = estate.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const addressMatch = estate.address
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    const rentedMatch = estate.rented
-      .toString()
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+    const rentedMatch =
+      estate.rented !== undefined
+        ? estate.rented
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+        : false;
     return nameMatch || addressMatch || rentedMatch;
   });
 
