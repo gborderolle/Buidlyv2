@@ -76,6 +76,7 @@ const Login = () => {
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isMobile] = useState(isMobileDevice());
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -139,7 +140,12 @@ const Login = () => {
     event.preventDefault();
     setIsLoggingIn(true); // Activar el spinner
     dispatch(
-      loginHandler(emailState.value, passwordState.value, navigate)
+      loginHandler(
+        emailState.value,
+        passwordState.value,
+        navigate,
+        setErrorMessage
+      )
     ).then(() => {
       setIsLoggingIn(false); // Desactivar el spinner una vez completado el login
     });
@@ -181,6 +187,14 @@ const Login = () => {
                         value={passwordState.value}
                       />
                     </CInputGroup>
+                    {errorMessage && (
+                      <div
+                        className="alert alert-danger"
+                        style={{ textAlign: "center" }}
+                      >
+                        {errorMessage}
+                      </div>
+                    )}
                     <CRow>
                       <CCol
                         xs={12}
@@ -196,9 +210,10 @@ const Login = () => {
                           ) : (
                             <FontAwesomeIcon icon={faCheck} /> // Mostrar check cuando `isLoggingIn` es false
                           )}
-                          Login
+                          &nbsp;Login
                         </CButton>
                       </CCol>
+
                       <br />
                       <CButton color="link" className="px-0">
                         ¿Olvidó la contraseña?

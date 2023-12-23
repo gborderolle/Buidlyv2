@@ -12,12 +12,19 @@ import {
 } from "@coreui/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faEye,
+  faTrowelBricks,
+  faCamera,
+  faFile,
+  faFileCirclePlus,
+} from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
 
 // redux imports
-import { batch, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
 import { fetchEstateList } from "../../../store/generalData-actions";
 
@@ -117,6 +124,36 @@ const EstateMenu = () => {
         <td>{estate.name}</td>
         <td>{estate.address}</td>
         <td>{estate.rented ? "Sí" : "No"}</td>
+        <td>
+          <button
+            onClick={() => navigateToProperty(estate.id)}
+            style={{ border: "none", background: "none" }}
+            className={isBumped ? "bump" : ""}
+          >
+            <FontAwesomeIcon icon={faEye} color="#697588" />
+          </button>
+          <button
+            onClick={() => navigateToWorks(estate.id)}
+            style={{ border: "none", background: "none" }}
+            className={isBumped ? "bump" : ""}
+          >
+            <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
+          </button>
+          <button
+            onClick={() => navigateToReports(estate.id)}
+            style={{ border: "none", background: "none" }}
+            className={isBumped ? "bump" : ""}
+          >
+            <FontAwesomeIcon icon={faCamera} color="#697588" />
+          </button>
+          <button
+            onClick={() => navigateToRent(estate.id)}
+            style={{ border: "none", background: "none" }}
+            className={isBumped ? "bump" : ""}
+          >
+            <FontAwesomeIcon icon={faFile} color="#697588" />
+          </button>
+        </td>
       </tr>
     ));
   };
@@ -178,6 +215,7 @@ const EstateMenu = () => {
                     <th>Nombre</th>
                     <th>Dirección</th>
                     <th>Alquilada</th>
+                    <th>Opciones</th>
                   </tr>
                 </thead>
                 <tbody>{renderEstateRows()}</tbody>
