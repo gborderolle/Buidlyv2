@@ -29,7 +29,7 @@ import { fetchEstateList } from "../../../store/generalData-actions";
 import { urlEstate } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
 
-const EstateCreate = () => {
+const EstateCreate = (props) => {
   //#region Const ***********************************
 
   const [isValidForm, setIsValidForm] = useState(true);
@@ -40,6 +40,8 @@ const EstateCreate = () => {
 
   const [latLong, setLatLong] = useState({ lat: null, lon: null });
   const [addressError, setAddressError] = useState("");
+
+  const [isEditing, setIsEditing] = useState(false);
 
   // redux
   const dispatch = useDispatch();
@@ -88,6 +90,10 @@ const EstateCreate = () => {
   } = useInput(() => true); // No se necesita
 
   //#endregion Const ***********************************
+
+  //#region Hooks ***********************************
+
+  //#endregion Hooks ***********************************
 
   //#region Events ***********************************
 

@@ -49,8 +49,8 @@ const EstateMenu = () => {
     setEstateList(reduxEstateList);
   }, [reduxEstateList]);
 
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 
   //#region RUTA PROTEGIDA
@@ -169,6 +169,22 @@ const EstateMenu = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  function navigateToProperty() {
+    navigate("/estateView");
+  }
+
+  function navigateToWorks() {
+    navigate("/workMenu");
+  }
+
+  function navigateToReports() {
+    navigate("/reportMenu");
+  }
+
+  function navigateToRent() {
+    navigate("/rentMenu");
+  }
 
   //#endregion Functions ***********************************
 
