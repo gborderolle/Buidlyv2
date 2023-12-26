@@ -82,6 +82,19 @@ export const fetchWorkerList = () => {
   };
 };
 
+export const fetchTenantList = () => {
+  return async (dispatch) => {
+    try {
+      const data = await fetchApi(urlWorker + "/GetTenant");
+      if (data.result) {
+        dispatch(generalDataActions.setTenantList(data.result));
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+};
+
 export const fetchCityList = () => {
   return async (dispatch) => {
     try {

@@ -28,7 +28,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
 import { fetchEstateList } from "../../../store/generalData-actions";
 
-import "./EstatesMenu.css";
+import "./EstateMenu.css";
 
 const buttonColor = "dark";
 
@@ -102,7 +102,7 @@ const EstateMenu = () => {
     dispatch(fetchEstateList());
 
     setTimeout(() => {
-      navigate("/add-estate");
+      navigate("/abm-estate");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
   };
 
@@ -124,30 +124,31 @@ const EstateMenu = () => {
         <td>{estate.name}</td>
         <td>{estate.address}</td>
         <td>{estate.rented ? "Sí" : "No"}</td>
+        <td>{estate.comments}</td>
         <td>
           <button
-            onClick={() => navigateToProperty(estate.id)}
+            onClick={() => navigateToProperty(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
           >
             <FontAwesomeIcon icon={faEye} color="#697588" />
           </button>
           <button
-            onClick={() => navigateToWorks(estate.id)}
+            onClick={() => navigateToWorks(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
           >
             <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
           </button>
           <button
-            onClick={() => navigateToReports(estate.id)}
+            onClick={() => navigateToReports(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
           >
             <FontAwesomeIcon icon={faCamera} color="#697588" />
           </button>
           <button
-            onClick={() => navigateToRent(estate.id)}
+            onClick={() => navigateToRent(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
           >
@@ -170,20 +171,20 @@ const EstateMenu = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  function navigateToProperty() {
-    navigate("/estateView");
+  function navigateToProperty(estate) {
+    navigate("/abm-estate", { state: { estate, editMode: true } });
   }
 
-  function navigateToWorks() {
-    navigate("/workMenu");
+  function navigateToWorks(estate) {
+    navigate("/jobs", { state: { estate } });
   }
 
-  function navigateToReports() {
-    navigate("/reportMenu");
+  function navigateToReports(estate) {
+    navigate("/reportMenu", { state: { estate } });
   }
 
-  function navigateToRent() {
-    navigate("/rentMenu");
+  function navigateToRent(estate) {
+    navigate("/rentMenu", { state: { estate } });
   }
 
   //#endregion Functions ***********************************
@@ -231,6 +232,7 @@ const EstateMenu = () => {
                     <th>Nombre</th>
                     <th>Dirección</th>
                     <th>Alquilada</th>
+                    <th>Comentarios</th>
                     <th>Opciones</th>
                   </tr>
                 </thead>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import {
   CRow,
@@ -29,13 +29,16 @@ import { fetchEstateList } from "../../../store/generalData-actions";
 import { urlEstate } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
 
-const EstateCreate = (props) => {
+const EstateABM = () => {
   //#region Const ***********************************
+
+  const location = useLocation();
+  const estate = location.state?.estate;
+  const editMode = location.state?.editMode ? location.state?.editMode : false;
 
   const [isValidForm, setIsValidForm] = useState(true);
   const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
 
-  const [ddlSelectedCity, setDdlSelectedCity] = useState(null);
   const [inputHasErrorCity, setInputHasErrorCity] = useState(false);
 
   const [latLong, setLatLong] = useState({ lat: null, lon: null });
@@ -62,6 +65,10 @@ const EstateCreate = (props) => {
   const provinceList = useSelector((state) => state.generalData.provinceList);
   const countryList = useSelector((state) => state.generalData.countryList);
 
+  const defaultCityId = estate?.cityDS?.id || null;
+  const defaultCity = cityList.find((city) => city.id === defaultCityId);
+  const [ddlSelectedCity, setDdlSelectedCity] = useState(defaultCity || null);
+
   const {
     value: estateName,
     isValid: inputIsValidName,
@@ -69,7 +76,11 @@ const EstateCreate = (props) => {
     valueChangeHandler: inputChangeHandlerName,
     inputBlurHandler: inputBlurHandlerName,
     reset: inputResetName,
-  } = useInput((value) => value.trim() !== "");
+  } = useInput(
+    (value) => value.trim() !== "", // validateValue function
+    null, // onChangeCallback
+    estate ? estate.name : ""
+  );
 
   const {
     value: estateAddress,
@@ -78,7 +89,11 @@ const EstateCreate = (props) => {
     valueChangeHandler: inputChangeHandlerAddress,
     inputBlurHandler: inputBlurHandlerAddress,
     reset: inputResetAddress,
-  } = useInput((value) => value.trim() !== "");
+  } = useInput(
+    (value) => value.trim() !== "", // validateValue function
+    null, // onChangeCallback
+    estate ? estate.address : ""
+  );
 
   const {
     value: estateComments,
@@ -87,7 +102,11 @@ const EstateCreate = (props) => {
     valueChangeHandler: inputChangeHandlerComments,
     inputBlurHandler: inputBlurHandlerComments,
     reset: inputResetComments,
-  } = useInput(() => true); // No se necesita
+  } = useInput(
+    (value) => true,
+    null, // onChangeCallback
+    estate ? estate.comments : ""
+  );
 
   //#endregion Const ***********************************
 
@@ -232,7 +251,9 @@ const EstateCreate = (props) => {
         <CForm onSubmit={formSubmitHandler}>
           <CCard>
             <CCardBody>
-              <CCardTitle>Agregar una propiedad</CCardTitle>
+              <CCardTitle>
+                {editMode ? "Modificar una propiedad" : "Agregar una propiedad"}
+              </CCardTitle>
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
@@ -361,4 +382,4 @@ const EstateCreate = (props) => {
   );
 };
 
-export default EstateCreate;
+export default EstateABM;
