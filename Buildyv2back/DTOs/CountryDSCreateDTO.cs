@@ -6,6 +6,8 @@ namespace Buildyv2.DTOs
 {
     public class CountryDSCreateDTO
     {
+        #region Internal
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -18,7 +20,14 @@ namespace Buildyv2.DTOs
         public DateTime Creation { get; set; } = DateTime.Now;
 
         public DateTime Update { get; set; } = DateTime.Now;
+       
         public string NominatimCountryCode { get; set; }
+
+        #endregion
+
+        #region External
+
+        #endregion
 
     }
 }

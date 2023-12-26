@@ -81,7 +81,48 @@ namespace Buildyv2.Controllers.V1
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromBody] TenantCreateDTO tenantCreateDto)
         {
-            return Ok();
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
+                if (await _tenantRepository.Get(v => v.Name.ToLower() == tenantCreateDto.Name.ToLower()) != null)
+                {
+                    _logger.LogError($"El nombre {tenantCreateDto.Name} ya existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"El nombre {tenantCreateDto.Name} ya existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    ModelState.AddModelError("NameAlreadyExists", $"El nombre {tenantCreateDto.Name} ya existe en el sistema.");
+                    return BadRequest(ModelState);
+                }
+
+                Tenant modelo = _mapper.Map<Tenant>(tenantCreateDto);
+                modelo.Creation = DateTime.Now;
+                modelo.Update = DateTime.Now;
+
+                await _tenantRepository.Create(modelo);
+                _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
+
+                _response.Result = _mapper.Map<TenantDTO>(modelo);
+                _response.StatusCode = HttpStatusCode.Created;
+
+                // CreatedAtRoute -> Nombre de la ruta (del método): GetCountryDSById
+                // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816172#notes
+                return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return _response;
         }
 
         #endregion

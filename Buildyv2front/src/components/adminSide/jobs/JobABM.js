@@ -29,7 +29,7 @@ import { fetchEstateList } from "../../../store/generalData-actions";
 import { urlEstate } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
 
-const EstateABM = () => {
+const JobABM = () => {
   //#region Const ***********************************
 
   const location = useLocation();
@@ -250,7 +250,7 @@ const EstateABM = () => {
           <CCard>
             <CCardBody>
               <CCardTitle>
-                {editMode ? "Modificar una propiedad" : "Agregar una propiedad"}
+                {editMode ? "Modificar una obra" : "Agregar una obra"}
               </CCardTitle>
               <br />
               <CInputGroup>
@@ -380,4 +380,4 @@ const EstateABM = () => {
   );
 };
 
-export default EstateABM;
+export default JobABM;

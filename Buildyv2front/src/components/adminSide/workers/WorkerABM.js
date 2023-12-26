@@ -25,24 +25,19 @@ import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchEstateList } from "../../../store/generalData-actions";
-import { urlEstate } from "../../../endpoints";
+import { fetchWorkerList } from "../../../store/generalData-actions";
+import { urlWorker } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
 
-const EstateABM = () => {
+const WorkerABM = () => {
   //#region Const ***********************************
 
   const location = useLocation();
-  const estate = location.state?.estate;
+  const worker = location.state?.worker;
   const editMode = location.state?.editMode ? location.state?.editMode : false;
 
   const [isValidForm, setIsValidForm] = useState(true);
   const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
-
-  const [inputHasErrorCity, setInputHasErrorCity] = useState(false);
-
-  const [latLong, setLatLong] = useState({ lat: null, lon: null });
-  const [addressError, setAddressError] = useState("");
 
   // redux
   const dispatch = useDispatch();
@@ -62,13 +57,14 @@ const EstateABM = () => {
   const cityList = useSelector((state) => state.generalData.cityList);
   const provinceList = useSelector((state) => state.generalData.provinceList);
   const countryList = useSelector((state) => state.generalData.countryList);
+  const jobList = useSelector((state) => state.generalData.jobList);
 
-  const defaultCityId = estate?.cityDS?.id || null;
-  const defaultCity = cityList.find((city) => city.id === defaultCityId);
-  const [ddlSelectedCity, setDdlSelectedCity] = useState(defaultCity || null);
+  const defaultJobId = worker?.job?.id || null;
+  const defaultJob = jobList.find((job) => job.id === defaultJobId);
+  const [ddlSelectedJob, setDdlSelectedJob] = useState(defaultJob || null);
 
   const {
-    value: estateName,
+    value: name,
     isValid: inputIsValidName,
     hasError: inputHasErrorName,
     valueChangeHandler: inputChangeHandlerName,
@@ -77,24 +73,50 @@ const EstateABM = () => {
   } = useInput(
     (value) => value.trim() !== "", // validateValue function
     null, // onChangeCallback
-    estate ? estate.name : ""
+    worker ? worker.name : ""
   );
 
   const {
-    value: estateAddress,
-    isValid: inputIsValidAddress,
-    hasError: inputHasErrorAddress,
-    valueChangeHandler: inputChangeHandlerAddress,
-    inputBlurHandler: inputBlurHandlerAddress,
-    reset: inputResetAddress,
+    value: phone,
+    isValid: inputIsValidPhone,
+    hasError: inputHasErrorPhone,
+    valueChangeHandler: inputChangeHandlerPhone,
+    inputBlurHandler: inputBlurHandlerPhone,
+    reset: inputResetPhone,
   } = useInput(
-    (value) => value.trim() !== "", // validateValue function
+    (value) => /^[0-9]{9}$/.test(value.trim()), // validateValue function
     null, // onChangeCallback
-    estate ? estate.address : ""
+    worker ? worker.Phone : ""
   );
 
   const {
-    value: estateComments,
+    value: email,
+    isValid: inputIsValidEmail,
+    hasError: inputHasErrorEmail,
+    valueChangeHandler: inputChangeHandlerEmail,
+    inputBlurHandler: inputBlurHandlerEmail,
+    reset: inputResetEmail,
+  } = useInput(
+    (value) => true,
+    null, // onChangeCallback
+    worker ? worker.Email : ""
+  );
+
+  const {
+    value: document,
+    isValid: inputIsValidDocument,
+    hasError: inputHasErrorDocument,
+    valueChangeHandler: inputChangeHandlerDocument,
+    inputBlurHandler: inputBlurHandlerDocument,
+    reset: inputResetDocument,
+  } = useInput(
+    (value) => true,
+    null, // onChangeCallback
+    worker ? worker.Document : ""
+  );
+
+  const {
+    value: comments,
     isValid: inputIsValidComments,
     hasError: inputHasErrorComments,
     valueChangeHandler: inputChangeHandlerComments,
@@ -103,7 +125,7 @@ const EstateABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    estate ? estate.comments : ""
+    worker ? worker.comments : ""
   );
 
   //#endregion Const ***********************************
@@ -117,128 +139,49 @@ const EstateABM = () => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
-    // Verificar si se seleccionó una provincia
-    const inputIsValidCity = ddlSelectedCity !== null;
-    if (!inputIsValidCity) {
-      setInputHasErrorCity(true);
-      return;
-    }
-
     setIsValidForm(
       inputIsValidName &&
-        inputIsValidAddress &&
-        inputIsValidComments &&
-        inputIsValidCity
+        inputIsValidPhone &&
+        inputIsValidEmail &&
+        inputIsValidDocument &&
+        inputIsValidComments
     );
 
     if (!isValidForm) {
       return;
     }
 
-    setAddressError(""); // Limpiar errores previos
+    const dataToUpload = {
+      Name: name,
+      Phone: phone,
+      Email: email.trim() === "" ? null : email, // Asigna null si el email está vacío
+      IdentityDocument: document,
+      Comments: comments,
+      JobId: ddlSelectedJob ? ddlSelectedJob.id : null,
+    };
+    console.log("dataToUpload:", dataToUpload);
 
-    await verifyAddress(); // Verificar dirección y obtener latitud y longitud
-    console.log("latLong después de verifyAddress:", latLong);
+    try {
+      await uploadData(dataToUpload, urlWorker);
+      dispatch(fetchWorkerList());
 
-    if (latLong && latLong.lat) {
-      const dataToUpload = {
-        Name: estateName,
-        Address: estateAddress,
-        Comments: estateComments,
-        CityDSId: ddlSelectedCity.id,
-        LatLong: `${latLong.lat},${latLong.lon}`,
-        GoogleMapsURL: `https://www.google.com/maps/search/${latLong.lat},${latLong.lon}`,
-      };
-      console.log("dataToUpload:", dataToUpload);
-
-      try {
-        await uploadData(dataToUpload, urlEstate);
-        dispatch(fetchEstateList());
-
-        inputResetName();
-        inputResetAddress();
-        inputResetComments();
-        inputResetCity();
-      } catch (error) {
-        console.error("Error al enviar los datos:", error);
-        if (error === "Dirección no encontrada.") {
-          setAddressError(true);
-        }
-      }
-    } else {
-      console.error("Error al enviar los datos");
-      setAddressError(true);
+      inputResetName();
+      inputResetPhone();
+      inputResetEmail();
+      inputResetDocument();
+      inputResetComments();
+      inputResetJob();
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
     }
-  };
-
-  const handleSelectDdlCity = (item) => {
-    setDdlSelectedCity(item);
   };
 
   //#endregion Events ***********************************
 
   //#region Functions ***********************************
-  const inputResetCity = () => {
-    setDdlSelectedCity(null);
-    setInputHasErrorCity(false);
-  };
 
-  const verifyAddress = () => {
-    return new Promise(async (resolve, reject) => {
-      if (!ddlSelectedCity) {
-        console.error("Ciudad no seleccionada");
-        reject("Ciudad no seleccionada");
-        return;
-      }
-
-      let citycode = ddlSelectedCity.nominatimCityCode;
-      let countrycode = "";
-      const selectedProvince = provinceList.find(
-        (p) => p.id === ddlSelectedCity.provinceDSId
-      );
-      if (selectedProvince) {
-        const selectedCountry = countryList.find(
-          (c) => c.id === selectedProvince.countryDSId
-        );
-        if (selectedCountry) {
-          countrycode = selectedCountry.nominatimCountryCode;
-        }
-      }
-
-      if (!citycode || !countrycode) {
-        console.error("Códigos de ciudad o país no encontrados");
-        reject("Códigos de ciudad o país no encontrados");
-        return;
-      }
-
-      try {
-        const query = `${estateAddress}, ${citycode}, ${countrycode}`;
-        const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&citycode=${encodeURIComponent(
-          citycode
-        )}&countrycode=${encodeURIComponent(
-          countrycode
-        )}&q=${encodeURIComponent(query)}`;
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Error en la solicitud: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.length === 0) {
-          setAddressError("Dirección no encontrada.");
-          // reject("Dirección no encontrada.");
-          return;
-        }
-        const { lat, lon } = data[0];
-        console.log("Coordenadas obtenidas:", lat, lon);
-
-        setLatLong({ lat, lon });
-        resolve({ lat, lon });
-      } catch (error) {
-        console.error("Error al verificar la dirección:", error);
-        setAddressError("Error al verificar la dirección");
-        // reject("Error al verificar la dirección");
-      }
-    });
+  const inputResetJob = () => {
+    setDdlSelectedJob(null);
   };
 
   //#endregion Functions ***********************************
@@ -250,19 +193,19 @@ const EstateABM = () => {
           <CCard>
             <CCardBody>
               <CCardTitle>
-                {editMode ? "Modificar una propiedad" : "Agregar una propiedad"}
+                {editMode ? "Modificar un trabajador" : "Agregar un trabajador"}
               </CCardTitle>
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Nombre propiedad
+                  Nombre completo
                 </CInputGroupText>
                 <CFormInput
                   type="text"
                   className="cardItem"
                   onChange={inputChangeHandlerName}
                   onBlur={inputBlurHandlerName}
-                  value={estateName}
+                  value={name}
                 />
                 {inputHasErrorName && (
                   <CAlert color="danger" className="w-100">
@@ -273,18 +216,54 @@ const EstateABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Dirección
+                  Celular
                 </CInputGroupText>
                 <CFormInput
                   type="text"
                   className="cardItem"
-                  onChange={inputChangeHandlerAddress}
-                  onBlur={inputBlurHandlerAddress}
-                  value={estateAddress}
+                  onChange={inputChangeHandlerPhone}
+                  onBlur={inputBlurHandlerPhone}
+                  value={phone}
                 />
-                {addressError && (
+                {inputHasErrorPhone && (
                   <CAlert color="danger" className="w-100">
-                    {addressError}
+                    Entrada inválida
+                  </CAlert>
+                )}
+              </CInputGroup>
+              <br />
+              <CInputGroup>
+                <CInputGroupText className="cardItem custom-input-group-text">
+                  Email
+                </CInputGroupText>
+                <CFormInput
+                  type="text"
+                  className="cardItem"
+                  onChange={inputChangeHandlerEmail}
+                  onBlur={inputBlurHandlerEmail}
+                  value={email}
+                />
+                {inputHasErrorEmail && (
+                  <CAlert color="danger" className="w-100">
+                    Entrada inválida
+                  </CAlert>
+                )}
+              </CInputGroup>
+              <br />
+              <CInputGroup>
+                <CInputGroupText className="cardItem custom-input-group-text">
+                  Cédula
+                </CInputGroupText>
+                <CFormInput
+                  type="text"
+                  className="cardItem"
+                  onChange={inputChangeHandlerDocument}
+                  onBlur={inputBlurHandlerDocument}
+                  value={document}
+                />
+                {inputHasErrorDocument && (
+                  <CAlert color="danger" className="w-100">
+                    Entrada inválida
                   </CAlert>
                 )}
               </CInputGroup>
@@ -298,7 +277,7 @@ const EstateABM = () => {
                   className="cardItem"
                   onChange={inputChangeHandlerComments}
                   onBlur={inputBlurHandlerComments}
-                  value={estateComments}
+                  value={comments}
                 />
                 {inputHasErrorComments && (
                   <CAlert color="danger" className="w-100">
@@ -309,35 +288,30 @@ const EstateABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Ciudad
+                  Obra
                 </CInputGroupText>
                 {/*  */}
                 <CDropdown>
-                  <CDropdownToggle id="ddCity" color="secondary">
-                    {ddlSelectedCity ? ddlSelectedCity.name : "Seleccionar"}
+                  <CDropdownToggle id="ddJob" color="secondary">
+                    {ddlSelectedJob ? ddlSelectedJob.name : "Seleccionar"}
                   </CDropdownToggle>
                   <CDropdownMenu>
-                    {cityList &&
-                      cityList.length > 0 &&
-                      cityList.map((city) => (
+                    {jobList &&
+                      jobList.length > 0 &&
+                      jobList.map((job) => (
                         <CDropdownItem
-                          key={city.id}
-                          onClick={() => handleSelectDdlCity(city)}
+                          key={job.id}
+                          onClick={() => handleSelectDdlJob(job)}
                           style={{ cursor: "pointer" }}
-                          value={city.id}
+                          value={job.id}
                         >
-                          {city.id}: {city.name}
+                          {job.id}: {job.name}
                         </CDropdownItem>
                       ))}
                   </CDropdownMenu>
                 </CDropdown>
 
                 {/*  */}
-                {inputHasErrorCity && (
-                  <CAlert color="danger" className="w-100">
-                    Entrada inválida
-                  </CAlert>
-                )}
               </CInputGroup>
               <br />
               <CRow className="justify-content-center">
@@ -380,4 +354,4 @@ const EstateABM = () => {
   );
 };
 
-export default EstateABM;
+export default WorkerABM;

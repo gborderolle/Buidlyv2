@@ -21,6 +21,13 @@ namespace Buildyv2.Utilities
                 .ForMember(dest => dest.CityDS, opt => opt.Ignore()) // Ignorar este campo
                 .ReverseMap();
 
+            CreateMap<WorkerCreateDTO, Worker>()
+    .ForMember(dest => dest.JobId, opt => opt.MapFrom(src => src.JobId.HasValue ? src.JobId.Value : (int?)null))
+    .ReverseMap();
+
+            CreateMap<TenantCreateDTO, Tenant>().ReverseMap();
+
+
             CreateMap<CountryDS, CountryDSDTO>().ReverseMap();
             CreateMap<CountryDSCreateDTO, CountryDS>().ReverseMap();
 

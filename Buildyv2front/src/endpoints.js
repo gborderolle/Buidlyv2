@@ -6,6 +6,7 @@ export const urlEstate = `${apiURL}/estates`;
 export const urlJob = `${apiURL}/jobs`;
 export const urlRent = `${apiURL}/rents`;
 export const urlWorker = `${apiURL}/workers`;
+export const urlTenant = `${apiURL}/tenants`;
 export const urlCity = `${apiURL}/cities`;
 export const urlProvince = `${apiURL}/provinces`;
 export const urlCountry = `${apiURL}/countries`;

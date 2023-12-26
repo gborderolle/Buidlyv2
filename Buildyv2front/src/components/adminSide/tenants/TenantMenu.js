@@ -232,8 +232,8 @@ const TenantMenu = () => {
                   <tr>
                     <th>#</th>
                     <th>Nombre</th>
-                    <th>Teléfono 1</th>
-                    <th>Teléfono 2</th>
+                    <th>Celular 1</th>
+                    <th>Celular 2</th>
                     <th>Email</th>
                     <th>Cédula</th>
                     <th>Comentarios</th>

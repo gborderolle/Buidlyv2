@@ -10,6 +10,7 @@ using System.Net;
 using Buildyv2.DTOs;
 using Buildyv2.Models;
 using Buildyv2.Utilities;
+using Buildyv2.Repository;
 
 namespace Buildyv2.Controllers.V1
 {
@@ -81,7 +82,48 @@ namespace Buildyv2.Controllers.V1
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromBody] WorkerCreateDTO workerCreateDto)
         {
-            return Ok();
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
+                if (await _workerRepository.Get(v => v.Name.ToLower() == workerCreateDto.Name.ToLower()) != null)
+                {
+                    _logger.LogError($"El nombre {workerCreateDto.Name} ya existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"El nombre {workerCreateDto.Name} ya existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    ModelState.AddModelError("NameAlreadyExists", $"El nombre {workerCreateDto.Name} ya existe en el sistema.");
+                    return BadRequest(ModelState);
+                }
+
+                Worker modelo = _mapper.Map<Worker>(workerCreateDto);
+                modelo.Creation = DateTime.Now;
+                modelo.Update = DateTime.Now;
+
+                await _workerRepository.Create(modelo);
+                _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
+
+                _response.Result = _mapper.Map<WorkerDTO>(modelo);
+                _response.StatusCode = HttpStatusCode.Created;
+
+                // CreatedAtRoute -> Nombre de la ruta (del método): GetCountryDSById
+                // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816172#notes
+                return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return _response;
         }
 
         #endregion

@@ -231,7 +231,7 @@ const WorkerMenu = () => {
                   <tr>
                     <th>#</th>
                     <th>Nombre</th>
-                    <th>Teléfono</th>
+                    <th>Celular</th>
                     <th>Email</th>
                     <th>Cédula</th>
                     <th>Comentarios</th>
