@@ -212,7 +212,8 @@ const EstateABM = () => {
       }
 
       try {
-        const query = `${estateAddress}, ${citycode}, ${countrycode}`;
+        //const query = `${estateAddress}, ${citycode}, ${countrycode}`;
+        const query = `${estateAddress}`;
         const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&citycode=${encodeURIComponent(
           citycode
         )}&countrycode=${encodeURIComponent(
@@ -223,16 +224,24 @@ const EstateABM = () => {
           throw new Error(`Error en la solicitud: ${response.status}`);
         }
         const data = await response.json();
-        if (data.length === 0) {
-          setAddressError("Dirección no encontrada.");
-          // reject("Dirección no encontrada.");
+
+        // Filtrar por la ciudad seleccionada
+        const matchingAddresses = data.filter(
+          (item) => item.address.city === ddlSelectedCity.name
+        );
+
+        if (matchingAddresses.length === 0) {
+          setAddressError(
+            "Dirección no encontrada para la ciudad seleccionada."
+          );
           return;
         }
-        const { lat, lon } = data[0];
-        console.log("Coordenadas obtenidas:", lat, lon);
 
+        // Asumir que se toma el primer resultado coincidente
+        const { lat, lon } = matchingAddresses[0];
         setLatLong({ lat, lon });
         resolve({ lat, lon });
+        console.log("Coordenadas obtenidas:", lat, lon);
       } catch (error) {
         console.error("Error al verificar la dirección:", error);
         setAddressError("Error al verificar la dirección");

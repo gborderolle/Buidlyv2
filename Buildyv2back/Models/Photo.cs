@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using Buildyv2.Validations;
 
 namespace Buildyv2.Models
 {

@@ -1,0 +1,214 @@
+Estructura de Report (reporte) y Photo (foto).
+Junto a sus respectivos DTO, CreateDTO y su Controller en el Backend.
+
+// Report ---------------------------------------------------------------
+
+    public class Report : IId
+    {
+        #region Internal
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        [StringLength(maximumLength: 100, ErrorMessage = "El campo {0} no puede tener más de {1} caracteres")]
+        [FirstCharCapitalValidation]
+        public string Name { get; set; }
+
+        public DateTime Creation { get; set; } = DateTime.Now;
+
+        public DateTime Update { get; set; } = DateTime.Now;
+
+        public string Comments { get; set; }
+
+        // Uniques
+        public List<Photo> ListPhotos { get; set; }
+
+        #endregion
+
+        #region External
+
+        [Required(ErrorMessage = "El campo {0} es requerido")] // n..0 (0=no existe este sin el padre)
+        public int EstateId { get; set; }
+        public Estate Estate { get; set; }
+
+        #endregion
+    }
+
+    public class ReportDTO
+    {
+        #region Internal
+
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public DateTime Creation { get; set; } = DateTime.Now;
+
+        public DateTime Update { get; set; } = DateTime.Now;
+
+        public string Comments { get; set; }
+
+        // Uniques
+        public List<Photo> ListPhotos { get; set; }
+
+        #endregion
+
+        #region External
+
+        public int EstateId { get; set; }
+        public Estate Estate { get; set; }
+
+        #endregion
+
+    }
+
+        public class ReportCreateDTO
+    {
+        #region Internal
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        [StringLength(maximumLength: 100, ErrorMessage = "El campo {0} no puede tener más de {1} caracteres")]
+        [FirstCharCapitalValidation]
+        public string Name { get; set; }
+
+        public DateTime Creation { get; set; } = DateTime.Now;
+
+        public DateTime Update { get; set; } = DateTime.Now;
+
+        public string Comments { get; set; }
+
+        // Uniques
+        public List<Photo> ListPhotos { get; set; }
+
+        #endregion
+
+        #region External
+
+        [Required(ErrorMessage = "El campo {0} es requerido")] // n..0 (0=no existe este sin el padre)
+        public int EstateId { get; set; }
+        public Estate Estate { get; set; }
+
+        #endregion
+
+    }
+
+
+        [ApiController]
+    [HasHeader("x-version", "1")]
+    [Route("api/reports")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class ReportsController : CustomBaseController<Report> // Notice <Report> here
+    {
+        private readonly IReportRepository _reportRepository; // Servicio que contiene la lógica principal de negocio para Reports.
+
+        public ReportsController(ILogger<ReportsController> logger, IMapper mapper, IReportRepository reportRepository)
+        : base(mapper, logger, reportRepository)
+        {
+            _response = new();
+            _reportRepository = reportRepository;
+        }
+
+        #region Endpoints genéricos
+
+        [HttpGet("GetReport")]
+        public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
+        {
+            return await Get<Report, ReportDTO>(paginationDTO: paginationDTO);
+        }
+
+        [HttpGet("all")]
+        [AllowAnonymous]
+        public async Task<ActionResult<APIResponse>> All()
+        {
+            var reports = await _reportRepository.GetAll();
+            _response.Result = _mapper.Map<List<ReportDTO>>(reports);
+            _response.StatusCode = HttpStatusCode.OK;
+            return _response;
+        }
+
+        [HttpGet("{id:int}")] // url completa: https://localhost:7003/api/Reports/1
+        public async Task<ActionResult<APIResponse>> Get([FromRoute] int id)
+        {
+            // 1..n
+            var includes = new List<IncludePropertyConfiguration<Report>>
+            {
+                    new IncludePropertyConfiguration<Report>
+                    {
+                        IncludeExpression = b => b.ListPhotos
+                    },
+                };
+            return await Get<Report, ReportDTO>(includes: includes);
+        }
+
+        [HttpDelete("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
+        public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
+        {
+            return await Delete<Report>(id);
+        }
+
+        [HttpPut("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
+        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] ReportCreateDTO reportCreateDTO)
+        {
+            return await Put<ReportCreateDTO, ReportDTO, Report>(id, reportCreateDTO);
+        }
+
+        [HttpPatch("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
+        public async Task<ActionResult<APIResponse>> Patch(int id, [FromBody] JsonPatchDocument<ReportPatchDTO> patchDto)
+        {
+            return await Patch<Report, ReportPatchDTO>(id, patchDto);
+        }
+
+        #endregion
+
+        #region Endpoints específicos
+
+        [HttpPost(Name = "CreateReport")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
+        public async Task<ActionResult<APIResponse>> Post([FromBody] ReportCreateDTO reportCreateDto)
+        {
+            return Ok();
+        }
+
+        #endregion
+
+        #region Private methods
+
+        #endregion
+
+    }
+
+
+// ---------------------------------------------------------------
+
+
+public class Photo
+{
+    #region Internal
+
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+
+    public DateTime Creation { get; set; } = DateTime.Now;
+
+    public DateTime Update { get; set; } = DateTime.Now;
+
+    // Uniques
+    [Required(ErrorMessage = "El campo {0} es requerido")]
+    public string URL { get; set; }
+
+    #endregion
+
+    #region External
+
+    #endregion
+}

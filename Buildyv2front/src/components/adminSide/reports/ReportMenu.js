@@ -26,7 +26,7 @@ import useBumpEffect from "../../../utils/useBumpEffect";
 // redux imports
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
-import { fetchJobList } from "../../../store/generalData-actions";
+import { fetchReportList } from "../../../store/generalData-actions";
 
 import "./ReportMenu.css";
 
@@ -228,9 +228,11 @@ const ReportMenu = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th>Casa</th>
                     <th>Dirección</th>
-                    <th>Alquilada</th>
+                    <th>Reporte</th>
+                    <th>Comentarios</th>
                     <th>Opciones</th>
                   </tr>
                 </thead>

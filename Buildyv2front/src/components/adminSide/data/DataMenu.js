@@ -73,7 +73,7 @@ const DataMenu = () => {
         <GroupInputCountry
           title="Agregar país"
           inputName="Nombre"
-          nominatimCode="Código Nominatim"
+          nominatimCode="Código Nominatim [UY]"
           createDataToUpload={countryData}
         />
         <br />

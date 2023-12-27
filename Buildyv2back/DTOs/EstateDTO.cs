@@ -41,7 +41,6 @@ namespace Buildyv2.DTOs
 
         public int PresentRentId { get; set; } = new();
 
-
         #endregion
     }
 }

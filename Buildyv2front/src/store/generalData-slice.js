@@ -6,6 +6,7 @@ const generalDataSlice = createSlice({
     estateList: [],
     jobList: [],
     rentList: [],
+    reportList: [],
     workerList: [],
     tenantList: [],
     countryList: [],
@@ -21,6 +22,9 @@ const generalDataSlice = createSlice({
     },
     setRentList: (state, action) => {
       state.rentList = action.payload;
+    },
+    setReportList: (state, action) => {
+      state.reportList = action.payload;
     },
     setWorkerList: (state, action) => {
       state.workerList = action.payload;

@@ -6,6 +6,7 @@ import {
   urlEstate,
   urlJob,
   urlRent,
+  urlReport,
   urlWorker,
   urlTenant,
   urlCity,
@@ -63,6 +64,19 @@ export const fetchRentList = () => {
       const data = await fetchApi(urlRent + "/GetRent");
       if (data.result) {
         dispatch(generalDataActions.setRentList(data.result));
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+};
+
+export const fetchReportList = () => {
+  return async (dispatch) => {
+    try {
+      const data = await fetchApi(urlReport + "/GetReport");
+      if (data.result) {
+        dispatch(generalDataActions.setReportList(data.result));
       }
     } catch (error) {
       console.error("Fetch error:", error);
