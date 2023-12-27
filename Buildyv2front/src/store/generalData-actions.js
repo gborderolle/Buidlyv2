@@ -7,6 +7,7 @@ import {
   urlJob,
   urlRent,
   urlWorker,
+  urlTenant,
   urlCity,
   urlProvince,
   urlCountry,
@@ -85,7 +86,7 @@ export const fetchWorkerList = () => {
 export const fetchTenantList = () => {
   return async (dispatch) => {
     try {
-      const data = await fetchApi(urlWorker + "/GetTenant");
+      const data = await fetchApi(urlTenant + "/GetTenant");
       if (data.result) {
         dispatch(generalDataActions.setTenantList(data.result));
       }

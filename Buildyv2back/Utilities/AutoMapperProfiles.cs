@@ -24,9 +24,10 @@ namespace Buildyv2.Utilities
             CreateMap<WorkerCreateDTO, Worker>()
     .ForMember(dest => dest.JobId, opt => opt.MapFrom(src => src.JobId.HasValue ? src.JobId.Value : (int?)null))
     .ReverseMap();
+            CreateMap<Worker, WorkerDTO>().ReverseMap();
 
             CreateMap<TenantCreateDTO, Tenant>().ReverseMap();
-
+            CreateMap<Tenant, TenantDTO>().ReverseMap();
 
             CreateMap<CountryDS, CountryDSDTO>().ReverseMap();
             CreateMap<CountryDSCreateDTO, CountryDS>().ReverseMap();

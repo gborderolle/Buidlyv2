@@ -47,10 +47,18 @@ namespace Buildyv2.Controllers.V1
             return _response;
         }
 
-        [HttpGet("{id:int}")] // url completa: https://localhost:7003/api/Workers/1
+        [HttpGet("{id}", Name = "GetWorkerById")] // url completa: https://localhost:7003/api/Estates/1
         public async Task<ActionResult<APIResponse>> Get([FromRoute] int id)
         {
-            return await Get<Worker, WorkerDTO>();
+            // 1..n
+            var includes = new List<IncludePropertyConfiguration<Worker>>
+            {
+                 new IncludePropertyConfiguration<Worker>
+                    {
+                        IncludeExpression = b => b.Job
+                    },
+                };
+            return await Get<Worker, WorkerDTO>(includes: includes);
         }
 
         [HttpDelete("{id:int}")]

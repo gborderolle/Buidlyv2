@@ -86,7 +86,7 @@ const WorkerABM = () => {
   } = useInput(
     (value) => /^[0-9]{9}$/.test(value.trim()), // validateValue function
     null, // onChangeCallback
-    worker ? worker.Phone : ""
+    worker ? worker.phone : ""
   );
 
   const {
@@ -99,7 +99,7 @@ const WorkerABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    worker ? worker.Email : ""
+    worker ? worker.email : ""
   );
 
   const {
@@ -112,7 +112,7 @@ const WorkerABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    worker ? worker.Document : ""
+    worker ? worker.document : ""
   );
 
   const {
@@ -216,7 +216,7 @@ const WorkerABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Celular
+                  Celular [9 dígitos]
                 </CInputGroupText>
                 <CFormInput
                   type="text"

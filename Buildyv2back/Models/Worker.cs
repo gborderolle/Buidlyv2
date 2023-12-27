@@ -35,7 +35,7 @@ namespace Buildyv2.Models
 
         #region External
 
-        public int JobId { get; set; } // n..1 (1=sí existe este sin el padre)
+        public int? JobId { get; set; } // n..1 (1=sí existe este sin el padre)
         public Job Job { get; set; }
 
         #endregion

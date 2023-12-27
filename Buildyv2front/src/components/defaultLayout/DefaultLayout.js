@@ -22,6 +22,7 @@ import {
   fetchJobList,
   fetchRentList,
   fetchWorkerList,
+  fetchTenantList,
   fetchCountryList,
   fetchProvinceList,
   fetchCityList,
@@ -82,6 +83,7 @@ const DefaultLayout = () => {
         dispatch(fetchJobList());
         dispatch(fetchRentList());
         dispatch(fetchWorkerList());
+        dispatch(fetchTenantList());
         dispatch(fetchCountryList());
         dispatch(fetchProvinceList());
         dispatch(fetchCityList());

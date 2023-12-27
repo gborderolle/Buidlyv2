@@ -333,7 +333,7 @@ namespace Buildyv2.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IdentityDocument = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    JobId = table.Column<int>(type: "int", nullable: false)
+                    JobId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -342,8 +342,7 @@ namespace Buildyv2.Migrations
                         name: "FK_Worker_Job_JobId",
                         column: x => x.JobId,
                         principalTable: "Job",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -360,7 +359,7 @@ namespace Buildyv2.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IdentityDocument = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RentId = table.Column<int>(type: "int", nullable: false)
+                    RentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -369,8 +368,7 @@ namespace Buildyv2.Migrations
                         name: "FK_Tenant_Rent_RentId",
                         column: x => x.RentId,
                         principalTable: "Rent",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -416,8 +414,8 @@ namespace Buildyv2.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "611bf88a-a08c-40f8-a72f-93d8aa9c8fe4", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEPQcm1YN3QaVOI5aVxpjsG6EMKJsyyXVF3ibkgYktnW9ZXwpBFYoZImAe9lToC23ng==", null, false, "78f277fb-7a9f-4320-b21e-031311570c53", false, "Sr.Admin" },
-                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "e8feecfa-e733-47a6-aa4c-8263e0d3d1f7", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEJjMOLik03S17PzuevO4jqbaIGLLDy+DRvIXsu+Hn7WJXrOzMoinmvGI6tu+LPhOAg==", null, false, "751d20dc-3f1e-4ea5-82d9-f46c62ed0ac3", false, "Sr.Normal" }
+                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "ba111ca3-ece9-4117-943b-abcaf357f57b", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEE6xejvXFOeUYvI72Ak17LL0mFqLFVR5OsowEPo24o4OxMo4gpajaDZzVRTWwneiyQ==", null, false, "7c286b88-b60b-4e98-88de-30cf5670e7bc", false, "Sr.Admin" },
+                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "9cd4fb6c-da4c-4185-8cd2-55690a3fbc11", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAECwaoNrzmznWxhZ6DU9Q9uYJGuZjJKQTR1/EbRjORlmUGEDdV1ddST3d7cVeQkaJzQ==", null, false, "68060ef9-776d-4ac8-95b1-d8d37319378b", false, "Sr.Normal" }
                 });
 
             migrationBuilder.InsertData(

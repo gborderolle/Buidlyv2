@@ -31,7 +31,7 @@ namespace Buildyv2.DTOs
 
         #region External
 
-        public int RentId { get; set; } // n..1 (1=sí existe este sin el padre)
+        public int? RentId { get; set; } // n..1 (1=sí existe este sin el padre)
 
         #endregion
     }

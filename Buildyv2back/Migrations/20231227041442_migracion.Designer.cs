@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildyv2.Migrations
 {
     [DbContext(typeof(ContextDB))]
-    [Migration("20231213200608_migracion")]
+    [Migration("20231227041442_migracion")]
     partial class migracion
     {
         /// <inheritdoc />
@@ -345,7 +345,7 @@ namespace Buildyv2.Migrations
                     b.Property<string>("Phone2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RentId")
+                    b.Property<int?>("RentId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Update")
@@ -378,7 +378,7 @@ namespace Buildyv2.Migrations
                     b.Property<string>("IdentityDocument")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("JobId")
+                    b.Property<int?>("JobId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -529,15 +529,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "611bf88a-a08c-40f8-a72f-93d8aa9c8fe4",
+                            ConcurrencyStamp = "ba111ca3-ece9-4117-943b-abcaf357f57b",
                             Email = "admin@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@buildy2.uy",
                             NormalizedUserName = "admin@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPQcm1YN3QaVOI5aVxpjsG6EMKJsyyXVF3ibkgYktnW9ZXwpBFYoZImAe9lToC23ng==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEE6xejvXFOeUYvI72Ak17LL0mFqLFVR5OsowEPo24o4OxMo4gpajaDZzVRTWwneiyQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "78f277fb-7a9f-4320-b21e-031311570c53",
+                            SecurityStamp = "7c286b88-b60b-4e98-88de-30cf5670e7bc",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Admin"
                         },
@@ -545,15 +545,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "e0765c93-676c-4199-b7ee-d7877c471821",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e8feecfa-e733-47a6-aa4c-8263e0d3d1f7",
+                            ConcurrencyStamp = "9cd4fb6c-da4c-4185-8cd2-55690a3fbc11",
                             Email = "normal@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "normal@buildy2.uy",
                             NormalizedUserName = "normal@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJjMOLik03S17PzuevO4jqbaIGLLDy+DRvIXsu+Hn7WJXrOzMoinmvGI6tu+LPhOAg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECwaoNrzmznWxhZ6DU9Q9uYJGuZjJKQTR1/EbRjORlmUGEDdV1ddST3d7cVeQkaJzQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "751d20dc-3f1e-4ea5-82d9-f46c62ed0ac3",
+                            SecurityStamp = "68060ef9-776d-4ac8-95b1-d8d37319378b",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Normal"
                         });
@@ -728,9 +728,7 @@ namespace Buildyv2.Migrations
                 {
                     b.HasOne("Buildyv2.Models.Rent", "Rent")
                         .WithMany("ListTenants")
-                        .HasForeignKey("RentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RentId");
 
                     b.Navigation("Rent");
                 });
@@ -739,9 +737,7 @@ namespace Buildyv2.Migrations
                 {
                     b.HasOne("Buildyv2.Models.Job", "Job")
                         .WithMany("ListWorkers")
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("JobId");
 
                     b.Navigation("Job");
                 });

@@ -68,21 +68,23 @@ const WorkerMenu = () => {
 
   //#region Hooks ***********************************
 
-  const filteredWorkerList = workerList.filter((estate) => {
-    const nameMatch = estate.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const addressMatch = estate.address
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const rentedMatch =
-      estate.rented !== undefined
-        ? estate.rented
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-        : false;
-    return nameMatch || addressMatch || rentedMatch;
+  const filteredWorkerList = workerList.filter((worker) => {
+    const match1 = worker.name
+      ? worker.name.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match2 = worker.phone
+      ? worker.phone.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match3 = worker.email
+      ? worker.email.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match4 = worker.identityDocument
+      ? worker.identityDocument.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match5 = worker.comments
+      ? worker.comments.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    return match1 || match2 || match3 || match4 || match5;
   });
 
   useEffect(() => {
@@ -110,7 +112,7 @@ const WorkerMenu = () => {
 
   //#region Functions ***********************************
 
-  const renderEstateRows = () => {
+  const renderWorkerRows = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentWorkers = filteredWorkerList.slice(
@@ -172,20 +174,20 @@ const WorkerMenu = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  function navigateToProperty(estate) {
-    navigate("/abm-job", { state: { estate, editMode: true } });
+  function navigateToProperty(worker) {
+    navigate("/abm-worker", { state: { worker, editMode: true } });
   }
 
-  function navigateToWorks(estate) {
-    navigate("/workMenu", { state: { estate } });
+  function navigateToWorks(worker) {
+    navigate("/workMenu", { state: { worker } });
   }
 
-  function navigateToReports(estate) {
-    navigate("/reportMenu", { state: { estate } });
+  function navigateToReports(worker) {
+    navigate("/reportMenu", { state: { worker } });
   }
 
-  function navigateToRent(estate) {
-    navigate("/rentMenu", { state: { estate } });
+  function navigateToRent(worker) {
+    navigate("/rentMenu", { state: { worker } });
   }
 
   //#endregion Functions ***********************************
@@ -238,7 +240,7 @@ const WorkerMenu = () => {
                     <th>Opciones</th>
                   </tr>
                 </thead>
-                <tbody>{renderEstateRows()}</tbody>
+                <tbody>{renderWorkerRows()}</tbody>
               </CTable>
             </div>
           </CRow>

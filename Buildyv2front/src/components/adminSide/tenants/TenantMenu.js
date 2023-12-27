@@ -69,20 +69,25 @@ const TenantMenu = () => {
   //#region Hooks ***********************************
 
   const filteredTenantList = tenantList.filter((tenant) => {
-    const nameMatch = tenant.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const addressMatch = tenant.address
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const rentedMatch =
-      tenant.rented !== undefined
-        ? tenant.rented
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-        : false;
-    return nameMatch || addressMatch || rentedMatch;
+    const match1 = tenant.name
+      ? tenant.name.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match2 = tenant.phone1
+      ? tenant.phone1.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match3 = tenant.email
+      ? tenant.email.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match4 = tenant.identityDocument
+      ? tenant.identityDocument.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match5 = tenant.comments
+      ? tenant.comments.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match6 = tenant.phone2
+      ? tenant.phone2.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    return match1 || match2 || match3 || match4 || match5 || match6;
   });
 
   useEffect(() => {
@@ -174,7 +179,7 @@ const TenantMenu = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   function navigateToProperty(tenant) {
-    navigate("/abm-job", { state: { tenant, editMode: true } });
+    navigate("/abm-tenant", { state: { tenant, editMode: true } });
   }
 
   function navigateToWorks(tenant) {

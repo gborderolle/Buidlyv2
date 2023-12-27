@@ -35,8 +35,6 @@ const TenantABM = () => {
   const [isValidForm, setIsValidForm] = useState(true);
   const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
 
-  const [isEditing, setIsEditing] = useState(false);
-
   // redux
   const dispatch = useDispatch();
 
@@ -79,20 +77,19 @@ const TenantABM = () => {
   } = useInput(
     (value) => /^[0-9]{9}$/.test(value.trim()), // validateValue function
     null, // onChangeCallback
-    tenant ? tenant.Phone1 : ""
+    tenant ? tenant.phone1 : ""
   );
 
   const {
     value: phone2,
-    isValid: inputIsValidPhone2,
     hasError: inputHasErrorPhone2,
     valueChangeHandler: inputChangeHandlerPhone2,
     inputBlurHandler: inputBlurHandlerPhone2,
     reset: inputResetPhone2,
   } = useInput(
-    (value) => value.trim() === "" || /^[0-9]{9}$/.test(value.trim()), // válido si está vacío o si cumple el formato
+    (value) => true,
     null, // onChangeCallback
-    tenant ? tenant.Phone2 : ""
+    tenant ? tenant.phone2 : ""
   );
 
   const {
@@ -105,7 +102,7 @@ const TenantABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    tenant ? tenant.Email : ""
+    tenant ? tenant.email : ""
   );
 
   const {
@@ -118,7 +115,7 @@ const TenantABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    tenant ? tenant.Document : ""
+    tenant ? tenant.document : ""
   );
 
   const {
@@ -218,7 +215,7 @@ const TenantABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Celular 1
+                  Celular [9 dígitos]
                 </CInputGroupText>
                 <CFormInput
                   type="text"
@@ -236,7 +233,7 @@ const TenantABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Celular 2
+                  Teléfono 2
                 </CInputGroupText>
                 <CFormInput
                   type="text"
