@@ -123,7 +123,17 @@ const EstateMenu = () => {
         <td>{index + 1}</td>
         <td>{estate.name}</td>
         <td>{estate.address}</td>
-        <td>{estate.rented ? "Sí" : "No"}</td>
+        <td>
+          {estate.listRents &&
+          estate.listRents.length > 0 &&
+          estate.listRents[0].listTenants &&
+          estate.listRents[0].listTenants.length > 0
+            ? estate.listRents[0].listTenants[0].name
+            : ""}
+        </td>
+        <td>
+          {estate.PresentRentId > 0 && estate.listRents.length > 0 ? estate.listRents?.[0].MonthlyValue : ""}
+        </td>
         <td>{estate.comments}</td>
         <td>
           <button
@@ -231,7 +241,8 @@ const EstateMenu = () => {
                     <th>#</th>
                     <th>Nombre</th>
                     <th>Dirección</th>
-                    <th>Alquilada</th>
+                    <th>Inquilino</th>
+                    <th>Alquiler $</th>
                     <th>Comentarios</th>
                     <th>Opciones</th>
                   </tr>

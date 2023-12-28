@@ -148,6 +148,9 @@ namespace Buildyv2.Migrations
                     b.Property<decimal>("LabourCost")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("Month")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -294,6 +297,9 @@ namespace Buildyv2.Migrations
 
                     b.Property<int>("EstateId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Month")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -526,15 +532,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ba111ca3-ece9-4117-943b-abcaf357f57b",
+                            ConcurrencyStamp = "3a921002-135a-4a60-84f5-ee008cf514db",
                             Email = "admin@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@buildy2.uy",
                             NormalizedUserName = "admin@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEE6xejvXFOeUYvI72Ak17LL0mFqLFVR5OsowEPo24o4OxMo4gpajaDZzVRTWwneiyQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGNu8He4HCySKY7hI/DrmFW6XarjNADsU6SOU1GQAA9z0LbPvvOA61hl0DX/dTwpbQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7c286b88-b60b-4e98-88de-30cf5670e7bc",
+                            SecurityStamp = "8102a647-3b5f-418c-96b9-15ce712cb3ca",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Admin"
                         },
@@ -542,15 +548,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "e0765c93-676c-4199-b7ee-d7877c471821",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9cd4fb6c-da4c-4185-8cd2-55690a3fbc11",
+                            ConcurrencyStamp = "cef13a17-84e0-46b2-bc02-6f8b5146fe9b",
                             Email = "normal@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "normal@buildy2.uy",
                             NormalizedUserName = "normal@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAECwaoNrzmznWxhZ6DU9Q9uYJGuZjJKQTR1/EbRjORlmUGEDdV1ddST3d7cVeQkaJzQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKKf/Wo5VTuLvlLZoYm5xBWOkX2CeyjRxIKN/bW3meLYkj9wVkdviNge24ryxn8QXA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "68060ef9-776d-4ac8-95b1-d8d37319378b",
+                            SecurityStamp = "d001826d-cb26-49fc-b5b5-e939ea61d7e0",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Normal"
                         });

@@ -115,9 +115,11 @@ const JobMenu = () => {
     return currentJobs.map((job, index) => (
       <tr key={job.id}>
         <td>{index + 1}</td>
+        <td>{job.month}</td>
+        <td>{job.estate?.name}</td>
+        <td>{job.estate?.address}</td>
         <td>{job.name}</td>
-        <td>{job.address}</td>
-        <td>{job.rented ? "Sí" : "No"}</td>
+        <td>{job.comments}</td>
         <td>
           <button
             onClick={() => navigateToProperty(job)}
@@ -222,9 +224,11 @@ const JobMenu = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th>Casa</th>
                     <th>Dirección</th>
-                    <th>Alquilada</th>
+                    <th>Obra</th>
+                    <th>Comentarios</th>
                     <th>Opciones</th>
                   </tr>
                 </thead>

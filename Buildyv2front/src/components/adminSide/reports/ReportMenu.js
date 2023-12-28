@@ -121,9 +121,11 @@ const ReportMenu = () => {
     return currentReports.map((report, index) => (
       <tr key={report.id}>
         <td>{index + 1}</td>
+        <td>{report.month}</td>
+        <td>{report.estate?.name}</td>
+        <td>{report.estate?.address}</td>
         <td>{report.name}</td>
-        <td>{report.address}</td>
-        <td>{report.rented ? "Sí" : "No"}</td>
+        <td>{report.comments}</td>
         <td>
           <button
             onClick={() => navigateToProperty(report)}

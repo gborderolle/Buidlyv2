@@ -252,6 +252,7 @@ namespace Buildyv2.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Month = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Update = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -304,6 +305,7 @@ namespace Buildyv2.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Month = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Update = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -414,8 +416,8 @@ namespace Buildyv2.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "ba111ca3-ece9-4117-943b-abcaf357f57b", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEE6xejvXFOeUYvI72Ak17LL0mFqLFVR5OsowEPo24o4OxMo4gpajaDZzVRTWwneiyQ==", null, false, "7c286b88-b60b-4e98-88de-30cf5670e7bc", false, "Sr.Admin" },
-                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "9cd4fb6c-da4c-4185-8cd2-55690a3fbc11", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAECwaoNrzmznWxhZ6DU9Q9uYJGuZjJKQTR1/EbRjORlmUGEDdV1ddST3d7cVeQkaJzQ==", null, false, "68060ef9-776d-4ac8-95b1-d8d37319378b", false, "Sr.Normal" }
+                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "3a921002-135a-4a60-84f5-ee008cf514db", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEGNu8He4HCySKY7hI/DrmFW6XarjNADsU6SOU1GQAA9z0LbPvvOA61hl0DX/dTwpbQ==", null, false, "8102a647-3b5f-418c-96b9-15ce712cb3ca", false, "Sr.Admin" },
+                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "cef13a17-84e0-46b2-bc02-6f8b5146fe9b", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEKKf/Wo5VTuLvlLZoYm5xBWOkX2CeyjRxIKN/bW3meLYkj9wVkdviNge24ryxn8QXA==", null, false, "d001826d-cb26-49fc-b5b5-e939ea61d7e0", false, "Sr.Normal" }
                 });
 
             migrationBuilder.InsertData(

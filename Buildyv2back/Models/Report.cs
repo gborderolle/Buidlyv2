@@ -17,6 +17,8 @@ namespace Buildyv2.Models
         [FirstCharCapitalValidation]
         public string Name { get; set; }
 
+        public string Month { get; set; }
+
         public DateTime Creation { get; set; } = DateTime.Now;
 
         public DateTime Update { get; set; } = DateTime.Now;
