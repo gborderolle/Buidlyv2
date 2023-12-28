@@ -27,6 +27,7 @@ namespace Buildyv2.Models
 
         #region External
 
+        public int CountryDSId { get; set; }
         public CountryDS CountryDS { get; set; }
 
         #endregion

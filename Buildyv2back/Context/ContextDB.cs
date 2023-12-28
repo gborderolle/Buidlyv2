@@ -98,7 +98,25 @@ namespace Buildyv2.Context
 
         private void SeedEntities(ModelBuilder modelBuilder)
         {
+            var country1 = new CountryDS() { Id = 1, Name = "Uruguay", NominatimCountryCode = "UY" };
+            modelBuilder.Entity<CountryDS>().HasData(new List<CountryDS>
+            {
+                country1
+            });
 
+            var province1 = new ProvinceDS() { Id = 1, Name = "Cerro Largo", CountryDSId = 1, NominatimProvinceCode = "CL" };
+            var province2 = new ProvinceDS() { Id = 2, Name = "Montevideo", CountryDSId = 1, NominatimProvinceCode = "MO" };
+            modelBuilder.Entity<ProvinceDS>().HasData(new List<ProvinceDS>
+            {
+                province1,province2
+            });
+
+            var city1 = new CityDS { Id = 1, Name = "Melo", ProvinceDSId = 1, NominatimCityCode = "ME" };
+            var city2 = new CityDS() { Id = 2, Name = "Montevideo", ProvinceDSId = 2, NominatimCityCode = "MO" };
+            modelBuilder.Entity<CityDS>().HasData(new List<CityDS>
+            {
+                city1,city2
+            });
         }
 
         private void SeedLists(ModelBuilder modelBuilder)

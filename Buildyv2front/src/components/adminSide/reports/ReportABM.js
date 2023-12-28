@@ -33,16 +33,13 @@ const ReportABM = () => {
   //#region Const ***********************************
 
   const location = useLocation();
-  const estate = location.state?.estate;
+  const report = location.state?.report;
   const editMode = location.state?.editMode ? location.state?.editMode : false;
 
   const [isValidForm, setIsValidForm] = useState(true);
   const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
 
-  const [inputHasErrorCity, setInputHasErrorCity] = useState(false);
-
-  const [latLong, setLatLong] = useState({ lat: null, lon: null });
-  const [addressError, setAddressError] = useState("");
+  const [inputHasErrorEstate, setInputHasErrorEstate] = useState(false);
 
   // redux
   const dispatch = useDispatch();
@@ -59,16 +56,18 @@ const ReportABM = () => {
   //#endregion RUTA PROTEGIDA
 
   // Redux
-  const cityList = useSelector((state) => state.generalData.cityList);
-  const provinceList = useSelector((state) => state.generalData.provinceList);
-  const countryList = useSelector((state) => state.generalData.countryList);
+  const estateList = useSelector((state) => state.generalData.estateList);
 
-  const defaultCityId = estate?.cityDS?.id || null;
-  const defaultCity = cityList.find((city) => city.id === defaultCityId);
-  const [ddlSelectedCity, setDdlSelectedCity] = useState(defaultCity || null);
+  const defaultEstateId = report?.estate?.id || null;
+  const defaultEstate = estateList.find(
+    (estate) => report?.estate?.id === defaultEstateId
+  );
+  const [ddlSelectedEstate, setDdlSelectedEstate] = useState(
+    defaultEstate || null
+  );
 
   const {
-    value: estateName,
+    value: reportName,
     isValid: inputIsValidName,
     hasError: inputHasErrorName,
     valueChangeHandler: inputChangeHandlerName,
@@ -77,24 +76,24 @@ const ReportABM = () => {
   } = useInput(
     (value) => value.trim() !== "", // validateValue function
     null, // onChangeCallback
-    estate ? estate.name : ""
+    report ? report.name : ""
   );
 
   const {
-    value: estateAddress,
-    isValid: inputIsValidAddress,
-    hasError: inputHasErrorAddress,
-    valueChangeHandler: inputChangeHandlerAddress,
-    inputBlurHandler: inputBlurHandlerAddress,
-    reset: inputResetAddress,
+    value: reportMonth,
+    isValid: inputIsValidMonth,
+    hasError: inputHasErrorMonth,
+    valueChangeHandler: inputChangeHandlerMonth,
+    inputBlurHandler: inputBlurHandlerMonth,
+    reset: inputResetMonth,
   } = useInput(
     (value) => value.trim() !== "", // validateValue function
     null, // onChangeCallback
-    estate ? estate.address : ""
+    report ? report.month : ""
   );
 
   const {
-    value: estateComments,
+    value: reportComments,
     isValid: inputIsValidComments,
     hasError: inputHasErrorComments,
     valueChangeHandler: inputChangeHandlerComments,
@@ -103,7 +102,7 @@ const ReportABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    estate ? estate.comments : ""
+    report ? report.comments : ""
   );
 
   //#endregion Const ***********************************
@@ -118,127 +117,54 @@ const ReportABM = () => {
     event.preventDefault();
 
     // Verificar si se seleccionó una provincia
-    const inputIsValidCity = ddlSelectedCity !== null;
-    if (!inputIsValidCity) {
-      setInputHasErrorCity(true);
+    const inputIsValidEstate = ddlSelectedEstate !== null;
+    if (!inputIsValidEstate) {
+      setInputHasErrorEstate(true);
       return;
     }
 
     setIsValidForm(
       inputIsValidName &&
-        inputIsValidAddress &&
+        inputIsValidMonth &&
         inputIsValidComments &&
-        inputIsValidCity
+        inputIsValidEstate
     );
 
     if (!isValidForm) {
       return;
     }
 
-    setAddressError(""); // Limpiar errores previos
+    const dataToUpload = {
+      Name: reportName,
+      Month: reportMonth,
+      Comments: reportComments,
+      EstateId: ddlSelectedEstate.id,
+    };
+    console.log("dataToUpload:", dataToUpload);
 
-    await verifyAddress(); // Verificar dirección y obtener latitud y longitud
-    console.log("latLong después de verifyAddress:", latLong);
+    try {
+      await uploadData(dataToUpload, urlEstate);
+      dispatch(fetchEstateList());
 
-    if (latLong && latLong.lat) {
-      const dataToUpload = {
-        Name: estateName,
-        Address: estateAddress,
-        Comments: estateComments,
-        CityDSId: ddlSelectedCity.id,
-        LatLong: `${latLong.lat},${latLong.lon}`,
-        GoogleMapsURL: `https://www.google.com/maps/search/${latLong.lat},${latLong.lon}`,
-      };
-      console.log("dataToUpload:", dataToUpload);
-
-      try {
-        await uploadData(dataToUpload, urlEstate);
-        dispatch(fetchEstateList());
-
-        inputResetName();
-        inputResetAddress();
-        inputResetComments();
-        inputResetCity();
-      } catch (error) {
-        console.error("Error al enviar los datos:", error);
-        if (error === "Dirección no encontrada.") {
-          setAddressError(true);
-        }
-      }
-    } else {
-      console.error("Error al enviar los datos");
-      setAddressError(true);
+      inputResetName();
+      inputResetMonth();
+      inputResetComments();
+      inputResetEstate();
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
     }
   };
 
-  const handleSelectDdlCity = (item) => {
-    setDdlSelectedCity(item);
+  const handleSelectDdlEstate = (item) => {
+    setDdlSelectedEstate(item);
   };
 
   //#endregion Events ***********************************
 
   //#region Functions ***********************************
-  const inputResetCity = () => {
-    setDdlSelectedCity(null);
-    setInputHasErrorCity(false);
-  };
-
-  const verifyAddress = () => {
-    return new Promise(async (resolve, reject) => {
-      if (!ddlSelectedCity) {
-        console.error("Ciudad no seleccionada");
-        reject("Ciudad no seleccionada");
-        return;
-      }
-
-      let citycode = ddlSelectedCity.nominatimCityCode;
-      let countrycode = "";
-      const selectedProvince = provinceList.find(
-        (p) => p.id === ddlSelectedCity.provinceDSId
-      );
-      if (selectedProvince) {
-        const selectedCountry = countryList.find(
-          (c) => c.id === selectedProvince.countryDSId
-        );
-        if (selectedCountry) {
-          countrycode = selectedCountry.nominatimCountryCode;
-        }
-      }
-
-      if (!citycode || !countrycode) {
-        console.error("Códigos de ciudad o país no encontrados");
-        reject("Códigos de ciudad o país no encontrados");
-        return;
-      }
-
-      try {
-        const query = `${estateAddress}, ${citycode}, ${countrycode}`;
-        const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&citycode=${encodeURIComponent(
-          citycode
-        )}&countrycode=${encodeURIComponent(
-          countrycode
-        )}&q=${encodeURIComponent(query)}`;
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Error en la solicitud: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.length === 0) {
-          setAddressError("Dirección no encontrada.");
-          // reject("Dirección no encontrada.");
-          return;
-        }
-        const { lat, lon } = data[0];
-        console.log("Coordenadas obtenidas:", lat, lon);
-
-        setLatLong({ lat, lon });
-        resolve({ lat, lon });
-      } catch (error) {
-        console.error("Error al verificar la dirección:", error);
-        setAddressError("Error al verificar la dirección");
-        // reject("Error al verificar la dirección");
-      }
-    });
+  const inputResetEstate = () => {
+    setDdlSelectedEstate(null);
+    setInputHasErrorEstate(false);
   };
 
   //#endregion Functions ***********************************
@@ -255,14 +181,47 @@ const ReportABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Nombre propiedad
+                  Propiedad
+                </CInputGroupText>
+                {/*  */}
+                <CDropdown>
+                  <CDropdownToggle id="ddlEstate" color="secondary">
+                    {ddlSelectedEstate ? ddlSelectedEstate.name : "Seleccionar"}
+                  </CDropdownToggle>
+                  <CDropdownMenu>
+                    {estateList &&
+                      estateList.length > 0 &&
+                      estateList.map((estate) => (
+                        <CDropdownItem
+                          key={estate.id}
+                          onClick={() => handleSelectDdlEstate(estate)}
+                          style={{ cursor: "pointer" }}
+                          value={estate.id}
+                        >
+                          {estate.id}: {estate.name} ({estate.cityDS?.name})
+                        </CDropdownItem>
+                      ))}
+                  </CDropdownMenu>
+                </CDropdown>
+
+                {/*  */}
+                {inputHasErrorEstate && (
+                  <CAlert color="danger" className="w-100">
+                    Entrada inválida
+                  </CAlert>
+                )}
+              </CInputGroup>
+              <br />
+              <CInputGroup>
+                <CInputGroupText className="cardItem custom-input-group-text">
+                  Nombre reporte
                 </CInputGroupText>
                 <CFormInput
                   type="text"
                   className="cardItem"
                   onChange={inputChangeHandlerName}
                   onBlur={inputBlurHandlerName}
-                  value={estateName}
+                  value={reportName}
                 />
                 {inputHasErrorName && (
                   <CAlert color="danger" className="w-100">
@@ -273,18 +232,18 @@ const ReportABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Dirección
+                  Fecha del reporte
                 </CInputGroupText>
                 <CFormInput
                   type="text"
                   className="cardItem"
-                  onChange={inputChangeHandlerAddress}
-                  onBlur={inputBlurHandlerAddress}
-                  value={estateAddress}
+                  onChange={inputChangeHandlerMonth}
+                  onBlur={inputBlurHandlerMonth}
+                  value={reportMonth}
                 />
-                {addressError && (
+                {inputHasErrorMonth && (
                   <CAlert color="danger" className="w-100">
-                    {addressError}
+                    Entrada inválida
                   </CAlert>
                 )}
               </CInputGroup>
@@ -298,7 +257,7 @@ const ReportABM = () => {
                   className="cardItem"
                   onChange={inputChangeHandlerComments}
                   onBlur={inputBlurHandlerComments}
-                  value={estateComments}
+                  value={reportComments}
                 />
                 {inputHasErrorComments && (
                   <CAlert color="danger" className="w-100">
@@ -306,39 +265,7 @@ const ReportABM = () => {
                   </CAlert>
                 )}
               </CInputGroup>
-              <br />
-              <CInputGroup>
-                <CInputGroupText className="cardItem custom-input-group-text">
-                  Ciudad
-                </CInputGroupText>
-                {/*  */}
-                <CDropdown>
-                  <CDropdownToggle id="ddCity" color="secondary">
-                    {ddlSelectedCity ? ddlSelectedCity.name : "Seleccionar"}
-                  </CDropdownToggle>
-                  <CDropdownMenu>
-                    {cityList &&
-                      cityList.length > 0 &&
-                      cityList.map((city) => (
-                        <CDropdownItem
-                          key={city.id}
-                          onClick={() => handleSelectDdlCity(city)}
-                          style={{ cursor: "pointer" }}
-                          value={city.id}
-                        >
-                          {city.id}: {city.name}
-                        </CDropdownItem>
-                      ))}
-                  </CDropdownMenu>
-                </CDropdown>
 
-                {/*  */}
-                {inputHasErrorCity && (
-                  <CAlert color="danger" className="w-100">
-                    Entrada inválida
-                  </CAlert>
-                )}
-              </CInputGroup>
               <br />
               <CRow className="justify-content-center">
                 {isLoading && (

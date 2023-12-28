@@ -184,7 +184,7 @@ namespace Buildyv2.Migrations
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Update = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NominatimProvinceCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CountryDSId = table.Column<int>(type: "int", nullable: true)
+                    CountryDSId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -193,7 +193,8 @@ namespace Buildyv2.Migrations
                         name: "FK_ProvinceDS_CountryDS_CountryDSId",
                         column: x => x.CountryDSId,
                         principalTable: "CountryDS",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -205,7 +206,7 @@ namespace Buildyv2.Migrations
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Update = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProvinceDSId = table.Column<int>(type: "int", nullable: true),
+                    ProvinceDSId = table.Column<int>(type: "int", nullable: false),
                     NominatimCityCode = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -215,7 +216,8 @@ namespace Buildyv2.Migrations
                         name: "FK_CityDS_ProvinceDS_ProvinceDSId",
                         column: x => x.ProvinceDSId,
                         principalTable: "ProvinceDS",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -416,14 +418,37 @@ namespace Buildyv2.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "3a921002-135a-4a60-84f5-ee008cf514db", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEGNu8He4HCySKY7hI/DrmFW6XarjNADsU6SOU1GQAA9z0LbPvvOA61hl0DX/dTwpbQ==", null, false, "8102a647-3b5f-418c-96b9-15ce712cb3ca", false, "Sr.Admin" },
-                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "cef13a17-84e0-46b2-bc02-6f8b5146fe9b", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEKKf/Wo5VTuLvlLZoYm5xBWOkX2CeyjRxIKN/bW3meLYkj9wVkdviNge24ryxn8QXA==", null, false, "d001826d-cb26-49fc-b5b5-e939ea61d7e0", false, "Sr.Normal" }
+                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "a0e17a05-a781-417e-9298-068ce7803695", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEF+GNXRiB0Fj7Jb2S+6+h71VxQjDATP+IMtIqkvwrU6uOecHWmIaG0Umu/PPUvFSdA==", null, false, "d5ba3281-685f-449c-a5a1-52168e8fa960", false, "Sr.Admin" },
+                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "7c472348-2038-4153-bdc8-fa128960a1cc", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEKmwkn2/7Shbm3pBOeyrlgApuhVkrKThme567jNXUzVsVl1RaePC6wpd4+kY0uvi5A==", null, false, "41736b1d-459b-4e88-ba95-4a73c7b1e070", false, "Sr.Normal" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "CountryDS",
+                columns: new[] { "Id", "Creation", "Name", "NominatimCountryCode", "Update" },
+                values: new object[] { 1, new DateTime(2023, 12, 28, 18, 8, 28, 978, DateTimeKind.Local).AddTicks(7906), "Uruguay", "UY", new DateTime(2023, 12, 28, 18, 8, 28, 978, DateTimeKind.Local).AddTicks(7941) });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserClaims",
                 columns: new[] { "Id", "ClaimType", "ClaimValue", "UserId" },
                 values: new object[] { 1, "role", "admin", "c2ee6493-5a73-46f3-a3f2-46d1d11d7176" });
+
+            migrationBuilder.InsertData(
+                table: "ProvinceDS",
+                columns: new[] { "Id", "CountryDSId", "Creation", "Name", "NominatimProvinceCode", "Update" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2023, 12, 28, 18, 8, 28, 978, DateTimeKind.Local).AddTicks(8126), "Cerro Largo", "CL", new DateTime(2023, 12, 28, 18, 8, 28, 978, DateTimeKind.Local).AddTicks(8127) },
+                    { 2, 1, new DateTime(2023, 12, 28, 18, 8, 28, 978, DateTimeKind.Local).AddTicks(8129), "Montevideo", "MO", new DateTime(2023, 12, 28, 18, 8, 28, 978, DateTimeKind.Local).AddTicks(8129) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "CityDS",
+                columns: new[] { "Id", "Creation", "Name", "NominatimCityCode", "ProvinceDSId", "Update" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 12, 28, 18, 8, 28, 978, DateTimeKind.Local).AddTicks(8188), "Melo", "ME", 1, new DateTime(2023, 12, 28, 18, 8, 28, 978, DateTimeKind.Local).AddTicks(8189) },
+                    { 2, new DateTime(2023, 12, 28, 18, 8, 28, 978, DateTimeKind.Local).AddTicks(8191), "Montevideo", "MO", 2, new DateTime(2023, 12, 28, 18, 8, 28, 978, DateTimeKind.Local).AddTicks(8191) }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

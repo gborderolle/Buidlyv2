@@ -25,6 +25,7 @@ namespace Buildyv2.Models
 
         #region External
 
+        public int ProvinceDSId { get; set; }
         public ProvinceDS ProvinceDS { get; set; }
 
         public string NominatimCityCode { get; set; }
