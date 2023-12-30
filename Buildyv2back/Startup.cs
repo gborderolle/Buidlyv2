@@ -1,5 +1,7 @@
 ﻿using Buildyv2.ApiBehavior;
+using Buildyv2.Context;
 using Buildyv2.Filters;
+using Buildyv2.Middlewares;
 using Buildyv2.Repository;
 using Buildyv2.Repository.Interfaces;
 using Buildyv2.Services;
@@ -17,10 +19,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
-using Buildyv2.Context;
-using Buildyv2.Filters;
-using Buildyv2.Middlewares;
-using Buildyv2.Services;
 
 [assembly: ApiConventionType(typeof(DefaultApiConventions))] // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/27148912#notes
 namespace Buildyv2
@@ -63,7 +61,7 @@ namespace Buildyv2
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Buildy revolución",
+                    Title = "Buildy React",
                     Version = "v1",
                     Description = "API de Buildy",
                     Contact = new OpenApiContact
@@ -222,7 +220,7 @@ namespace Buildyv2
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Buildy revolución");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Buildy React");
             });
 
             app.UseHttpsRedirection();

@@ -69,20 +69,41 @@ const EstateMenu = () => {
   //#region Hooks ***********************************
 
   const filteredEstateList = estateList.filter((estate) => {
-    const nameMatch = estate.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const addressMatch = estate.address
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const rentedMatch =
-      estate.rented !== undefined
-        ? estate.rented
+    const match1 = estate.name
+      ? estate.name.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match2 = estate.address
+      ? estate.address.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+
+    // Último alquiler y primer inquilino
+    const lastRent =
+      estate.listRents && estate.listRents.length > 0
+        ? estate.listRents[estate.listRents.length - 1]
+        : null;
+    const tenantName =
+      lastRent && lastRent.listTenants && lastRent.listTenants.length > 0
+        ? lastRent.listTenants[0].name
+        : null;
+
+    // Verificar si el nombre del inquilino coincide con el término de búsqueda
+    const match3 = tenantName
+      ? tenantName.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+
+    const match4 =
+      lastRent && lastRent.monthlyValue
+        ? lastRent.monthlyValue
             .toString()
             .toLowerCase()
             .includes(searchTerm.toLowerCase())
         : false;
-    return nameMatch || addressMatch || rentedMatch;
+
+    const match5 = estate.comments
+      ? estate.comments.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+
+    return match1 || match2 || match3 || match4 || match5;
   });
 
   useEffect(() => {
@@ -132,7 +153,9 @@ const EstateMenu = () => {
             : ""}
         </td>
         <td>
-          {estate.PresentRentId > 0 && estate.listRents.length > 0 ? estate.listRents?.[0].MonthlyValue : ""}
+          {estate.PresentRentId > 0 && estate.listRents.length > 0
+            ? estate.listRents?.[0].MonthlyValue
+            : ""}
         </td>
         <td>{estate.comments}</td>
         <td>

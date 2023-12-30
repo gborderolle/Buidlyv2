@@ -47,6 +47,17 @@ namespace Buildyv2.Utilities
             CreateMap<CityDSCreateDTO, CityDS>()
             .ForMember(dest => dest.ProvinceDS, opt => opt.Ignore()) // Ignorar este campo
         .ReverseMap();
+
+            CreateMap<ReportCreateDTO, Report>()
+    .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
+    .ReverseMap();
+            CreateMap<Report, ReportDTO>().ReverseMap();
+
+            CreateMap<JobCreateDTO, Job>()
+    .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
+    .ReverseMap();
+            CreateMap<Job, JobDTO>().ReverseMap();
+
         }
     }
 }

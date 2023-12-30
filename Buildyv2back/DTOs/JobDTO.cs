@@ -1,11 +1,8 @@
 ﻿using Buildyv2.Models;
-using Buildyv2.Validations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
 namespace Buildyv2.DTOs
 {
-    public class JobPatchDTO
+    public class JobDTO
     {
         #region Internal
 
@@ -30,7 +27,7 @@ namespace Buildyv2.DTOs
         #endregion
 
         #region External
-        
+
         public int EstateId { get; set; }
         public Estate Estate { get; set; }
 

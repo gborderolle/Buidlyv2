@@ -25,9 +25,12 @@ import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchEstateList } from "../../../store/generalData-actions";
-import { urlEstate } from "../../../endpoints";
+import { fetchReportList } from "../../../store/generalData-actions";
+import { urlReport } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ReportABM = () => {
   //#region Const ***********************************
@@ -40,6 +43,10 @@ const ReportABM = () => {
   const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
 
   const [inputHasErrorEstate, setInputHasErrorEstate] = useState(false);
+
+  const monthString = report?.month;
+  const monthDate = monthString ? new Date(monthString) : new Date();
+  const [month, setMonth] = useState(monthDate);
 
   // redux
   const dispatch = useDispatch();
@@ -67,7 +74,7 @@ const ReportABM = () => {
   );
 
   const {
-    value: reportName,
+    value: name,
     isValid: inputIsValidName,
     hasError: inputHasErrorName,
     valueChangeHandler: inputChangeHandlerName,
@@ -80,20 +87,7 @@ const ReportABM = () => {
   );
 
   const {
-    value: reportMonth,
-    isValid: inputIsValidMonth,
-    hasError: inputHasErrorMonth,
-    valueChangeHandler: inputChangeHandlerMonth,
-    inputBlurHandler: inputBlurHandlerMonth,
-    reset: inputResetMonth,
-  } = useInput(
-    (value) => value.trim() !== "", // validateValue function
-    null, // onChangeCallback
-    report ? report.month : ""
-  );
-
-  const {
-    value: reportComments,
+    value: comments,
     isValid: inputIsValidComments,
     hasError: inputHasErrorComments,
     valueChangeHandler: inputChangeHandlerComments,
@@ -125,7 +119,6 @@ const ReportABM = () => {
 
     setIsValidForm(
       inputIsValidName &&
-        inputIsValidMonth &&
         inputIsValidComments &&
         inputIsValidEstate
     );
@@ -135,16 +128,16 @@ const ReportABM = () => {
     }
 
     const dataToUpload = {
-      Name: reportName,
-      Month: reportMonth,
-      Comments: reportComments,
+      Name: name,
+      Month: month,
+      Comments: comments,
       EstateId: ddlSelectedEstate.id,
     };
     console.log("dataToUpload:", dataToUpload);
 
     try {
-      await uploadData(dataToUpload, urlEstate);
-      dispatch(fetchEstateList());
+      await uploadData(dataToUpload, urlReport);
+      dispatch(fetchReportList());
 
       inputResetName();
       inputResetMonth();
@@ -214,14 +207,14 @@ const ReportABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Nombre reporte
+                  Nombre del reporte
                 </CInputGroupText>
                 <CFormInput
                   type="text"
                   className="cardItem"
                   onChange={inputChangeHandlerName}
                   onBlur={inputBlurHandlerName}
-                  value={reportName}
+                  value={name}
                 />
                 {inputHasErrorName && (
                   <CAlert color="danger" className="w-100">
@@ -231,21 +224,14 @@ const ReportABM = () => {
               </CInputGroup>
               <br />
               <CInputGroup>
-                <CInputGroupText className="cardItem custom-input-group-text">
-                  Fecha del reporte
-                </CInputGroupText>
-                <CFormInput
-                  type="month"
-                  className="cardItem"
-                  onChange={inputChangeHandlerMonth}
-                  onBlur={inputBlurHandlerMonth}
-                  value={reportMonth}
+                <CInputGroupText>Fecha del reporte</CInputGroupText>
+                <DatePicker
+                  selected={month}
+                  onChange={(date) => setMonth(date)}
+                  dateFormat="MM/yyyy"
+                  showMonthYearPicker
+                  className="form-control"
                 />
-                {inputHasErrorMonth && (
-                  <CAlert color="danger" className="w-100">
-                    Entrada inválida
-                  </CAlert>
-                )}
               </CInputGroup>
               <br />
               <CInputGroup>
@@ -257,7 +243,7 @@ const ReportABM = () => {
                   className="cardItem"
                   onChange={inputChangeHandlerComments}
                   onBlur={inputBlurHandlerComments}
-                  value={reportComments}
+                  value={comments}
                 />
                 {inputHasErrorComments && (
                   <CAlert color="danger" className="w-100">
@@ -265,7 +251,6 @@ const ReportABM = () => {
                   </CAlert>
                 )}
               </CInputGroup>
-
               <br />
               <CRow className="justify-content-center">
                 {isLoading && (

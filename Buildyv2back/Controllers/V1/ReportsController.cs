@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
+using Buildyv2.Context;
 using Buildyv2.DTOs;
 using Buildyv2.Models;
 using Buildyv2.Repository.Interfaces;
+using Buildyv2.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Buildyv2.Utilities;
-using Buildyv2.Context;
 
 namespace Buildyv2.Controllers.V1
 {
@@ -34,7 +34,18 @@ namespace Buildyv2.Controllers.V1
         [HttpGet("GetReport")]
         public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
         {
-            return await Get<Report, ReportDTO>(paginationDTO: paginationDTO);
+            var includes = new List<IncludePropertyConfiguration<Report>>
+            {
+                    new IncludePropertyConfiguration<Report>
+                    {
+                        IncludeExpression = b => b.Estate
+                    },
+                new IncludePropertyConfiguration<Report>
+                    {
+                        IncludeExpression = b => b.ListPhotos
+                    },
+                };
+            return await Get<Report, ReportDTO>(paginationDTO: paginationDTO, includes: includes);
         }
 
         [HttpGet("all")]

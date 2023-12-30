@@ -18,7 +18,6 @@ import {
   faTrowelBricks,
   faCamera,
   faFile,
-  faFileCirclePlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
@@ -69,20 +68,25 @@ const ReportMenu = () => {
   //#region Hooks ***********************************
 
   const filteredReportList = reportList.filter((report) => {
-    const nameMatch = report.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const addressMatch = report.address
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const rentedMatch =
-      report.rented !== undefined
-        ? report.rented
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+    const match1 = report.name
+      ? report.name.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match2 = report.address
+      ? report.address.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match3 =
+      report.estate && report.estate.name
+        ? report.estate.name.toLowerCase().includes(searchTerm.toLowerCase())
         : false;
-    return nameMatch || addressMatch || rentedMatch;
+    const match4 =
+      report.estate && report.estate.address
+        ? report.estate.address.toLowerCase().includes(searchTerm.toLowerCase())
+        : false;
+    const match5 = report.comments
+      ? report.comments.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+
+    return match1 || match2 || match3 || match4 || match5;
   });
 
   useEffect(() => {
@@ -118,46 +122,55 @@ const ReportMenu = () => {
       indexOfLastItem
     );
 
-    return currentReports.map((report, index) => (
-      <tr key={report.id}>
-        <td>{index + 1}</td>
-        <td>{report.month}</td>
-        <td>{report.estate?.name}</td>
-        <td>{report.estate?.address}</td>
-        <td>{report.name}</td>
-        <td>{report.comments}</td>
-        <td>
-          <button
-            onClick={() => navigateToProperty(report)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faEye} color="#697588" />
-          </button>
-          <button
-            onClick={() => navigateToWorks(report)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
-          </button>
-          <button
-            onClick={() => navigateToReports(report)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faCamera} color="#697588" />
-          </button>
-          <button
-            onClick={() => navigateToRent(report)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faFile} color="#697588" />
-          </button>
-        </td>
-      </tr>
-    ));
+    return currentReports.map((report, index) => {
+      // Parsear la fecha y formatearla como Año/Mes
+      const reportDate = new Date(report.month);
+      const formattedDate = `${reportDate.getFullYear()}/${(
+        "0" +
+        (reportDate.getMonth() + 1)
+      ).slice(-2)}`; // Añade un cero delante para los meses de un solo dígito
+
+      return (
+        <tr key={report.id}>
+          <td>{index + 1}</td>
+          <td>{formattedDate}</td> {/* Usar la fecha formateada */}
+          <td>{report.estate?.name}</td>
+          <td>{report.estate?.address}</td>
+          <td>{report.name}</td>
+          <td>{report.comments}</td>
+          <td>
+            <button
+              onClick={() => navigateToProperty(report)}
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+            >
+              <FontAwesomeIcon icon={faEye} color="#697588" />
+            </button>
+            <button
+              onClick={() => navigateToWorks(report)}
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+            >
+              <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
+            </button>
+            <button
+              onClick={() => navigateToReports(report)}
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+            >
+              <FontAwesomeIcon icon={faCamera} color="#697588" />
+            </button>
+            <button
+              onClick={() => navigateToRent(report)}
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+            >
+              <FontAwesomeIcon icon={faFile} color="#697588" />
+            </button>
+          </td>
+        </tr>
+      );
+    });
   };
 
   // Determinar el rango de páginas a mostrar alrededor de la página actual

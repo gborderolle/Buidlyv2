@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
+using Buildyv2.Context;
 using Buildyv2.DTOs;
 using Buildyv2.Models;
 using Buildyv2.Repository.Interfaces;
+using Buildyv2.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Buildyv2.Utilities;
-using Buildyv2.Context;
 
 namespace Buildyv2.Controllers.V1
 {
@@ -34,7 +34,22 @@ namespace Buildyv2.Controllers.V1
         [HttpGet("GetJob")]
         public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
         {
-            return await Get<Job, JobDTO>(paginationDTO: paginationDTO);
+            var includes = new List<IncludePropertyConfiguration<Job>>
+            {
+                    new IncludePropertyConfiguration<Job>
+                    {
+                        IncludeExpression = b => b.Estate
+                    },
+                new IncludePropertyConfiguration<Job>
+                    {
+                        IncludeExpression = b => b.ListWorkers
+                    },
+                new IncludePropertyConfiguration<Job>
+                    {
+                        IncludeExpression = b => b.ListPhotos
+                    },
+                };
+            return await Get<Job, JobDTO>(paginationDTO: paginationDTO, includes: includes);
         }
 
         [HttpGet("all")]
@@ -81,9 +96,9 @@ namespace Buildyv2.Controllers.V1
 
         [HttpPatch("{id:int}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Patch(int id, [FromBody] JsonPatchDocument<JobPatchDTO> patchDto)
+        public async Task<ActionResult<APIResponse>> Patch(int id, [FromBody] JsonPatchDocument<JobDTO> patchDto)
         {
-            return await Patch<Job, JobPatchDTO>(id, patchDto);
+            return await Patch<Job, JobDTO>(id, patchDto);
         }
 
         #endregion
@@ -126,7 +141,7 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 Job modelo = _mapper.Map<Job>(jobCreateDto);
-                modelo.Estate = estate; 
+                modelo.Estate = estate;
                 modelo.Creation = DateTime.Now;
                 modelo.Update = DateTime.Now;
 
