@@ -235,7 +235,7 @@ const ReportABM = () => {
                   Fecha del reporte
                 </CInputGroupText>
                 <CFormInput
-                  type="text"
+                  type="month"
                   className="cardItem"
                   onChange={inputChangeHandlerMonth}
                   onBlur={inputBlurHandlerMonth}
