@@ -71,7 +71,7 @@ const AppBreadcrumb = (props) => {
     <div className="d-flex justify-content-between align-items-center w-100">
       {!isMobile && (
         <CBreadcrumb className={`m-0 ms-2 ${classes.CBreadcrumb}`}>
-          <CBreadcrumbItem href="/">Home</CBreadcrumbItem>
+          <CBreadcrumbItem href="/#/estates">Home</CBreadcrumbItem>
           {breadcrumbs.map((breadcrumb, index) => {
             return (
               <CBreadcrumbItem

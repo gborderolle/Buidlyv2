@@ -41,7 +41,7 @@ const routes = [
   { path: "/abm-estate", name: "Agregar propiedades", element: EstateABM },
 
   { path: "/reports", name: "Reportes", element: ReportMenu },
-  { path: "/abm-report", name: "Agregar Reportes", element: ReportABM },
+  { path: "/abm-report", name: "Agregar reportes", element: ReportABM },
 
   { path: "/jobs", name: "Obras", element: JobMenu },
   { path: "/abm-job", name: "Agregar obras", element: JobABM },

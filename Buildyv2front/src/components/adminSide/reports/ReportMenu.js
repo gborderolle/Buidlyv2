@@ -139,7 +139,7 @@ const ReportMenu = () => {
               onClick={() => navigateToProperty(report)}
               style={{ border: "none", background: "none" }}
               className={isBumped ? "bump" : ""}
-            >
+            > 
               <FontAwesomeIcon icon={faEye} color="#697588" />
             </button>
             <button

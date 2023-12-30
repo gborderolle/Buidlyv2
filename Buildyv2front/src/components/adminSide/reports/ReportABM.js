@@ -31,6 +31,8 @@ import { authActions } from "../../../store/auth-slice";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "./uploadFiles.css";
+import FileUpload, { uploadFileToServer } from "./FileUpload.js";
 
 const ReportABM = () => {
   //#region Const ***********************************
@@ -47,6 +49,8 @@ const ReportABM = () => {
   const monthString = report?.month;
   const monthDate = monthString ? new Date(monthString) : new Date();
   const [month, setMonth] = useState(monthDate);
+
+  const [loadedPhotos, setLoadedPhotos] = useState([]);
 
   // redux
   const dispatch = useDispatch();
@@ -118,9 +122,7 @@ const ReportABM = () => {
     }
 
     setIsValidForm(
-      inputIsValidName &&
-        inputIsValidComments &&
-        inputIsValidEstate
+      inputIsValidName && inputIsValidComments && inputIsValidEstate
     );
 
     if (!isValidForm) {
@@ -132,6 +134,7 @@ const ReportABM = () => {
       Month: month,
       Comments: comments,
       EstateId: ddlSelectedEstate.id,
+      ListPhotos: loadedPhotos, // Añadir las fotos cargadas
     };
     console.log("dataToUpload:", dataToUpload);
 
@@ -251,6 +254,21 @@ const ReportABM = () => {
                   </CAlert>
                 )}
               </CInputGroup>
+              <br />
+              <FileUpload
+                multiple={true}
+                name="example-upload"
+                maxSize={300000}
+                onUpload={(files) =>
+                  setLoadedPhotos(
+                    files.map((file) => ({
+                      ...file,
+                      type: file.type, // Asegúrate de que cada archivo tenga un tipo
+                    }))
+                  )
+                }
+                label="Cargar fotos"
+              />
               <br />
               <CRow className="justify-content-center">
                 {isLoading && (
