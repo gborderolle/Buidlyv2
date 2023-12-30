@@ -140,12 +140,37 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(ModelState);
                 }
 
-                Job modelo = _mapper.Map<Job>(jobCreateDto);
+                var modelo = _mapper.Map<Job>(jobCreateDto);
                 modelo.Estate = estate;
                 modelo.Creation = DateTime.Now;
                 modelo.Update = DateTime.Now;
 
-                await _jobRepository.Create(modelo);
+                //await _jobRepository.Create(modelo);
+
+                //// Ahora, asocia los trabajadores al trabajo
+                //foreach (var workerId in jobCreateDto.WorkerIds)
+                //{
+                //    var worker = await _dbContext.Worker.FindAsync(workerId);
+                //    if (worker != null)
+                //    {
+                //        modelo.ListWorkers.Add(worker);
+                //    }
+                //}
+
+                _dbContext.Job.Add(modelo);
+                await _dbContext.SaveChangesAsync(); // Guarda el trabajo en la base de datos
+
+                // Asociar los trabajadores al trabajo creado
+                foreach (var workerDto in jobCreateDto.ListWorkers)
+                {
+                    var existingWorker = await _dbContext.Worker.FindAsync(workerDto.Id);
+                    if (existingWorker != null)
+                    {
+                        modelo.ListWorkers.Add(existingWorker);
+                    }
+                }
+
+                await _dbContext.SaveChangesAsync(); // Guarda los cambios con los trabajadores asociados
                 _logger.LogInformation($"Se creó correctamente la obra Id:{modelo.Id}.");
 
                 _response.Result = _mapper.Map<JobDTO>(modelo);

@@ -68,15 +68,21 @@ const JobMenu = () => {
   //#region Hooks ***********************************
 
   const filteredJobList = jobList.filter((job) => {
-    const nameMatch = job.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const addressMatch = job.address
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const rentedMatch =
-      job.rented !== undefined
-        ? job.rented.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    const match1 = job.name
+      ? job.name.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    const match2 =
+      job.estate && job.estate.name
+        ? job.estate.name.toLowerCase().includes(searchTerm.toLowerCase())
         : false;
-    return nameMatch || addressMatch || rentedMatch;
+    const match3 =
+      job.estate && job.estate.address
+        ? job.estate.address.toLowerCase().includes(searchTerm.toLowerCase())
+        : false;
+    const match4 = job.comments
+      ? job.comments.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
+    return match1 || match2 || match3 || match4;
   });
 
   useEffect(() => {
@@ -112,46 +118,58 @@ const JobMenu = () => {
       indexOfLastItem
     );
 
-    return currentJobs.map((job, index) => (
-      <tr key={job.id}>
-        <td>{index + 1}</td>
-        <td>{job.month}</td>
-        <td>{job.estate?.name}</td>
-        <td>{job.estate?.address}</td>
-        <td>{job.name}</td>
-        <td>{job.comments}</td>
-        <td>
-          <button
-            onClick={() => navigateToProperty(job)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faEye} color="#697588" />
-          </button>
-          <button
-            onClick={() => navigateToWorks(job)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
-          </button>
-          <button
-            onClick={() => navigateToReports(job)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faCamera} color="#697588" />
-          </button>
-          <button
-            onClick={() => navigateToRent(job)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faFile} color="#697588" />
-          </button>
-        </td>
-      </tr>
-    ));
+    return currentJobs.map((job, index) => {
+      // Formatear la fecha del trabajo, si es necesario
+      const formattedDate = job.month; // Reemplazar con lógica de formateo si job.month es una fecha
+
+      // Obtener el nombre del primer trabajador o un valor predeterminado
+      const firstWorkerName =
+        job.listWorkers && job.listWorkers.length > 0
+          ? job.listWorkers[0].name
+          : "No asignado";
+
+      return (
+        <tr key={job.id}>
+          <td>{index + 1 + (currentPage - 1) * itemsPerPage}</td>
+          <td>{formattedDate}</td>
+          <td>{job.estate?.name}</td>
+          <td>{job.estate?.address}</td>
+          <td>{job.name}</td>
+          <td>{firstWorkerName}</td>
+          <td>{job.comments}</td>
+          <td>
+            <button
+              onClick={() => navigateToProperty(job)}
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+            >
+              <FontAwesomeIcon icon={faEye} color="#697588" />
+            </button>
+            <button
+              onClick={() => navigateToWorks(job)}
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+            >
+              <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
+            </button>
+            <button
+              onClick={() => navigateToReports(job)}
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+            >
+              <FontAwesomeIcon icon={faCamera} color="#697588" />
+            </button>
+            <button
+              onClick={() => navigateToRent(job)}
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+            >
+              <FontAwesomeIcon icon={faFile} color="#697588" />
+            </button>
+          </td>
+        </tr>
+      );
+    });
   };
 
   // Determinar el rango de páginas a mostrar alrededor de la página actual
@@ -228,6 +246,7 @@ const JobMenu = () => {
                     <th>Casa</th>
                     <th>Dirección</th>
                     <th>Obra</th>
+                    <th>Trabajador</th>
                     <th>Comentarios</th>
                     <th>Opciones</th>
                   </tr>

@@ -71,22 +71,18 @@ const ReportMenu = () => {
     const match1 = report.name
       ? report.name.toLowerCase().includes(searchTerm.toLowerCase())
       : false;
-    const match2 = report.address
-      ? report.address.toLowerCase().includes(searchTerm.toLowerCase())
-      : false;
-    const match3 =
+    const match2 =
       report.estate && report.estate.name
         ? report.estate.name.toLowerCase().includes(searchTerm.toLowerCase())
         : false;
-    const match4 =
+    const match3 =
       report.estate && report.estate.address
         ? report.estate.address.toLowerCase().includes(searchTerm.toLowerCase())
         : false;
-    const match5 = report.comments
+    const match4 = report.comments
       ? report.comments.toLowerCase().includes(searchTerm.toLowerCase())
       : false;
-
-    return match1 || match2 || match3 || match4 || match5;
+    return match1 || match2 || match3 || match4;
   });
 
   useEffect(() => {
@@ -186,7 +182,7 @@ const ReportMenu = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   function navigateToProperty(report) {
-    navigate("/abm-job", { state: { report, editMode: true } });
+    navigate("/abm-report", { state: { report, editMode: true } });
   }
 
   function navigateToWorks(report) {

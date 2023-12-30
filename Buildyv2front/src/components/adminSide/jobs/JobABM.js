@@ -159,11 +159,11 @@ const JobABM = () => {
 
     const dataToUpload = {
       Name: name,
-      Month: month,
+      Month: month.toISOString().split('T')[0], // Asegúrate de formatear la fecha correctamente
       Comments: comments,
       LabourCost: cost,
       EstateId: ddlSelectedEstate.id,
-      EstateId: ddlSelectedWorker.id,
+      ListWorkers: ddlSelectedWorker ? [ddlSelectedWorker] : [], // Enviar como lista
     };
     console.log("dataToUpload:", dataToUpload);
 
@@ -172,7 +172,6 @@ const JobABM = () => {
       dispatch(fetchJobList());
 
       inputResetName();
-      inputResetMonth();
       inputResetCost();
       inputResetComments();
       inputResetEstate();
