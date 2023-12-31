@@ -48,10 +48,11 @@ namespace Buildyv2.Utilities
             .ForMember(dest => dest.ProvinceDS, opt => opt.Ignore()) // Ignorar este campo
         .ReverseMap();
 
+            CreateMap<Report, ReportDTO>().ReverseMap();
             CreateMap<ReportCreateDTO, Report>()
     .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
+                .ForMember(dest => dest.ListPhotos, opt => opt.MapFrom(src => MapIFormFilesToPhotos(src.ListPhotos)))
     .ReverseMap();
-            CreateMap<Report, ReportDTO>().ReverseMap();
 
             CreateMap<JobCreateDTO, Job>()
     .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
@@ -59,5 +60,30 @@ namespace Buildyv2.Utilities
             CreateMap<Job, JobDTO>().ReverseMap();
 
         }
+
+        private List<Photo> MapIFormFilesToPhotos(List<IFormFile> files)
+        {
+            var photos = new List<Photo>();
+            foreach (var file in files)
+            {
+                var photo = new Photo
+                {
+                    // Aquí debes definir cómo transformar un IFormFile en un Photo
+                    // Por ejemplo, podrías querer guardar el archivo en algún lugar y poner la URL en Photo.Url
+                    URL = SaveFileSomewhereAndGetUrl(file)
+                };
+                photos.Add(photo);
+            }
+            return photos;
+        }
+
+        private string SaveFileSomewhereAndGetUrl(IFormFile file)
+        {
+            // Implementa la lógica para guardar el archivo y devolver la URL
+            // Esto depende de cómo manejes la carga y almacenamiento de archivos en tu aplicación
+            throw new NotImplementedException();
+        }
+
+
     }
 }

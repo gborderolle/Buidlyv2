@@ -27,7 +27,10 @@ namespace Buildyv2.DTOs
         public string Comments { get; set; }
 
         // Uniques
-        public List<Photo> ListPhotos { get; set; }
+        //public List<Photo> ListPhotos { get; set; }
+        [FileSizeValidation(maxSizeMB: 4)]
+        [FileTypeValidation(fileTypeGroup: FileTypeGroup.Image)]
+        public List<IFormFile> ListPhotos { get; set; } // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/19983788#notes
 
         #endregion
 

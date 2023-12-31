@@ -27,6 +27,7 @@ namespace Buildyv2.Models
 
         // Uniques
         public List<Photo> ListPhotos { get; set; }
+        //public List<string> ListPhotosURL { get; set; }
 
         #endregion
 

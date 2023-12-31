@@ -19,6 +19,9 @@ namespace Buildyv2.Models
         [Required(ErrorMessage = "El campo {0} es requerido")]
         public string URL { get; set; }
 
+        public int ReportId { get; set; }
+        public Report Report { get; set; }
+
         #endregion
 
         #region External

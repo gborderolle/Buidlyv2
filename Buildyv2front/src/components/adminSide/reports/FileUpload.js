@@ -24,7 +24,12 @@ const styles = {
 };
 
 export const uploadFileToServer = (file) => {
-  const delay = file.size / 100;
+  if (!file) {
+    console.error("Archivo no proporcionado a uploadFileToServer");
+    return Promise.reject("Archivo no proporcionado");
+  }
+
+  const delay = file.size / 100; // Asegúrate de que 'file' es un objeto File
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve();
@@ -131,10 +136,11 @@ const FileUpload = ({ maxSize, name, multiple, label, onUpload }) => {
     setHoverState(e.type === "dragover" ? styles.hover : null);
   };
 
+  // Esta función ahora solo establece los archivos en el estado fileList
   const handleFileSelect = (e) => {
     handleDragOver(e);
     const files = e.target.files || e.dataTransfer.files;
-    setFileList([...Object.keys(files).map((key) => files[key])]);
+    onUpload([...Object.keys(files).map((key) => files[key])]); // Actualizar el estado en el componente padre
   };
 
   const removeItem = (index) => {

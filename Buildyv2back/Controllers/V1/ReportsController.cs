@@ -40,11 +40,7 @@ namespace Buildyv2.Controllers.V1
                     {
                         IncludeExpression = b => b.Estate
                     },
-                new IncludePropertyConfiguration<Report>
-                    {
-                        IncludeExpression = b => b.ListPhotos
-                    },
-                };
+            };
             return await Get<Report, ReportDTO>(paginationDTO: paginationDTO, includes: includes);
         }
 
@@ -66,9 +62,9 @@ namespace Buildyv2.Controllers.V1
             {
                     new IncludePropertyConfiguration<Report>
                     {
-                        IncludeExpression = b => b.ListPhotos
+                        IncludeExpression = b => b.Estate
                     },
-                };
+            };
             return await Get<Report, ReportDTO>(includes: includes);
         }
 
@@ -99,7 +95,8 @@ namespace Buildyv2.Controllers.V1
 
         [HttpPost(Name = "CreateReport")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Post([FromBody] ReportCreateDTO reportCreateDto)
+        public async Task<ActionResult<APIResponse>> Post([FromForm] ReportCreateDTO reportCreateDto)
+        //public async Task<ActionResult<APIResponse>> Post([FromBody] ReportCreateDTO reportCreateDto)
         {
             try
             {
