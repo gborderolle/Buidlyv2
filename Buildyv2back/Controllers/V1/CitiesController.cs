@@ -1,19 +1,14 @@
 ﻿using AutoMapper;
-using Azure;
+using Buildyv2.Context;
 using Buildyv2.DTOs;
 using Buildyv2.Models;
 using Buildyv2.Repository.Interfaces;
+using Buildyv2.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Buildyv2.DTOs;
-using Buildyv2.Models;
-using Buildyv2.Utilities;
-using Buildyv2.Repository;
-using Microsoft.EntityFrameworkCore;
-using Buildyv2.Context;
 
 namespace Buildyv2.Controllers.V1
 {
@@ -30,6 +25,8 @@ namespace Buildyv2.Controllers.V1
         : base(mapper, logger, workerRepository)
         {
             _response = new();
+
+
             _cityRepository = workerRepository;
             _dbContext = dbContext;
         }
