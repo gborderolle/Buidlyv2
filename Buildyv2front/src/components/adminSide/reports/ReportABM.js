@@ -125,29 +125,45 @@ const ReportABM = () => {
       inputIsValidName && inputIsValidComments && inputIsValidEstate
     );
 
-    if (!isValidForm) {
-      return;
-    }
+    if (isValidForm) {
+      try {
+        // Subir cada foto en loadedPhotos
+        const formData = new FormData();
+        loadedPhotos.forEach((photo, index) => {
+          formData.append(`ListPhotos`, photo.file); // Aquí no uses índice en el nombre del campo
+        });
 
-    const dataToUpload = {
-      Name: name,
-      Month: month,
-      Comments: comments,
-      EstateId: ddlSelectedEstate.id,
-      ListPhotos: loadedPhotos, // Añadir las fotos cargadas
-    };
-    console.log("dataToUpload:", dataToUpload);
+        // Agrega otros campos del formulario a formData
+        formData.append("Name", name);
+        formData.append("Month", month.toISOString()); // Asegúrate de enviar la fecha en un formato adecuado
+        formData.append("Comments", comments);
+        formData.append("EstateId", ddlSelectedEstate.id);
 
-    try {
-      await uploadData(dataToUpload, urlReport);
-      dispatch(fetchReportList());
+        console.log("Archivos cargados:", loadedPhotos);
+        for (var pair of formData.entries()) {
+          console.log(pair[0] + ", " + pair[1]);
+        }
 
-      inputResetName();
-      inputResetMonth();
-      inputResetComments();
-      inputResetEstate();
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
+        await uploadData(formData, urlReport);
+
+        const dataToUpload = {
+          Name: name,
+          Month: month,
+          Comments: comments,
+          EstateId: ddlSelectedEstate.id,
+          ListPhotos: loadedPhotos, // Añadir las fotos cargadas
+        };
+        console.log("dataToUpload:", dataToUpload);
+
+        //await uploadData(dataToUpload, urlReport);
+        dispatch(fetchReportList());
+
+        inputResetName();
+        inputResetComments();
+        inputResetEstate();
+      } catch (error) {
+        console.error("Error al enviar los datos:", error);
+      }
     }
   };
 
@@ -262,7 +278,7 @@ const ReportABM = () => {
                 onUpload={(files) =>
                   setLoadedPhotos(
                     files.map((file) => ({
-                      ...file,
+                      file, // Asegúrate de que esto sea un objeto File
                       type: file.type, // Asegúrate de que cada archivo tenga un tipo
                     }))
                   )

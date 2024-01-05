@@ -30,6 +30,11 @@ namespace Buildyv2.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Report>()
+        .HasMany(r => r.ListPhotos)
+        .WithOne(p => p.Report)
+        .HasForeignKey(p => p.ReportId);
+
             SeedData(modelBuilder);
         }
 

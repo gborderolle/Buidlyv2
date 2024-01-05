@@ -85,10 +85,6 @@ const ReportMenu = () => {
     return match1 || match2 || match3 || match4;
   });
 
-  useEffect(() => {
-    // setPageCount(Math.ceil(filteredEstateList.length / itemsPerPage));
-  }, [filteredReportList]);
-
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -133,13 +129,14 @@ const ReportMenu = () => {
           <td>{report.estate?.name}</td>
           <td>{report.estate?.address}</td>
           <td>{report.name}</td>
+          <td>{report.listPhotos?.length}</td>
           <td>{report.comments}</td>
           <td>
             <button
               onClick={() => navigateToProperty(report)}
               style={{ border: "none", background: "none" }}
               className={isBumped ? "bump" : ""}
-            > 
+            >
               <FontAwesomeIcon icon={faEye} color="#697588" />
             </button>
             <button
@@ -243,6 +240,7 @@ const ReportMenu = () => {
                     <th>Casa</th>
                     <th>Dirección</th>
                     <th>Reporte</th>
+                    <th># Fotos</th>
                     <th>Comentarios</th>
                     <th>Opciones</th>
                   </tr>
