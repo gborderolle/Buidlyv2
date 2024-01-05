@@ -15,8 +15,11 @@ namespace Buildyv2.Middlewares
     // Middleware para registrar todos los response del sistema
     // Clase 1: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816098#notes
     // Clase 2: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/26839760#notes
+
+#pragma warning disable CS1570 // XML comment has badly formed XML
     /// </summary>
     public class LogResponseMiddleware
+#pragma warning restore CS1570 // XML comment has badly formed XML
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<LogResponseMiddleware> _logger;

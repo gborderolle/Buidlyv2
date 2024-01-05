@@ -15,7 +15,9 @@ namespace Buildyv2.Repository
             _dbContext = dbContext;
         }
 
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
         public async Task<CityDS> Update(CityDS entity)
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
         {
             entity.Update = DateTime.Now;
             _dbContext.Update(entity);

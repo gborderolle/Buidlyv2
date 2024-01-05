@@ -5,12 +5,12 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);1591</NoWarn>
+      <NoWarn>$(NoWarn);1591;CS8632</NoWarn>
     <PlatformTarget>x64</PlatformTarget>
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup> 
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="7.1.4" />

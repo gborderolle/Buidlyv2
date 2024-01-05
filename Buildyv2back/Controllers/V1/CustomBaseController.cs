@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
 using System.Net;
-using System.Security.Cryptography;
 using Buildyv2.Models;
 using Buildyv2.DTOs;
-using Buildyv2.Models;
 using Buildyv2.Repository.Interfaces;
 
 namespace Buildyv2.Controllers.V1

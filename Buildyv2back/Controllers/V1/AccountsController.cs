@@ -13,7 +13,6 @@ using System.Security.Claims;
 using System.Text;
 using Wangkanai.Detection.Services;
 using Buildyv2.Context;
-using Buildyv2.DTOs;
 using Buildyv2.Models;
 using Buildyv2.Utilities;
 
@@ -234,7 +233,9 @@ namespace Buildyv2.Controllers.V1
 
         private async Task SendLoginNotification(UserCredential userCredential)
         {
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             string? clientIP = HttpContext.Connection.RemoteIpAddress?.ToString();
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             string? clientIPCity = await GetIpInfo(clientIP);
             bool isMobile = _detectionService.Device.Type == Wangkanai.Detection.Models.Device.Mobile;
             await SendAsyncEmail(userCredential, clientIP, clientIPCity, isMobile);
@@ -259,7 +260,7 @@ namespace Buildyv2.Controllers.V1
                             returnString = geolocationInfo?.city;
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         //ServiceLog.AddException("Excepcion. Obteniendo info de IP al login. ERROR: " + ex.Message, MethodBase.GetCurrentMethod()?.DeclaringType?.Name, MethodBase.GetCurrentMethod()?.Name, ex.Message);
                     }
