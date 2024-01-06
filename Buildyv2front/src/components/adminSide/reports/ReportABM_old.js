@@ -179,31 +179,6 @@ const ReportABM = () => {
     setInputHasErrorEstate(false);
   };
 
-  // Esta función se llama cuando se cargan nuevos archivos
-  const handleFileUpload = (newFiles) => {
-    setLoadedPhotos((currentFiles) => [
-      ...currentFiles,
-      ...newFiles.map((file) => ({
-        file,
-        type: file.type,
-        name: file.name,
-      })),
-    ]);
-  };
-
-  // Agrega una sección para mostrar las vistas previas
-  const renderPhotoPreviews = () => {
-    return loadedPhotos.map((photo, index) => (
-      <div key={index}>
-        <img
-          src={URL.createObjectURL(photo.file)}
-          alt={photo.name}
-          style={{ width: "100px", height: "100px" }}
-        />
-      </div>
-    ));
-  };
-
   //#endregion Functions ***********************************
 
   return (
@@ -296,7 +271,7 @@ const ReportABM = () => {
                 )}
               </CInputGroup>
               <br />
-              {/* <FileUpload
+              <FileUpload
                 multiple={true}
                 name="example-upload"
                 maxSize={300000}
@@ -309,16 +284,7 @@ const ReportABM = () => {
                   )
                 }
                 label="Cargar fotos"
-              /> */}
-
-              <FileUpload
-                multiple={true}
-                name="example-upload"
-                maxSize={300000}
-                onUpload={handleFileUpload}
-                label="Cargar fotos"
               />
-              {/* <div>{renderPhotoPreviews()}</div> */}
               <br />
               <CRow className="justify-content-center">
                 {isLoading && (

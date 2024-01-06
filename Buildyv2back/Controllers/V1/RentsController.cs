@@ -54,7 +54,7 @@ namespace Buildyv2.Controllers.V1
                     {
                         IncludeExpression = b => b.ListTenants
                     },
-                new IncludePropertyConfiguration<Rent>
+                    new IncludePropertyConfiguration<Rent>
                     {
                         IncludeExpression = b => b.ListPhotos
                     },

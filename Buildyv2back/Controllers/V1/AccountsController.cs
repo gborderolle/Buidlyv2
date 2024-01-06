@@ -23,7 +23,7 @@ namespace Buildyv2.Controllers.V1
     [Route("api/accounts")]
     public class AccountsController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration; 
         private readonly ILogger<AccountsController> _logger; // Logger para registrar eventos. 
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;

@@ -138,9 +138,19 @@ const FileUpload = ({ maxSize, name, multiple, label, onUpload }) => {
 
   // Esta función ahora solo establece los archivos en el estado fileList
   const handleFileSelect = (e) => {
-    handleDragOver(e);
-    const files = e.target.files || e.dataTransfer.files;
-    onUpload([...Object.keys(files).map((key) => files[key])]); // Actualizar el estado en el componente padre
+    e.preventDefault(); // Prevenir el comportamiento por defecto
+    e.stopPropagation(); // Detener la propagación del evento
+
+    const newFiles = e.target.files || e.dataTransfer.files; // Obtener los archivos seleccionados
+
+    // Asegúrate de que los archivos no excedan el tamaño máximo
+    const validFiles = [...newFiles].filter((file) => file.size <= maxSize);
+
+    // Actualiza el estado fileList con los nuevos archivos, además de los ya existentes
+    setFileList((currentFiles) => [...currentFiles, ...validFiles]);
+
+    // Llama al callback onUpload con los nuevos archivos
+    onUpload(validFiles);
   };
 
   const removeItem = (index) => {

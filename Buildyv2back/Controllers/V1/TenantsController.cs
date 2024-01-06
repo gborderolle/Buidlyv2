@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Buildyv2.DTOs;
-using Buildyv2.Models;
 using Buildyv2.Utilities;
 
 namespace Buildyv2.Controllers.V1
