@@ -55,7 +55,7 @@ export const loginHandler =
         icon: "error",
       });
       setErrorMessage(
-        "Error al autenticar. Por favor, revisa tus credenciales y tu conexión a Internet."
+        "Error al autenticar. Por favor, revisa tu conexión a Internet."
       );
     }
   };

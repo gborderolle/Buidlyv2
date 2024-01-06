@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Buildyv2.csproj",
+                "${workspaceFolder}/Buildyv2back.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/Buildyv2.csproj",
+                "${workspaceFolder}/Buildyv2back.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/Buildyv2.csproj"
+                "${workspaceFolder}/Buildyv2back.sln"
             ],
             "problemMatcher": "$msCompile"
         }

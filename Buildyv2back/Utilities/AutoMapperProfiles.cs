@@ -7,12 +7,8 @@ namespace Buildyv2.Utilities
 {
     public class AutoMapperProfiles : Profile
     {
-        private readonly IWebHostEnvironment _env;
-
-        public AutoMapperProfiles(IWebHostEnvironment env)
+        public AutoMapperProfiles()
         {
-            _env = env;
-
             CreateMap<IdentityUser, UserDTO>();
 
             CreateMap<Estate, EstateDTO>()
@@ -89,7 +85,8 @@ namespace Buildyv2.Utilities
             }
 
             // Construye la ruta base usando el ReportId y la fecha de creación.
-            string basePath = Path.Combine(_env.WebRootPath, "/wwwroot/uploads/reports", reportId.ToString(), creationDate.ToString("yyyyMMddHHmmss"));
+            // string basePath = Path.Combine(_env.WebRootPath, "/wwwroot/uploads/reports", reportId.ToString(), creationDate.ToString("yyyyMMddHHmmss"));
+            string basePath = Path.Combine("/wwwroot/uploads/reports", reportId.ToString(), creationDate.ToString("yyyyMMddHHmmss"));
 
             // Asegúrate de que la carpeta exista.
             if (!Directory.Exists(basePath))
