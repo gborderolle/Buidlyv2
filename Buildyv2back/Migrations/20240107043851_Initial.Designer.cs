@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildyv2.Migrations
 {
     [DbContext(typeof(ContextDB))]
-    [Migration("20231231200241_migracion")]
-    partial class migracion
+    [Migration("20240107043851_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,20 +60,20 @@ namespace Buildyv2.Migrations
                         new
                         {
                             Id = 1,
-                            Creation = new DateTime(2023, 12, 31, 17, 2, 40, 830, DateTimeKind.Local).AddTicks(6287),
+                            Creation = new DateTime(2024, 1, 7, 1, 38, 51, 384, DateTimeKind.Local).AddTicks(8367),
                             Name = "Melo",
                             NominatimCityCode = "ME",
                             ProvinceDSId = 1,
-                            Update = new DateTime(2023, 12, 31, 17, 2, 40, 830, DateTimeKind.Local).AddTicks(6289)
+                            Update = new DateTime(2024, 1, 7, 1, 38, 51, 384, DateTimeKind.Local).AddTicks(8368)
                         },
                         new
                         {
                             Id = 2,
-                            Creation = new DateTime(2023, 12, 31, 17, 2, 40, 830, DateTimeKind.Local).AddTicks(6290),
+                            Creation = new DateTime(2024, 1, 7, 1, 38, 51, 384, DateTimeKind.Local).AddTicks(8369),
                             Name = "Montevideo",
                             NominatimCityCode = "MO",
                             ProvinceDSId = 2,
-                            Update = new DateTime(2023, 12, 31, 17, 2, 40, 830, DateTimeKind.Local).AddTicks(6291)
+                            Update = new DateTime(2024, 1, 7, 1, 38, 51, 384, DateTimeKind.Local).AddTicks(8370)
                         });
                 });
 
@@ -107,10 +107,10 @@ namespace Buildyv2.Migrations
                         new
                         {
                             Id = 1,
-                            Creation = new DateTime(2023, 12, 31, 17, 2, 40, 830, DateTimeKind.Local).AddTicks(5907),
+                            Creation = new DateTime(2024, 1, 7, 1, 38, 51, 384, DateTimeKind.Local).AddTicks(7986),
                             Name = "Uruguay",
                             NominatimCountryCode = "UY",
-                            Update = new DateTime(2023, 12, 31, 17, 2, 40, 830, DateTimeKind.Local).AddTicks(5939)
+                            Update = new DateTime(2024, 1, 7, 1, 38, 51, 384, DateTimeKind.Local).AddTicks(8020)
                         });
                 });
 
@@ -273,19 +273,19 @@ namespace Buildyv2.Migrations
                         {
                             Id = 1,
                             CountryDSId = 1,
-                            Creation = new DateTime(2023, 12, 31, 17, 2, 40, 830, DateTimeKind.Local).AddTicks(6224),
+                            Creation = new DateTime(2024, 1, 7, 1, 38, 51, 384, DateTimeKind.Local).AddTicks(8301),
                             Name = "Cerro Largo",
                             NominatimProvinceCode = "CL",
-                            Update = new DateTime(2023, 12, 31, 17, 2, 40, 830, DateTimeKind.Local).AddTicks(6225)
+                            Update = new DateTime(2024, 1, 7, 1, 38, 51, 384, DateTimeKind.Local).AddTicks(8302)
                         },
                         new
                         {
                             Id = 2,
                             CountryDSId = 1,
-                            Creation = new DateTime(2023, 12, 31, 17, 2, 40, 830, DateTimeKind.Local).AddTicks(6227),
+                            Creation = new DateTime(2024, 1, 7, 1, 38, 51, 384, DateTimeKind.Local).AddTicks(8303),
                             Name = "Montevideo",
                             NominatimProvinceCode = "MO",
-                            Update = new DateTime(2023, 12, 31, 17, 2, 40, 830, DateTimeKind.Local).AddTicks(6227)
+                            Update = new DateTime(2024, 1, 7, 1, 38, 51, 384, DateTimeKind.Local).AddTicks(8303)
                         });
                 });
 
@@ -585,15 +585,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0e7fead6-1cc1-43d8-a17c-706d0c021bb1",
+                            ConcurrencyStamp = "f887d5fe-cb7d-4f4a-bcf9-9b889a8dd194",
                             Email = "admin@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@buildy2.uy",
                             NormalizedUserName = "admin@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAECNlCXUF/y8wjh6OeMm8HcCi1O8g7jQJ/NOzpMqaw6hQM50n8Az71gpg7hyqhpx0fA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEM0yM/BMcqzJwt9Nsm4E015GT0UXud24MAONZoreTqetQHIVf/35le4YL7cyfJH8Tg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "152e185a-496e-4214-8fc9-f286ea14f955",
+                            SecurityStamp = "bbd355db-6cb1-4996-8a0e-d226abb791e1",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Admin"
                         },
@@ -601,15 +601,15 @@ namespace Buildyv2.Migrations
                         {
                             Id = "e0765c93-676c-4199-b7ee-d7877c471821",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "44e32146-cf00-4f26-9585-fd26df393aca",
+                            ConcurrencyStamp = "e126bfb8-242f-4e45-b1e6-3f0b0f0638e8",
                             Email = "normal@buildy2.uy",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "normal@buildy2.uy",
                             NormalizedUserName = "normal@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAELJ1/3piKhLRUKhDWyfquy7q2Ww//xGNXfhADtga/rdyAbcFzFSv/a2WI0uoqZoqVw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJxUk0zHSp7kUeQDd1rrkaG9pJqwnXvcGfZoOLoSgIWnTvxZtYIQ3eRDNWknJ3K5Vw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b48015e3-bc83-476e-b665-13a14a4a5a79",
+                            SecurityStamp = "bad41afa-fd16-41b7-b9b7-df9e0e3d61a1",
                             TwoFactorEnabled = false,
                             UserName = "Sr.Normal"
                         });

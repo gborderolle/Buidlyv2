@@ -107,6 +107,16 @@ const ReportABM = () => {
 
   //#region Hooks ***********************************
 
+  useEffect(() => {
+    if (editMode && report?.ListPhotosURL) {
+      const existingPhotos = report.ListPhotosURL.map((url) => ({
+        url, // URL de la foto existente
+        isExisting: true, // Marca para identificar que es una foto ya existente
+      }));
+      setLoadedPhotos(existingPhotos);
+    }
+  }, [editMode, report]);
+
   //#endregion Hooks ***********************************
 
   //#region Events ***********************************
@@ -146,21 +156,21 @@ const ReportABM = () => {
 
         await uploadData(formData, urlReport);
 
-        const dataToUpload = {
-          Name: name,
-          Month: month,
-          Comments: comments,
-          EstateId: ddlSelectedEstate.id,
-          ListPhotos: loadedPhotos, // Añadir las fotos cargadas
-        };
-        console.log("dataToUpload:", dataToUpload);
-
+        // const dataToUpload = {
+        //   Name: name,
+        //   Month: month,
+        //   Comments: comments,
+        //   EstateId: ddlSelectedEstate.id,
+        //   ListPhotos: loadedPhotos, // Añadir las fotos cargadas
+        // };
+        // console.log("dataToUpload:", dataToUpload);
         //await uploadData(dataToUpload, urlReport);
+
         dispatch(fetchReportList());
 
-        inputResetName();
-        inputResetComments();
-        inputResetEstate();
+        setTimeout(() => {
+          navigate("/reports");
+        }, 1000);
       } catch (error) {
         console.error("Error al enviar los datos:", error);
       }
@@ -191,15 +201,25 @@ const ReportABM = () => {
     ]);
   };
 
-  // Agrega una sección para mostrar las vistas previas
+  // Modificar la función de renderizado para manejar fotos existentes
   const renderPhotoPreviews = () => {
     return loadedPhotos.map((photo, index) => (
       <div key={index}>
-        <img
-          src={URL.createObjectURL(photo.file)}
-          alt={photo.name}
-          style={{ width: "100px", height: "100px" }}
-        />
+        {photo.isExisting ? (
+          // Foto existente
+          <img
+            src={photo.url}
+            alt={`Foto ${index}`}
+            style={{ width: "100px", height: "100px" }}
+          />
+        ) : (
+          // Foto nueva subida
+          <img
+            src={URL.createObjectURL(photo.file)}
+            alt={photo.name}
+            style={{ width: "100px", height: "100px" }}
+          />
+        )}
       </div>
     ));
   };
@@ -296,20 +316,6 @@ const ReportABM = () => {
                 )}
               </CInputGroup>
               <br />
-              {/* <FileUpload
-                multiple={true}
-                name="example-upload"
-                maxSize={300000}
-                onUpload={(files) =>
-                  setLoadedPhotos(
-                    files.map((file) => ({
-                      file, // Asegúrate de que esto sea un objeto File
-                      type: file.type, // Asegúrate de que cada archivo tenga un tipo
-                    }))
-                  )
-                }
-                label="Cargar fotos"
-              /> */}
 
               <FileUpload
                 multiple={true}

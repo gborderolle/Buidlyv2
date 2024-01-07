@@ -129,7 +129,7 @@ const ReportMenu = () => {
           <td>{report.estate?.name}</td>
           <td>{report.estate?.address}</td>
           <td>{report.name}</td>
-          <td>{report.listPhotos?.length}</td>
+          <td>{report.listPhotosURL?.length}</td>
           <td>{report.comments}</td>
           <td>
             <button

@@ -3,6 +3,7 @@ using Buildyv2.Context;
 using Buildyv2.DTOs;
 using Buildyv2.Models;
 using Buildyv2.Repository.Interfaces;
+using Buildyv2.Services;
 using Buildyv2.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,13 +20,17 @@ namespace Buildyv2.Controllers.V1
     public class ReportsController : CustomBaseController<Report> // Notice <Report> here
     {
         private readonly IReportRepository _reportRepository; // Servicio que contiene la lógica principal de negocio para Reports.
+        private readonly IPhotoRepository _photoRepository; // Servicio que contiene la lógica principal de negocio para Reports.
         private readonly ContextDB _dbContext;
+        private readonly IFileStorage _fileStorage;
 
-        public ReportsController(ILogger<ReportsController> logger, IMapper mapper, IReportRepository reportRepository, ContextDB dbContext)
+        public ReportsController(ILogger<ReportsController> logger, IMapper mapper, IReportRepository reportRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ContextDB dbContext)
         : base(mapper, logger, reportRepository)
         {
             _response = new();
             _reportRepository = reportRepository;
+            _photoRepository = photoRepository;
+            _fileStorage = fileStorage;
             _dbContext = dbContext;
         }
 
@@ -39,6 +44,10 @@ namespace Buildyv2.Controllers.V1
                     new IncludePropertyConfiguration<Report>
                     {
                         IncludeExpression = b => b.Estate
+                    },
+                    new IncludePropertyConfiguration<Report>
+                    {
+                        IncludeExpression = b => b.ListPhotos
                     },
             };
             return await Get<Report, ReportDTO>(paginationDTO: paginationDTO, includes: includes);
@@ -63,6 +72,10 @@ namespace Buildyv2.Controllers.V1
                     new IncludePropertyConfiguration<Report>
                     {
                         IncludeExpression = b => b.Estate
+                    },
+                    new IncludePropertyConfiguration<Report>
+                    {
+                        IncludeExpression = b => b.ListPhotos
                     },
             };
             return await Get<Report, ReportDTO>(includes: includes);
@@ -96,7 +109,6 @@ namespace Buildyv2.Controllers.V1
         [HttpPost(Name = "CreateReport")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromForm] ReportCreateDTO reportCreateDto)
-        //public async Task<ActionResult<APIResponse>> Post([FromBody] ReportCreateDTO reportCreateDto)
         {
             try
             {
@@ -136,6 +148,26 @@ namespace Buildyv2.Controllers.V1
 
                 await _reportRepository.Create(modelo);
                 _logger.LogInformation($"Se creó correctamente el reporte Id:{modelo.Id}.");
+
+                if (reportCreateDto.ListPhotos != null && reportCreateDto.ListPhotos.Count > 0)
+                {
+                    string dynamicContainer = $"uploads/reports/estate{estate.Id}/{DateTime.Now:yyyy_MM}/report{modelo.Id}";
+                    foreach (var photoForm in reportCreateDto.ListPhotos)
+                    {
+                        Photo newPhoto = new();
+                        newPhoto.Report = modelo;
+
+                        using (var stream = new MemoryStream())
+                        {
+                            await photoForm.CopyToAsync(stream);
+                            var content = stream.ToArray();
+                            var extension = Path.GetExtension(photoForm.FileName);
+                            newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
+                        }
+
+                        await _photoRepository.Create(newPhoto);
+                    }
+                }
 
                 _response.Result = _mapper.Map<ReportDTO>(modelo);
                 _response.StatusCode = HttpStatusCode.Created;

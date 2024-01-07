@@ -48,11 +48,15 @@ namespace Buildyv2.Utilities
               .ForMember(dest => dest.ProvinceDS, opt => opt.Ignore()) // Ignorar este campo
               .ReverseMap();
 
-            CreateMap<Report, ReportDTO>().ReverseMap();
+            CreateMap<Report, ReportDTO>()
+              .ForMember(dest => dest.ListPhotosURL, opt => opt.MapFrom(src => src.ListPhotos.Select(photo => photo.URL).ToList()))
+            .ReverseMap();
+
             CreateMap<ReportCreateDTO, Report>()
               .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
-              .ForMember(dest => dest.ListPhotos, opt => opt.MapFrom(src => MapIFormFilesToPhotos(src.ListPhotos, src.Id, src.Creation)))
+              .ForMember(dest => dest.ListPhotos, opt => opt.Ignore()) // Ignorar porque lo agrego a mano en el Controller
               .ReverseMap();
+            //   .ForMember(dest => dest.ListPhotos, opt => opt.MapFrom(src => MapIFormFilesToPhotos(src.ListPhotos, src.Id, src.Creation)))
 
             CreateMap<JobCreateDTO, Job>()
               .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
@@ -61,20 +65,14 @@ namespace Buildyv2.Utilities
 
         }
 
-        private List<Photo> MapIFormFilesToPhotos(List<IFormFile> files, int reportId, DateTime creationDate)
+        private List<string> MapIFormFilesToPhotos(List<Photo> photos)
         {
-            var photos = new List<Photo>();
-            int count = 1;
-            foreach (var file in files)
+            var urls = new List<string>();
+            foreach (var photo in photos)
             {
-                var photo = new Photo
-                {
-                    URL = SaveFileAndGetUrl(file, reportId, creationDate, count)
-                };
-                photos.Add(photo);
-                count++;
+                urls.Add(photo.URL);
             }
-            return photos;
+            return urls;
         }
 
         private string SaveFileAndGetUrl(IFormFile file, int reportId, DateTime creationDate, int fileCount)

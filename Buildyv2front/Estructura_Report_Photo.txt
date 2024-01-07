@@ -24,6 +24,7 @@ Junto a sus respectivos DTO, CreateDTO y su Controller en el Backend.
 
         // Uniques
         public List<Photo> ListPhotos { get; set; }
+        //public List<string> ListPhotosURL { get; set; }
 
         #endregion
 
@@ -51,7 +52,8 @@ Junto a sus respectivos DTO, CreateDTO y su Controller en el Backend.
         public string Comments { get; set; }
 
         // Uniques
-        public List<Photo> ListPhotos { get; set; }
+        //public List<Photo> ListPhotos { get; set; }
+        public List<string> ListPhotosURL { get; set; }
 
         #endregion
 
@@ -84,7 +86,10 @@ Junto a sus respectivos DTO, CreateDTO y su Controller en el Backend.
         public string Comments { get; set; }
 
         // Uniques
-        public List<Photo> ListPhotos { get; set; }
+        //public List<Photo> ListPhotos { get; set; }
+        [FileSizeValidation(maxSizeMB: 4)]
+        [FileTypeValidation(fileTypeGroup: FileTypeGroup.Image)]
+        public List<IFormFile> ListPhotos { get; set; } // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/19983788#notes
 
         #endregion
 
@@ -99,19 +104,25 @@ Junto a sus respectivos DTO, CreateDTO y su Controller en el Backend.
     }
 
 
-        [ApiController]
+     [ApiController]
     [HasHeader("x-version", "1")]
     [Route("api/reports")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ReportsController : CustomBaseController<Report> // Notice <Report> here
     {
         private readonly IReportRepository _reportRepository; // Servicio que contiene la lógica principal de negocio para Reports.
+        private readonly IPhotoRepository _photoRepository; // Servicio que contiene la lógica principal de negocio para Reports.
+        private readonly ContextDB _dbContext;
+        private readonly IFileStorage _fileStorage;
 
-        public ReportsController(ILogger<ReportsController> logger, IMapper mapper, IReportRepository reportRepository)
+        public ReportsController(ILogger<ReportsController> logger, IMapper mapper, IReportRepository reportRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ContextDB dbContext)
         : base(mapper, logger, reportRepository)
         {
             _response = new();
             _reportRepository = reportRepository;
+            _photoRepository = photoRepository;
+            _fileStorage = fileStorage;
+            _dbContext = dbContext;
         }
 
         #region Endpoints genéricos
@@ -119,7 +130,18 @@ Junto a sus respectivos DTO, CreateDTO y su Controller en el Backend.
         [HttpGet("GetReport")]
         public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
         {
-            return await Get<Report, ReportDTO>(paginationDTO: paginationDTO);
+            var includes = new List<IncludePropertyConfiguration<Report>>
+            {
+                    new IncludePropertyConfiguration<Report>
+                    {
+                        IncludeExpression = b => b.Estate
+                    },
+                    new IncludePropertyConfiguration<Report>
+                    {
+                        IncludeExpression = b => b.ListPhotos
+                    },
+            };
+            return await Get<Report, ReportDTO>(paginationDTO: paginationDTO, includes: includes);
         }
 
         [HttpGet("all")]
@@ -140,9 +162,13 @@ Junto a sus respectivos DTO, CreateDTO y su Controller en el Backend.
             {
                     new IncludePropertyConfiguration<Report>
                     {
+                        IncludeExpression = b => b.Estate
+                    },
+                    new IncludePropertyConfiguration<Report>
+                    {
                         IncludeExpression = b => b.ListPhotos
                     },
-                };
+            };
             return await Get<Report, ReportDTO>(includes: includes);
         }
 
@@ -173,42 +199,112 @@ Junto a sus respectivos DTO, CreateDTO y su Controller en el Backend.
 
         [HttpPost(Name = "CreateReport")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Post([FromBody] ReportCreateDTO reportCreateDto)
+        public async Task<ActionResult<APIResponse>> Post([FromForm] ReportCreateDTO reportCreateDto)
         {
-            return Ok();
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
+                if (await _reportRepository.Get(v => v.Name.ToLower() == reportCreateDto.Name.ToLower()) != null)
+                {
+                    _logger.LogError($"El nombre {reportCreateDto.Name} ya existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"El nombre {reportCreateDto.Name} ya existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    ModelState.AddModelError("NameAlreadyExists", $"El nombre {reportCreateDto.Name} ya existe en el sistema.");
+                    return BadRequest(ModelState);
+                }
+
+                var estate = await _dbContext.Estate.FindAsync(reportCreateDto.EstateId);
+                if (estate == null)
+                {
+                    _logger.LogError($"La propiedad ID={reportCreateDto.EstateId} no existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"La propiedad ID={reportCreateDto.EstateId} no existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    ModelState.AddModelError("NameAlreadyExists", $"La propiedad ID={reportCreateDto.EstateId} no existe en el sistema.");
+                    return BadRequest(ModelState);
+                }
+
+                Report modelo = _mapper.Map<Report>(reportCreateDto);
+                modelo.Estate = estate;
+                modelo.Creation = DateTime.Now;
+                modelo.Update = DateTime.Now;
+
+                await _reportRepository.Create(modelo);
+                _logger.LogInformation($"Se creó correctamente el reporte Id:{modelo.Id}.");
+
+                if (reportCreateDto.ListPhotos != null && reportCreateDto.ListPhotos.Count > 0)
+                {
+                    string dynamicContainer = $"uploads/reports/estate{estate.Id}/{DateTime.Now:yyyy_MM}";
+                    foreach (var photoForm in reportCreateDto.ListPhotos)
+                    {
+                        Photo newPhoto = new();
+                        newPhoto.Report = modelo;
+
+                        using (var stream = new MemoryStream())
+                        {
+                            await photoForm.CopyToAsync(stream);
+                            var content = stream.ToArray();
+                            var extension = Path.GetExtension(photoForm.FileName);
+                            newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
+                        }
+
+                        await _photoRepository.Create(newPhoto);
+                    }
+                }
+
+                _response.Result = _mapper.Map<ReportDTO>(modelo);
+                _response.StatusCode = HttpStatusCode.Created;
+
+                // CreatedAtRoute -> Nombre de la ruta (del método): GetEstateById
+                // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816172#notes
+                return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return _response;
         }
 
         #endregion
-
-        #region Private methods
-
-        #endregion
-
-    }
 
 
 // ---------------------------------------------------------------
 
 
 public class Photo
-{
-    #region Internal
+    {
+        #region Internal
 
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
-    public DateTime Creation { get; set; } = DateTime.Now;
+        public DateTime Creation { get; set; } = DateTime.Now;
 
-    public DateTime Update { get; set; } = DateTime.Now;
+        public DateTime Update { get; set; } = DateTime.Now;
 
-    // Uniques
-    [Required(ErrorMessage = "El campo {0} es requerido")]
-    public string URL { get; set; }
+        // Uniques
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        public string URL { get; set; }
 
-    #endregion
+        #endregion
 
-    #region External
+        #region External
 
-    #endregion
-}
+        public int ReportId { get; set; }
+        public Report Report { get; set; }
+
+        #endregion
+    }
