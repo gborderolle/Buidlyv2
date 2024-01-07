@@ -22,3 +22,5 @@ EmailService/bin/
 EmailService/bin/*
 EmailService/obj/
 EmailService/obj/*
+Buildyv2back/wwwroot/uploads/
+Buildyv2back/wwwroot/uploads/*

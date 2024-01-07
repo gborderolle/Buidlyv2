@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import Modal from "react-modal";
 
 import {
   CRow,
@@ -52,6 +53,9 @@ const ReportABM = () => {
 
   const [loadedPhotos, setLoadedPhotos] = useState([]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
   // redux
   const dispatch = useDispatch();
 
@@ -103,13 +107,23 @@ const ReportABM = () => {
     report ? report.comments : ""
   );
 
+  const openModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
 
   useEffect(() => {
-    if (editMode && report?.ListPhotosURL) {
-      const existingPhotos = report.ListPhotosURL.map((url) => ({
+    if (editMode && report?.listPhotosURL) {
+      const existingPhotos = report.listPhotosURL.map((url) => ({
         url, // URL de la foto existente
         isExisting: true, // Marca para identificar que es una foto ya existente
       }));
@@ -156,16 +170,6 @@ const ReportABM = () => {
 
         await uploadData(formData, urlReport);
 
-        // const dataToUpload = {
-        //   Name: name,
-        //   Month: month,
-        //   Comments: comments,
-        //   EstateId: ddlSelectedEstate.id,
-        //   ListPhotos: loadedPhotos, // Añadir las fotos cargadas
-        // };
-        // console.log("dataToUpload:", dataToUpload);
-        //await uploadData(dataToUpload, urlReport);
-
         dispatch(fetchReportList());
 
         setTimeout(() => {
@@ -184,10 +188,6 @@ const ReportABM = () => {
   //#endregion Events ***********************************
 
   //#region Functions ***********************************
-  const inputResetEstate = () => {
-    setDdlSelectedEstate(null);
-    setInputHasErrorEstate(false);
-  };
 
   // Esta función se llama cuando se cargan nuevos archivos
   const handleFileUpload = (newFiles) => {
@@ -203,25 +203,23 @@ const ReportABM = () => {
 
   // Modificar la función de renderizado para manejar fotos existentes
   const renderPhotoPreviews = () => {
-    return loadedPhotos.map((photo, index) => (
-      <div key={index}>
-        {photo.isExisting ? (
-          // Foto existente
-          <img
-            src={photo.url}
-            alt={`Foto ${index}`}
-            style={{ width: "100px", height: "100px" }}
-          />
-        ) : (
-          // Foto nueva subida
-          <img
-            src={URL.createObjectURL(photo.file)}
-            alt={photo.name}
-            style={{ width: "100px", height: "100px" }}
-          />
-        )}
+    return (
+      <div style={{ display: "flex", overflowX: "auto", gap: "10px" }}>
+        {loadedPhotos.map((photo, index) => (
+          <div
+            key={index}
+            style={{ flex: "0 0 auto" }}
+            onClick={() => openModal(photo.url)}
+          >
+            <img
+              src={photo.url}
+              alt={`Foto ${index}`}
+              style={{ width: "100px", height: "100px", cursor: "pointer" }}
+            />
+          </div>
+        ))}
       </div>
-    ));
+    );
   };
 
   //#endregion Functions ***********************************
@@ -324,7 +322,25 @@ const ReportABM = () => {
                 onUpload={handleFileUpload}
                 label="Cargar fotos"
               />
-              {/* <div>{renderPhotoPreviews()}</div> */}
+              {editMode && (
+                <>
+                  <br />
+                  <div>{renderPhotoPreviews()}</div>
+
+                  <Modal
+                    isOpen={isModalOpen}
+                    onRequestClose={closeModal}
+                    contentLabel="Imagen Ampliada"
+                  >
+                    <img
+                      src={selectedImage}
+                      alt="Imagen Ampliada"
+                      style={{ width: "500px" }}
+                    />
+                    <button onClick={closeModal}>Cerrar</button>
+                  </Modal>
+                </>
+              )}
               <br />
               <CRow className="justify-content-center">
                 {isLoading && (
