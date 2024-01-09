@@ -33,6 +33,7 @@ import { authActions } from "../../../store/auth-slice";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+// Este componente de React se utiliza para agregar o modificar un alquiler.
 const RentABM = () => {
   //#region Const ***********************************
 
@@ -139,6 +140,7 @@ const RentABM = () => {
 
   //#region Events ***********************************
 
+  // Este método se llama cuando se envía el formulario. Se encarga de validar los datos de entrada y de subirlos a la API.
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
@@ -188,6 +190,7 @@ const RentABM = () => {
     }
   };
 
+  // Este método se llama cuando se selecciona o se deselecciona un inquilino en el formulario. Se encarga de actualizar el estado de los inquilinos seleccionados.
   const handleSelectCheckboxTenant = (event, tenantId) => {
     if (event.target.checked) {
       setSelectedTenants((prevTenants) => [...prevTenants, tenantId]);
