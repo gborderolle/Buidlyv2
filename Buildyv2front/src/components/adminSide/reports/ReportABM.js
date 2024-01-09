@@ -32,8 +32,8 @@ import { authActions } from "../../../store/auth-slice";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./uploadFiles.css";
-import FileUpload, { uploadFileToServer } from "./FileUpload.js";
+import "../../../utils/FileUpload.css";
+import FileUpload from "../../../utils/FileUpload.js";
 
 const ReportABM = () => {
   //#region Const ***********************************
