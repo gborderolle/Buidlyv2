@@ -26,6 +26,9 @@ namespace Buildyv2.Models
         public string Comments { get; set; }
 
         // Uniques
+        /// <summary>
+        /// Fotos del reporte
+        /// </summary>
         public List<Photo> ListPhotos { get; set; }
         //public List<string> ListPhotosURL { get; set; }
 

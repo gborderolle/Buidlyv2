@@ -56,7 +56,15 @@ namespace Buildyv2.Utilities
               .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
               .ForMember(dest => dest.ListPhotos, opt => opt.Ignore()) // Ignorar porque lo agrego a mano en el Controller
               .ReverseMap();
-            //   .ForMember(dest => dest.ListPhotos, opt => opt.MapFrom(src => MapIFormFilesToPhotos(src.ListPhotos, src.Id, src.Creation)))
+
+            CreateMap<Rent, RentDTO>()
+                         .ForMember(destinationMember: dest => dest.ListPhotosURL, opt => opt.MapFrom(src => src.ListPhotos.Select(photo => photo.URL).ToList()))
+                       .ReverseMap();
+
+            CreateMap<RentCreateDTO, Rent>()
+              .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
+              .ForMember(dest => dest.ListPhotos, opt => opt.Ignore()) // Ignorar porque lo agrego a mano en el Controller
+              .ReverseMap();
 
             CreateMap<JobCreateDTO, Job>()
               .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos

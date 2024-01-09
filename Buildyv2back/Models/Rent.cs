@@ -29,6 +29,9 @@ namespace Buildyv2.Models
 
         public bool RentIsEnded { get; set; }
 
+        /// <summary>
+        /// Fotos del contrato
+        /// </summary>
         public List<Photo> ListPhotos { get; set; }
 
         #endregion

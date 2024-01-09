@@ -15,10 +15,6 @@ import {
   CCardTitle,
   CCardBody,
   CCardFooter,
-  CDropdown,
-  CDropdownItem,
-  CDropdownToggle,
-  CDropdownMenu,
   CFormCheck,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
@@ -52,6 +48,8 @@ const RentABM = () => {
   const monthDate = monthString ? new Date(monthString) : new Date();
   const [month, setMonth] = useState(monthDate);
 
+  const [inputWarrant, setInputWarrant] = useState(rent?.warrant);
+
   // redux
   const dispatch = useDispatch();
 
@@ -78,19 +76,6 @@ const RentABM = () => {
   );
   const [ddlSelectedTenant, setDdlSelectedTenant] = useState(
     defaultTenant || null
-  );
-
-  const {
-    value: warrant,
-    isValid: inputIsValidWarrant,
-    hasError: inputHasErrorWarrant,
-    valueChangeHandler: inputChangeHandlerWarrant,
-    inputBlurHandler: inputBlurHandlerWarrant,
-    reset: inputResetWarrant,
-  } = useInput(
-    (value) => value.trim() !== "",
-    null, // onChangeCallback
-    rent ? rent.warrant : ""
   );
 
   const {
@@ -144,18 +129,14 @@ const RentABM = () => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
-    // Verificar si se seleccionó un inquilino
-    const inputIsValidTenant = ddlSelectedTenant !== null;
-    if (!inputIsValidTenant) {
+    // Verificar si se ha seleccionado al menos un inquilino
+    if (selectedTenants.length === 0) {
       setInputHasErrorTenant(true);
       return;
     }
 
     setIsValidForm(
-      inputIsValidComments &&
-        inputIsValidWarrant &&
-        inputIsValidMonthlyValue &&
-        inputIsValidDuration
+      inputIsValidComments && inputIsValidMonthlyValue && inputIsValidDuration
     );
 
     if (!isValidForm) {
@@ -164,12 +145,12 @@ const RentABM = () => {
 
     const dataToUpload = {
       Comments: comments,
-      Warrant: warrant,
+      Warrant: inputWarrant,
       MonthlyValue: monthlyValue,
       Datetime_monthInit: month.toISOString().split("T")[0], // Asegúrate de formatear la fecha correctamente
       Duration: duration,
       RentIsEnded: false,
-      ListTenants: ddlSelectedTenant ? [ddlSelectedTenant] : [], // Enviar como lista
+      ListTenants: selectedTenants, // Incluir la lista de inquilinos seleccionados
 
       //   ListPhotos: listPhotos,
       //   EstateId: rent.estateId,
@@ -237,6 +218,7 @@ const RentABM = () => {
                       key={tenant.id}
                       id={`tenant-${tenant.id}`}
                       label={`${tenant.id}: ${tenant.name} (${tenant.phone1})`}
+                      checked={selectedTenants.includes(tenant.id)} // Establecer la propiedad checked
                       onChange={(event) =>
                         handleSelectCheckboxTenant(event, tenant.id)
                       }
@@ -254,7 +236,7 @@ const RentABM = () => {
                 {/*  */}
                 {inputHasErrorTenant && (
                   <CAlert color="danger" className="w-100">
-                    Entrada inválida
+                    Por favor, selecciona al menos un inquilino.
                   </CAlert>
                 )}
               </CInputGroup>
@@ -266,16 +248,30 @@ const RentABM = () => {
                 <CFormInput
                   type="text"
                   className="cardItem"
-                  onChange={inputChangeHandlerWarrant}
-                  onBlur={inputBlurHandlerWarrant}
-                  value={warrant}
+                  value={inputWarrant}
+                  onChange={(e) => setInputWarrant(e.target.value)}
+                  style={{ flex: "1" }} // Asegura que el input tome el máximo espacio posible
                 />
-                {inputHasErrorWarrant && (
-                  <CAlert color="danger" className="w-100">
-                    Entrada inválida
-                  </CAlert>
-                )}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginLeft: "10px", // Espaciar el checkbox del input
+                  }}
+                >
+                  <CFormCheck
+                    id="luc-checkbox"
+                    label="LUC"
+                    checked={inputWarrant === "LUC"}
+                    onChange={(event) =>
+                      event.target.checked
+                        ? setInputWarrant("LUC")
+                        : setInputWarrant("")
+                    }
+                  />
+                </div>
               </CInputGroup>
+
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">

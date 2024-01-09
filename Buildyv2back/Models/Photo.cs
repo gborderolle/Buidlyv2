@@ -23,8 +23,11 @@ namespace Buildyv2.Models
 
         #region External
 
-        public int ReportId { get; set; }
-        public Report Report { get; set; }
+        public int? ReportId { get; set; }
+        public Report? Report { get; set; }
+
+        public int? RentId { get; set; }
+        public Rent? Rent { get; set; }
 
         #endregion
     }

@@ -1,6 +1,7 @@
 ﻿using Buildyv2.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Buildyv2.Validations;
 
 namespace Buildyv2.DTOs
 {
@@ -30,7 +31,10 @@ namespace Buildyv2.DTOs
 
         public bool RentIsEnded { get; set; }
 
-        public List<Photo> ListPhotos { get; set; }
+        //public List<Photo> ListPhotos { get; set; }
+        [FileSizeValidation(maxSizeMB: 4)]
+        [FileTypeValidation(fileTypeGroup: FileTypeGroup.Image)]
+        public List<IFormFile> ListPhotos { get; set; } // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/19983788#notes
 
         #endregion
 
