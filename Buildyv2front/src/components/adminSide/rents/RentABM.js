@@ -36,7 +36,6 @@ import "react-datepicker/dist/react-datepicker.css";
 const RentABM = () => {
   //#region Const ***********************************
 
-  // Esto es un comentario de prueba
   const location = useLocation();
   const rent = location.state?.rent;
   const editMode = location.state?.editMode ? location.state?.editMode : false;
