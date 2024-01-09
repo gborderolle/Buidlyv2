@@ -34,7 +34,8 @@ const RentABM = () => {
   //#region Const ***********************************
 
   const location = useLocation();
-  const rent = location.state?.rent;
+  const estate = location.state?.estate;
+  const rent = location.state?.estate?.rent;
   const editMode = location.state?.editMode ? location.state?.editMode : false;
 
   const [isValidForm, setIsValidForm] = useState(true);
@@ -48,7 +49,7 @@ const RentABM = () => {
   const monthDate = monthString ? new Date(monthString) : new Date();
   const [month, setMonth] = useState(monthDate);
 
-  const [inputWarrant, setInputWarrant] = useState(rent?.warrant);
+  const [inputWarrant, setInputWarrant] = useState(rent?.warrant || "");
 
   // redux
   const dispatch = useDispatch();
@@ -143,31 +144,38 @@ const RentABM = () => {
       return;
     }
 
-    const dataToUpload = {
-      Comments: comments,
-      Warrant: inputWarrant,
-      MonthlyValue: monthlyValue,
-      Datetime_monthInit: month.toISOString().split("T")[0], // Asegúrate de formatear la fecha correctamente
-      Duration: duration,
-      RentIsEnded: false,
-      ListTenants: selectedTenants, // Incluir la lista de inquilinos seleccionados
+    if (isValidForm) {
+      try {
+        // Subir cada foto en loadedPhotos
+        const formData = new FormData();
+        loadedPhotos.forEach((photo, index) => {
+          formData.append(`ListPhotos`, photo.file); // Aquí no uses índice en el nombre del campo
+        });
 
-      //   ListPhotos: listPhotos,
-      //   EstateId: rent.estateId,
-      //   ListTenants: listTenants,
-      //   PrimaryTenantId: primaryTenantId,
-    };
-    console.log("dataToUpload:", dataToUpload);
+        // Agrega otros campos del formulario a formData
+        formData.append("Warrant", inputWarrant);
+        formData.append("MonthlyValue", monthlyValue);
+        formData.append("Datetime_monthInit", month.toISOString()); // Asegúrate de enviar la fecha en un formato adecuado
+        formData.append("Duration", duration.toString());
+        formData.append("RentIsEnded", false);
+        formData.append("Comments", comments);
+        formData.append("EstateId", estate.id);
+        formData.append("ListTenants", selectedTenants);
 
-    try {
-      await uploadData(dataToUpload, urlRent);
-      dispatch(fetchRentList());
+        console.log("Archivos cargados:", loadedPhotos);
+        for (var pair of formData.entries()) {
+          console.log(pair[0] + ", " + pair[1]);
+        }
 
-      setTimeout(() => {
-        navigate("/estates");
-      }, 1000);
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
+        await uploadData(formData, urlReport);
+        dispatch(fetchRentList());
+
+        setTimeout(() => {
+          navigate("/estates");
+        }, 1000);
+      } catch (error) {
+        console.error("Error al enviar los datos:", error);
+      }
     }
   };
 
