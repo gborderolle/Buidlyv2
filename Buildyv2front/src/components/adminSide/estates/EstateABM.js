@@ -155,10 +155,9 @@ const EstateABM = () => {
         await uploadData(dataToUpload, urlEstate);
         dispatch(fetchEstateList());
 
-        inputResetName();
-        inputResetAddress();
-        inputResetComments();
-        inputResetCity();
+        setTimeout(() => {
+          navigate("/estates");
+        }, 1000);
       } catch (error) {
         console.error("Error al enviar los datos:", error);
         if (error === "Dirección no encontrada.") {
@@ -178,10 +177,6 @@ const EstateABM = () => {
   //#endregion Events ***********************************
 
   //#region Functions ***********************************
-  const inputResetCity = () => {
-    setDdlSelectedCity(null);
-    setInputHasErrorCity(false);
-  };
 
   const verifyAddress = () => {
     return new Promise(async (resolve, reject) => {

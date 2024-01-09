@@ -18,7 +18,9 @@ import {
   faTrowelBricks,
   faCamera,
   faFile,
+  faFileUpload,
   faFileCirclePlus,
+  faMoneyBillWave,
 } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
@@ -163,6 +165,7 @@ const EstateMenu = () => {
             onClick={() => navigateToProperty(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
+            title="Ver propiedad"
           >
             <FontAwesomeIcon icon={faEye} color="#697588" />
           </button>
@@ -170,6 +173,7 @@ const EstateMenu = () => {
             onClick={() => navigateToWorks(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
+            title="Ver trabajos"
           >
             <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
           </button>
@@ -177,6 +181,7 @@ const EstateMenu = () => {
             onClick={() => navigateToReports(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
+            title="Ver reportes"
           >
             <FontAwesomeIcon icon={faCamera} color="#697588" />
           </button>
@@ -184,8 +189,12 @@ const EstateMenu = () => {
             onClick={() => navigateToRent(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
+            title="Agregar alquiler"
           >
-            <FontAwesomeIcon icon={faFile} color="#697588" />
+            <FontAwesomeIcon
+              icon={estate.EstateIsRented ? faFile : faFileUpload}
+              color={estate.EstateIsRented ? "#697588" : "orange"}
+            />
           </button>
         </td>
       </tr>
@@ -217,7 +226,7 @@ const EstateMenu = () => {
   }
 
   function navigateToRent(estate) {
-    navigate("/rentMenu", { state: { estate } });
+    navigate("/abm-rent", { state: { estate } });
   }
 
   //#endregion Functions ***********************************

@@ -165,12 +165,9 @@ const WorkerABM = () => {
       await uploadData(dataToUpload, urlWorker);
       dispatch(fetchWorkerList());
 
-      inputResetName();
-      inputResetPhone();
-      inputResetEmail();
-      inputResetDocument();
-      inputResetComments();
-      inputResetJob();
+      setTimeout(() => {
+        navigate("/workers");
+      }, 1000);
     } catch (error) {
       console.error("Error al enviar los datos:", error);
     }

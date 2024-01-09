@@ -168,12 +168,9 @@ const TenantABM = () => {
       await uploadData(dataToUpload, urlTenant);
       dispatch(fetchTenantList());
 
-      inputResetName();
-      inputResetPhone1();
-      inputResetPhone2();
-      inputResetEmail();
-      inputResetDocument();
-      inputResetComments();
+      setTimeout(() => {
+        navigate("/tenants");
+      }, 1000);
     } catch (error) {
       console.error("Error al enviar los datos:", error);
     }

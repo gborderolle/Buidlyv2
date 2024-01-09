@@ -19,34 +19,35 @@ import {
   CDropdownItem,
   CDropdownToggle,
   CDropdownMenu,
+  CFormCheck,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchJobList } from "../../../store/generalData-actions";
-import { urlJob } from "../../../endpoints";
+import { fetchRentList } from "../../../store/generalData-actions";
+import { urlRent } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const JobABM = () => {
+const RentABM = () => {
   //#region Const ***********************************
 
   const location = useLocation();
-  const job = location.state?.job;
+  const rent = location.state?.rent;
   const editMode = location.state?.editMode ? location.state?.editMode : false;
 
   const [isValidForm, setIsValidForm] = useState(true);
   const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
 
   // DDLs
-  const [inputHasErrorEstate, setInputHasErrorEstate] = useState(false);
-  const [inputHasErrorWorker, setInputHasErrorWorker] = useState(false);
+  const [inputHasErrorTenant, setInputHasErrorTenant] = useState(false);
+  const [selectedTenants, setSelectedTenants] = useState([]);
 
-  const monthString = job?.month;
+  const monthString = rent?.month;
   const monthDate = monthString ? new Date(monthString) : new Date();
   const [month, setMonth] = useState(monthDate);
 
@@ -65,36 +66,56 @@ const JobABM = () => {
   //#endregion RUTA PROTEGIDA
 
   // Redux
-  const estateList = useSelector((state) => state.generalData.estateList);
-  const workerList = useSelector((state) => state.generalData.workerList);
+  const cityList = useSelector((state) => state.generalData.cityList);
+  const provinceList = useSelector((state) => state.generalData.provinceList);
+  const countryList = useSelector((state) => state.generalData.countryList);
+  const tenantList = useSelector((state) => state.generalData.tenantList);
 
-  const defaultEstateId = job?.estate?.id || null;
-  const defaultEstate = estateList.find(
-    (estate) => job?.estate?.id === defaultEstateId
+  const defaultTenantId = rent?.tenant?.id || null;
+  const defaultTenant = tenantList.find(
+    (tenant) => tenant.id === defaultTenantId
   );
-  const [ddlSelectedEstate, setDdlSelectedEstate] = useState(
-    defaultEstate || null
-  );
-
-  const defaultWorkerId = job?.worker?.id || null;
-  const defaultWorker = workerList.find(
-    (worker) => job?.worker?.id === defaultWorkerId
-  );
-  const [ddlSelectedWorker, setDdlSelectedWorker] = useState(
-    defaultWorker || null
+  const [ddlSelectedTenant, setDdlSelectedTenant] = useState(
+    defaultTenant || null
   );
 
   const {
-    value: name,
-    isValid: inputIsValidName,
-    hasError: inputHasErrorName,
-    valueChangeHandler: inputChangeHandlerName,
-    inputBlurHandler: inputBlurHandlerName,
-    reset: inputResetName,
+    value: warrant,
+    isValid: inputIsValidWarrant,
+    hasError: inputHasErrorWarrant,
+    valueChangeHandler: inputChangeHandlerWarrant,
+    inputBlurHandler: inputBlurHandlerWarrant,
+    reset: inputResetWarrant,
   } = useInput(
-    (value) => value.trim() !== "", // validateValue function
+    (value) => value.trim() !== "",
     null, // onChangeCallback
-    job ? job.name : ""
+    rent ? rent.warrant : ""
+  );
+
+  const {
+    value: monthlyValue,
+    isValid: inputIsValidMonthlyValue,
+    hasError: inputHasErrorMonthlyValue,
+    valueChangeHandler: inputChangeHandlerMonthlyValue,
+    inputBlurHandler: inputBlurHandlerMonthlyValue,
+    reset: inputResetMonthlyValue,
+  } = useInput(
+    (value) => value.trim() !== "",
+    null, // onChangeCallback
+    rent ? rent.monthlyValue : ""
+  );
+
+  const {
+    value: duration,
+    isValid: inputIsValidDuration,
+    hasError: inputHasErrorDuration,
+    valueChangeHandler: inputChangeHandlerDuration,
+    inputBlurHandler: inputBlurHandlerDuration,
+    reset: inputResetDuration,
+  } = useInput(
+    (value) => true,
+    null, // onChangeCallback
+    rent ? rent.duration : 1
   );
 
   const {
@@ -107,20 +128,7 @@ const JobABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    job ? job.comments : ""
-  );
-
-  const {
-    value: cost,
-    isValid: inputIsValidCost,
-    hasError: inputHasErrorCost,
-    valueChangeHandler: inputChangeHandlerCost,
-    inputBlurHandler: inputBlurHandlerCost,
-    reset: inputResetCost,
-  } = useInput(
-    (value) => value.trim() !== "", // validateValue function
-    null, // onChangeCallback
-    job ? job.cost : ""
+    rent ? rent.comments : ""
   );
 
   //#endregion Const ***********************************
@@ -134,24 +142,18 @@ const JobABM = () => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
-    // Verificar si se seleccionó una provincia
-    const inputIsValidEstate = ddlSelectedEstate !== null;
-    if (!inputIsValidEstate) {
-      setInputHasErrorEstate(true);
-      return;
-    }
-    const inputIsValidWorker = ddlSelectedWorker !== null;
-    if (!inputIsValidWorker) {
-      setInputHasErrorWorker(true);
+    // Verificar si se seleccionó un inquilino
+    const inputIsValidTenant = ddlSelectedTenant !== null;
+    if (!inputIsValidTenant) {
+      setInputHasErrorTenant(true);
       return;
     }
 
     setIsValidForm(
-      inputIsValidName &&
-        inputIsValidComments &&
-        inputIsValidCost &&
-        inputIsValidEstate &&
-        inputIsValidWorker
+      inputIsValidComments &&
+        inputIsValidWarrant &&
+        inputIsValidMonthlyValue &&
+        inputIsValidDuration
     );
 
     if (!isValidForm) {
@@ -159,32 +161,41 @@ const JobABM = () => {
     }
 
     const dataToUpload = {
-      Name: name,
-      Month: month.toISOString().split("T")[0], // Asegúrate de formatear la fecha correctamente
       Comments: comments,
-      LabourCost: cost,
-      EstateId: ddlSelectedEstate.id,
-      ListWorkers: ddlSelectedWorker ? [ddlSelectedWorker] : [], // Enviar como lista
+      Warrant: warrant,
+      MonthlyValue: monthlyValue,
+      Datetime_monthInit: month.toISOString().split("T")[0], // Asegúrate de formatear la fecha correctamente
+      Duration: duration,
+      RentIsEnded: false,
+      ListTenants: ddlSelectedTenant ? [ddlSelectedTenant] : [], // Enviar como lista
+
+      //   ListPhotos: listPhotos,
+      //   EstateId: rent.estateId,
+      //   ListTenants: listTenants,
+      //   PrimaryTenantId: primaryTenantId,
     };
     console.log("dataToUpload:", dataToUpload);
 
     try {
-      await uploadData(dataToUpload, urlJob);
-      dispatch(fetchJobList());
+      await uploadData(dataToUpload, urlRent);
+      dispatch(fetchRentList());
 
       setTimeout(() => {
-        navigate("/jobs");
+        navigate("/estates");
       }, 1000);
     } catch (error) {
       console.error("Error al enviar los datos:", error);
     }
   };
 
-  const handleSelectDdlEstate = (item) => {
-    setDdlSelectedEstate(item);
-  };
-  const handleSelectDdlWorker = (item) => {
-    setDdlSelectedWorker(item);
+  const handleSelectCheckboxTenant = (event, tenantId) => {
+    if (event.target.checked) {
+      setSelectedTenants((prevTenants) => [...prevTenants, tenantId]);
+    } else {
+      setSelectedTenants((prevTenants) =>
+        prevTenants.filter((id) => id !== tenantId)
+      );
+    }
   };
 
   //#endregion Events ***********************************
@@ -200,36 +211,45 @@ const JobABM = () => {
           <CCard>
             <CCardBody>
               <CCardTitle>
-                {editMode ? "Modificar una obra" : "Agregar una obra"}
+                {editMode ? "Modificar un alquiler" : "Agregar un alquiler"}
               </CCardTitle>
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Propiedad
+                  Inquilino
                 </CInputGroupText>
-                {/*  */}
-                <CDropdown>
-                  <CDropdownToggle id="ddlEstate" color="secondary">
-                    {ddlSelectedEstate ? ddlSelectedEstate.name : "Seleccionar"}
-                  </CDropdownToggle>
-                  <CDropdownMenu>
-                    {estateList &&
-                      estateList.length > 0 &&
-                      estateList.map((estate) => (
-                        <CDropdownItem
-                          key={estate.id}
-                          onClick={() => handleSelectDdlEstate(estate)}
-                          style={{ cursor: "pointer" }}
-                          value={estate.id}
-                        >
-                          {estate.id}: {estate.name} ({estate.cityDS?.name})
-                        </CDropdownItem>
-                      ))}
-                  </CDropdownMenu>
-                </CDropdown>
+                <div
+                  style={{
+                    border: "1px solid lightgray",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    minWidth: "50%",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "left",
+                  }}
+                >
+                  {tenantList.map((tenant) => (
+                    <CFormCheck
+                      key={tenant.id}
+                      id={`tenant-${tenant.id}`}
+                      label={`${tenant.id}: ${tenant.name} (${tenant.phone1})`}
+                      onChange={(event) =>
+                        handleSelectCheckboxTenant(event, tenant.id)
+                      }
+                      style={{
+                        color: "#0d6efd",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        marginBottom: "10px",
+                        marginLeft: "1px",
+                      }}
+                    />
+                  ))}
+                </div>
 
                 {/*  */}
-                {inputHasErrorEstate && (
+                {inputHasErrorTenant && (
                   <CAlert color="danger" className="w-100">
                     Entrada inválida
                   </CAlert>
@@ -238,49 +258,16 @@ const JobABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Trabajador
-                </CInputGroupText>
-                {/*  */}
-                <CDropdown>
-                  <CDropdownToggle id="ddlWorker" color="secondary">
-                    {ddlSelectedWorker ? ddlSelectedWorker.name : "Seleccionar"}
-                  </CDropdownToggle>
-                  <CDropdownMenu>
-                    {workerList &&
-                      workerList.length > 0 &&
-                      workerList.map((worker) => (
-                        <CDropdownItem
-                          key={worker.id}
-                          onClick={() => handleSelectDdlWorker(worker)}
-                          style={{ cursor: "pointer" }}
-                          value={worker.id}
-                        >
-                          {worker.id}: {worker.name}
-                        </CDropdownItem>
-                      ))}
-                  </CDropdownMenu>
-                </CDropdown>
-
-                {/*  */}
-                {inputHasErrorWorker && (
-                  <CAlert color="danger" className="w-100">
-                    Entrada inválida
-                  </CAlert>
-                )}
-              </CInputGroup>
-              <br />
-              <CInputGroup>
-                <CInputGroupText className="cardItem custom-input-group-text">
-                  Nombre de la obra
+                  Garantía
                 </CInputGroupText>
                 <CFormInput
                   type="text"
                   className="cardItem"
-                  onChange={inputChangeHandlerName}
-                  onBlur={inputBlurHandlerName}
-                  value={name}
+                  onChange={inputChangeHandlerWarrant}
+                  onBlur={inputBlurHandlerWarrant}
+                  value={warrant}
                 />
-                {inputHasErrorName && (
+                {inputHasErrorWarrant && (
                   <CAlert color="danger" className="w-100">
                     Entrada inválida
                   </CAlert>
@@ -288,7 +275,27 @@ const JobABM = () => {
               </CInputGroup>
               <br />
               <CInputGroup>
-                <CInputGroupText>Fecha de la obra</CInputGroupText>
+                <CInputGroupText className="cardItem custom-input-group-text">
+                  Valor mensual $
+                </CInputGroupText>
+                <CFormInput
+                  type="number"
+                  step="0.01"
+                  className="cardItem"
+                  onChange={inputChangeHandlerMonthlyValue}
+                  onBlur={inputBlurHandlerMonthlyValue}
+                  value={monthlyValue}
+                  required
+                />
+                {inputHasErrorMonthlyValue && (
+                  <CAlert color="danger" className="w-100">
+                    Entrada inválida
+                  </CAlert>
+                )}
+              </CInputGroup>
+              <br />
+              <CInputGroup>
+                <CInputGroupText>Fecha del inicio</CInputGroupText>
                 <DatePicker
                   selected={month}
                   onChange={(date) => setMonth(date)}
@@ -296,6 +303,24 @@ const JobABM = () => {
                   showMonthYearPicker
                   className="form-control"
                 />
+              </CInputGroup>
+              <br />
+              <CInputGroup>
+                <CInputGroupText className="cardItem custom-input-group-text">
+                  Duración (años)
+                </CInputGroupText>
+                <CFormInput
+                  type="number"
+                  className="cardItem"
+                  onChange={inputChangeHandlerDuration}
+                  onBlur={inputBlurHandlerDuration}
+                  value={duration}
+                />
+                {inputHasErrorDuration && (
+                  <CAlert color="danger" className="w-100">
+                    Entrada inválida
+                  </CAlert>
+                )}
               </CInputGroup>
               <br />
               <CInputGroup>
@@ -310,24 +335,6 @@ const JobABM = () => {
                   value={comments}
                 />
                 {inputHasErrorComments && (
-                  <CAlert color="danger" className="w-100">
-                    Entrada inválida
-                  </CAlert>
-                )}
-              </CInputGroup>
-              <br />
-              <CInputGroup>
-                <CInputGroupText className="cardItem custom-input-group-text">
-                  Costo de la obra $
-                </CInputGroupText>
-                <CFormInput
-                  type="number"
-                  className="cardItem"
-                  onChange={inputChangeHandlerCost}
-                  onBlur={inputBlurHandlerCost}
-                  value={cost}
-                />
-                {inputHasErrorCost && (
                   <CAlert color="danger" className="w-100">
                     Entrada inválida
                   </CAlert>
@@ -367,11 +374,9 @@ const JobABM = () => {
             </CCardBody>
           </CCard>
         </CForm>
-        <br />
-        <br />
       </CCol>
     </CRow>
   );
 };
 
-export default JobABM;
+export default RentABM;

@@ -31,6 +31,10 @@ const TenantABM = React.lazy(() =>
 const JobMenu = React.lazy(() => import("./components/adminSide/jobs/JobMenu"));
 const JobABM = React.lazy(() => import("./components/adminSide/jobs/JobABM"));
 
+const RentABM = React.lazy(() =>
+  import("./components/adminSide/rents/RentABM")
+);
+
 const DataMenu = React.lazy(() =>
   import("./components/adminSide/data/DataMenu")
 );
@@ -51,6 +55,8 @@ const routes = [
 
   { path: "/workers", name: "Trabajadores", element: WorkerMenu },
   { path: "/abm-worker", name: "Agregar trabajadores", element: WorkerABM },
+
+  { path: "/abm-rent", name: "Agregar alquiler", element: RentABM },
 
   { path: "/data", name: "Datos", element: DataMenu },
 ];

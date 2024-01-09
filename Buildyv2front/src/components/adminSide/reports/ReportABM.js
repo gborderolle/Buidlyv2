@@ -169,7 +169,6 @@ const ReportABM = () => {
         }
 
         await uploadData(formData, urlReport);
-
         dispatch(fetchReportList());
 
         setTimeout(() => {
