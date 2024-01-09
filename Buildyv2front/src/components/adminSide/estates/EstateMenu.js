@@ -192,8 +192,8 @@ const EstateMenu = () => {
             title="Agregar alquiler"
           >
             <FontAwesomeIcon
-              icon={estate.EstateIsRented ? faFile : faFileUpload}
-              color={estate.EstateIsRented ? "#697588" : "orange"}
+              icon={estate.presentRentId > 0 ? faFile : faFileUpload}
+              color={estate.presentRentId > 0 ? "darkgreen" : "orange"}
             />
           </button>
         </td>
@@ -226,7 +226,11 @@ const EstateMenu = () => {
   }
 
   function navigateToRent(estate) {
-    navigate("/abm-rent", { state: { estate } });
+    if (estate.presentRentId > 0) {
+      navigate("/abm-rent", { state: { estate, editMode: true } });
+    } else {
+      navigate("/abm-rent", { state: { estate } });
+    }
   }
 
   //#endregion Functions ***********************************

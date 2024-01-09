@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import Modal from "react-modal";
 
 import {
   CRow,
@@ -22,12 +23,17 @@ import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchRentList } from "../../../store/generalData-actions";
+import {
+  fetchRentList,
+  fetchEstateList,
+} from "../../../store/generalData-actions";
 import { urlRent } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "./uploadFiles.css";
+import FileUpload, { uploadFileToServer } from "./FileUpload.js";
 
 // Este componente de React se utiliza para agregar o modificar un alquiler.
 const RentABM = () => {
@@ -35,8 +41,12 @@ const RentABM = () => {
 
   const location = useLocation();
   const estate = location.state?.estate;
-  const rent = location.state?.estate?.rent;
   const editMode = location.state?.editMode ? location.state?.editMode : false;
+
+  let rent = null;
+  if (editMode && estate.listRents?.length > 0) {
+    rent = estate.listRents[estate.listRents?.length - 1];
+  }
 
   const [isValidForm, setIsValidForm] = useState(true);
   const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
@@ -48,6 +58,10 @@ const RentABM = () => {
   const monthString = rent?.month;
   const monthDate = monthString ? new Date(monthString) : new Date();
   const [month, setMonth] = useState(monthDate);
+
+  const [loadedPhotos, setLoadedPhotos] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const [inputWarrant, setInputWarrant] = useState(rent?.warrant || "");
 
@@ -89,7 +103,7 @@ const RentABM = () => {
   } = useInput(
     (value) => value.trim() !== "",
     null, // onChangeCallback
-    rent ? rent.monthlyValue : ""
+    rent ? rent.monthlyValue.toString() : "" // Convierte a cadena
   );
 
   const {
@@ -102,7 +116,7 @@ const RentABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    rent ? rent.duration : 1
+    rent ? rent.duration.toString() : "1" // Convierte a cadena
   );
 
   const {
@@ -118,9 +132,29 @@ const RentABM = () => {
     rent ? rent.comments : ""
   );
 
+  const openModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
+
+  useEffect(() => {
+    if (editMode && rent?.listPhotosURL) {
+      const existingPhotos = rent.listPhotosURL.map((url) => ({
+        url, // URL de la foto existente
+        isExisting: true, // Marca para identificar que es una foto ya existente
+      }));
+      setLoadedPhotos(existingPhotos);
+    }
+  }, [editMode, rent]);
 
   //#endregion Hooks ***********************************
 
@@ -160,6 +194,7 @@ const RentABM = () => {
         formData.append("RentIsEnded", false);
         formData.append("Comments", comments);
         formData.append("EstateId", estate.id);
+        // formData.append("ListTenants", JSON.stringify(selectedTenants));
         formData.append("ListTenants", selectedTenants);
 
         console.log("Archivos cargados:", loadedPhotos);
@@ -167,8 +202,9 @@ const RentABM = () => {
           console.log(pair[0] + ", " + pair[1]);
         }
 
-        await uploadData(formData, urlReport);
+        await uploadData(formData, urlRent);
         dispatch(fetchRentList());
+        dispatch(fetchEstateList());
 
         setTimeout(() => {
           navigate("/estates");
@@ -180,12 +216,12 @@ const RentABM = () => {
   };
 
   // Este método se llama cuando se selecciona o se deselecciona un inquilino en el formulario. Se encarga de actualizar el estado de los inquilinos seleccionados.
-  const handleSelectCheckboxTenant = (event, tenantId) => {
+  const handleSelectCheckboxTenant = (event, tenant) => {
     if (event.target.checked) {
-      setSelectedTenants((prevTenants) => [...prevTenants, tenantId]);
+      setSelectedTenants((prevTenants) => [...prevTenants, tenant]);
     } else {
       setSelectedTenants((prevTenants) =>
-        prevTenants.filter((id) => id !== tenantId)
+        prevTenants.filter((t) => t.id !== tenant.id)
       );
     }
   };
@@ -193,6 +229,39 @@ const RentABM = () => {
   //#endregion Events ***********************************
 
   //#region Functions ***********************************
+
+  // Esta función se llama cuando se cargan nuevos archivos
+  const handleFileUpload = (newFiles) => {
+    setLoadedPhotos((currentFiles) => [
+      ...currentFiles,
+      ...newFiles.map((file) => ({
+        file,
+        type: file.type,
+        name: file.name,
+      })),
+    ]);
+  };
+
+  // Modificar la función de renderizado para manejar fotos existentes
+  const renderPhotoPreviews = () => {
+    return (
+      <div style={{ display: "flex", overflowX: "auto", gap: "10px" }}>
+        {loadedPhotos.map((photo, index) => (
+          <div
+            key={index}
+            style={{ flex: "0 0 auto" }}
+            onClick={() => openModal(photo.url)}
+          >
+            <img
+              src={photo.url}
+              alt={`Foto ${index}`}
+              style={{ width: "100px", height: "100px", cursor: "pointer" }}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   //#endregion Functions ***********************************
 
@@ -226,9 +295,9 @@ const RentABM = () => {
                       key={tenant.id}
                       id={`tenant-${tenant.id}`}
                       label={`${tenant.id}: ${tenant.name} (${tenant.phone1})`}
-                      checked={selectedTenants.includes(tenant.id)} // Establecer la propiedad checked
+                      checked={selectedTenants.some((t) => t.id === tenant.id)}
                       onChange={(event) =>
-                        handleSelectCheckboxTenant(event, tenant.id)
+                        handleSelectCheckboxTenant(event, tenant)
                       }
                       style={{
                         color: "#0d6efd",
@@ -256,7 +325,7 @@ const RentABM = () => {
                 <CFormInput
                   type="text"
                   className="cardItem"
-                  value={inputWarrant}
+                  value={inputWarrant !== null ? inputWarrant : ""} // Usa una cadena vacía si inputWarrant es null
                   onChange={(e) => setInputWarrant(e.target.value)}
                   style={{ flex: "1" }} // Asegura que el input tome el máximo espacio posible
                 />
@@ -347,6 +416,33 @@ const RentABM = () => {
                   </CAlert>
                 )}
               </CInputGroup>
+              <br />
+              <FileUpload
+                multiple={true}
+                name="example-upload"
+                maxSize={300000}
+                onUpload={handleFileUpload}
+                label="Cargar fotos"
+              />
+              {editMode && (
+                <>
+                  <br />
+                  <div>{renderPhotoPreviews()}</div>
+
+                  <Modal
+                    isOpen={isModalOpen}
+                    onRequestClose={closeModal}
+                    contentLabel="Imagen Ampliada"
+                  >
+                    <img
+                      src={selectedImage}
+                      alt="Imagen Ampliada"
+                      style={{ width: "500px" }}
+                    />
+                    <button onClick={closeModal}>Cerrar</button>
+                  </Modal>
+                </>
+              )}
               <br />
               <CRow className="justify-content-center">
                 {isLoading && (

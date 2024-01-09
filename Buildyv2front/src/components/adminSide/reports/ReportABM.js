@@ -52,7 +52,6 @@ const ReportABM = () => {
   const [month, setMonth] = useState(monthDate);
 
   const [loadedPhotos, setLoadedPhotos] = useState([]);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 

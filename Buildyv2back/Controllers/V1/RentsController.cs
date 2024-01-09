@@ -10,6 +10,7 @@ using System.Net;
 using Buildyv2.Utilities;
 using Buildyv2.Context;
 using Buildyv2.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Buildyv2.Controllers.V1
 {
@@ -20,16 +21,18 @@ namespace Buildyv2.Controllers.V1
     public class RentsController : CustomBaseController<Rent> // Notice <Rent> here
     {
         private readonly IRentRepository _rentRepository; // Servicio que contiene la lógica principal de negocio para Rents.
+        private readonly IEstateRepository _estateRepository; // Servicio que contiene la lógica principal de negocio para Reports.
         private readonly IPhotoRepository _photoRepository; // Servicio que contiene la lógica principal de negocio para Reports.
         private readonly ContextDB _dbContext;
         private readonly IFileStorage _fileStorage;
 
-        public RentsController(ILogger<RentsController> logger, IMapper mapper, IRentRepository rentRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ContextDB dbContext
+        public RentsController(ILogger<RentsController> logger, IMapper mapper, IRentRepository rentRepository, IEstateRepository estateRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ContextDB dbContext
         )
         : base(mapper, logger, rentRepository)
         {
             _response = new();
             _rentRepository = rentRepository;
+            _estateRepository = estateRepository;
             _photoRepository = photoRepository;
             _fileStorage = fileStorage;
             _dbContext = dbContext;
@@ -40,7 +43,22 @@ namespace Buildyv2.Controllers.V1
         [HttpGet("GetRent")]
         public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
         {
-            return await Get<Rent, RentDTO>(paginationDTO: paginationDTO);
+            var includes = new List<IncludePropertyConfiguration<Rent>>
+            {
+                    new IncludePropertyConfiguration<Rent>
+                    {
+                        IncludeExpression = b => b.Estate
+                    },
+                    new IncludePropertyConfiguration<Rent>
+                    {
+                        IncludeExpression = b => b.ListPhotos
+                    },
+                    new IncludePropertyConfiguration<Rent>
+                    {
+                        IncludeExpression = b => b.ListTenants
+                    },
+            };
+            return await Get<Rent, RentDTO>(paginationDTO: paginationDTO, includes: includes);
         }
 
         [HttpGet("all")]
@@ -61,13 +79,17 @@ namespace Buildyv2.Controllers.V1
             {
                     new IncludePropertyConfiguration<Rent>
                     {
-                        IncludeExpression = b => b.ListTenants
+                        IncludeExpression = b => b.Estate
                     },
                     new IncludePropertyConfiguration<Rent>
                     {
                         IncludeExpression = b => b.ListPhotos
                     },
-                };
+                    new IncludePropertyConfiguration<Rent>
+                    {
+                        IncludeExpression = b => b.ListTenants
+                    },
+            };
             return await Get<Rent, RentDTO>(includes: includes);
         }
 
@@ -147,10 +169,14 @@ namespace Buildyv2.Controllers.V1
                 await _rentRepository.Create(modelo);
                 _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
 
+                // Actualizo la propiedad con el ID del alquiler
+                estate.PresentRentId = modelo.Id;
+                estate.EstateIsRented = true;
+                await _estateRepository.Update(estate);
+
                 if (rentCreateDto.ListPhotos != null && rentCreateDto.ListPhotos.Count > 0)
                 {
-                    string dynamicContainer = $"uploads/reports/estate{estate.Id}/{DateTime.Now:yyyy_MM}/report{modelo.Id}";
-
+                    string dynamicContainer = $"uploads/rents/estate{estate.Id}/{DateTime.Now:yyyy_MM}/rent{modelo.Id}";
                     foreach (var photoForm in rentCreateDto.ListPhotos)
                     {
                         Photo newPhoto = new();
