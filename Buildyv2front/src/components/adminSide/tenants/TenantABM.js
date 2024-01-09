@@ -180,6 +180,14 @@ const TenantABM = () => {
 
   //#region Functions ***********************************
 
+  const validatePhone1Input = (input) => {
+    const maxDigits = 9;
+    const inputValue = input.trim();
+    const isValid = /^\d{0,9}$/.test(inputValue);
+    // return isValid ? inputValue : inputValue.slice(0, maxDigits);
+    return isValid ? inputValue : false;
+  };
+
   //#endregion Functions ***********************************
 
   return (
@@ -215,9 +223,16 @@ const TenantABM = () => {
                   Celular [9 dígitos]
                 </CInputGroupText>
                 <CFormInput
-                  type="text"
+                  type="number"
                   className="cardItem"
-                  onChange={inputChangeHandlerPhone1}
+                  onChange={(event) => {
+                    const validatedInput = validatePhone1Input(
+                      event.target.value
+                    );
+                    if (validatedInput) {
+                      inputChangeHandlerPhone1(event);
+                    }
+                  }}
                   onBlur={inputBlurHandlerPhone1}
                   value={phone1}
                 />
