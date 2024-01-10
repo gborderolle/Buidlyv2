@@ -169,7 +169,7 @@ const JobABM = () => {
     console.log("dataToUpload:", dataToUpload);
 
     try {
-      await uploadData(dataToUpload, urlJob);
+      await uploadData(dataToUpload, urlJob, editMode, job?.id);
       dispatch(fetchJobList());
 
       setTimeout(() => {

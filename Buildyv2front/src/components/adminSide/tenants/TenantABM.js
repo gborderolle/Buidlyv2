@@ -142,37 +142,53 @@ const TenantABM = () => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
+    // Validar cada campo antes de procesar el formulario
+    const isNameValid = name ? name.trim() !== "" : false;
+    const isPhone1Valid = phone1 ? /^[0-9]{9}$/.test(phone1.trim()) : false;
+    // Asumiendo que los demás campos son opcionales o su validación permite valores nulos
+    const isPhone2Valid = true; // Modificar según sea necesario
+    const isEmailValid = true; // Modificar según sea necesario
+    const isDocumentValid = true; // Modificar según sea necesario
+    const isCommentsValid = true; // Modificar según sea necesario
+
     setIsValidForm(
-      inputIsValidName &&
-        inputIsValidPhone1 && // Solo phone1 es obligatorio
-        inputIsValidEmail &&
-        inputIsValidDocument &&
-        inputIsValidComments
+      isNameValid &&
+        isPhone1Valid &&
+        isPhone2Valid &&
+        isEmailValid &&
+        isDocumentValid &&
+        isCommentsValid
     );
 
+    // Si el formulario no es válido, no continuar
     if (!isValidForm) {
       return;
     }
 
+    // Crear el objeto para la carga de datos
     const dataToUpload = {
       Name: name,
       Phone1: phone1,
       Phone2: phone2,
-      Email: email.trim() === "" ? null : email, // Asigna null si el email está vacío
+      Email: email ? email.trim() : null, // Asumiendo que el email puede ser nulo
       IdentityDocument: document,
       Comments: comments,
     };
+
     console.log("dataToUpload:", dataToUpload);
 
+    // Intentar enviar los datos
     try {
-      await uploadData(dataToUpload, urlTenant);
+      await uploadData(dataToUpload, urlTenant, editMode, tenant?.id);
       dispatch(fetchTenantList());
 
+      // Navegar a otra ruta después de un breve retraso
       setTimeout(() => {
         navigate("/tenants");
       }, 1000);
     } catch (error) {
       console.error("Error al enviar los datos:", error);
+      // Manejo adicional de errores si es necesario
     }
   };
 

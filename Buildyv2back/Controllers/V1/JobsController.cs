@@ -89,9 +89,69 @@ namespace Buildyv2.Controllers.V1
 
         [HttpPut("{id:int}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] JobCreateDTO jobCreateDTO)
+        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] JobCreateDTO jobCreateDto)
         {
-            return await Put<JobCreateDTO, JobDTO, Job>(id, jobCreateDTO);
+            try
+            {
+                if (id <= 0)
+                {
+                    _logger.LogError($"Datos de entrada inválidos.");
+                    _response.ErrorMessages = new List<string> { $"Datos de entrada inválidos." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+
+                // 1..n
+                var includes = new List<IncludePropertyConfiguration<Job>>
+            {
+                    new IncludePropertyConfiguration<Job>
+                    {
+                        IncludeExpression = b => b.ListWorkers
+                    },
+                new IncludePropertyConfiguration<Job>
+                    {
+                        IncludeExpression = b => b.ListPhotos
+                    },
+                };
+
+                var job = await _jobRepository.Get(v => v.Id == id, includes: includes);
+                if (job == null)
+                {
+                    _logger.LogError($"Trabajo no encontrado ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Trabajo no encontrado ID = {id}" };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound(_response);
+                }
+
+                // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
+                job.Name = jobCreateDto.Name;
+                job.Month = jobCreateDto.Month;
+                job.LabourCost = jobCreateDto.LabourCost;
+                job.Comments = jobCreateDto.Comments;
+                job.Update = DateTime.Now;
+
+                job.EstateId = jobCreateDto.EstateId;
+                job.Estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
+                job.ListWorkers = jobCreateDto.ListWorkers;
+
+                var updatedJob = await _jobRepository.Update(job);
+
+                _logger.LogInformation($"Se actualizó correctamente La obra Id:{id}.");
+                _response.Result = _mapper.Map<EstateDTO>(updatedJob);
+                _response.StatusCode = HttpStatusCode.OK;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return BadRequest(_response);
         }
 
         [HttpPatch("{id:int}")]
@@ -132,35 +192,24 @@ namespace Buildyv2.Controllers.V1
                 var estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
                 if (estate == null)
                 {
-                    _logger.LogError($"La propiedad ID={jobCreateDto.EstateId} no existe en el sistema");
-                    _response.ErrorMessages = new List<string> { $"La propiedad ID={jobCreateDto.EstateId} no existe en el sistema." };
+                    _logger.LogError($"La obra ID={jobCreateDto.EstateId} no existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"La obra ID={jobCreateDto.EstateId} no existe en el sistema." };
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    ModelState.AddModelError("NameAlreadyExists", $"La propiedad ID={jobCreateDto.EstateId} no existe en el sistema.");
+                    ModelState.AddModelError("NameAlreadyExists", $"La obra ID={jobCreateDto.EstateId} no existe en el sistema.");
                     return BadRequest(ModelState);
                 }
 
                 var modelo = _mapper.Map<Job>(jobCreateDto);
-                modelo.Estate = estate;
+                modelo.Estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
                 modelo.Creation = DateTime.Now;
                 modelo.Update = DateTime.Now;
 
-                //await _jobRepository.Create(modelo);
-
-                //// Ahora, asocia los trabajadores al trabajo
-                //foreach (var workerId in jobCreateDto.WorkerIds)
-                //{
-                //    var worker = await _dbContext.Worker.FindAsync(workerId);
-                //    if (worker != null)
-                //    {
-                //        modelo.ListWorkers.Add(worker);
-                //    }
-                //}
-
+                // Primero, agrega el trabajo sin los trabajadores
                 _dbContext.Job.Add(modelo);
                 await _dbContext.SaveChangesAsync(); // Guarda el trabajo en la base de datos
 
-                // Asociar los trabajadores al trabajo creado
+                // Luego, asocia los trabajadores al trabajo creado
                 foreach (var workerDto in jobCreateDto.ListWorkers)
                 {
                     var existingWorker = await _dbContext.Worker.FindAsync(workerDto.Id);

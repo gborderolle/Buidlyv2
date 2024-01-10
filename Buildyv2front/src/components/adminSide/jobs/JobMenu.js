@@ -122,10 +122,10 @@ const JobMenu = () => {
       // Formatear la fecha del trabajo, si es necesario
       const formattedDate = job.month; // Reemplazar con lógica de formateo si job.month es una fecha
 
-      // Obtener el nombre del primer trabajador o un valor predeterminado
-      const firstWorkerName =
+      // Crear una cadena con todos los nombres de los trabajadores
+      const workerNames =
         job.listWorkers && job.listWorkers.length > 0
-          ? job.listWorkers[0].name
+          ? job.listWorkers.map((worker) => worker.name).join(", ")
           : "No asignado";
 
       return (
@@ -135,7 +135,7 @@ const JobMenu = () => {
           <td>{job.estate?.name}</td>
           <td>{job.estate?.address}</td>
           <td>{job.name}</td>
-          <td>{firstWorkerName}</td>
+          <td>{workerNames}</td>
           <td>{job.comments}</td>
           <td>
             <button
@@ -246,7 +246,7 @@ const JobMenu = () => {
                     <th>Casa</th>
                     <th>Dirección</th>
                     <th>Obra</th>
-                    <th>Trabajador</th>
+                    <th>Trabajadores</th>
                     <th>Comentarios</th>
                     <th>Opciones</th>
                   </tr>

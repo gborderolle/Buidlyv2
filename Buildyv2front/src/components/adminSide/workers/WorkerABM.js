@@ -139,12 +139,19 @@ const WorkerABM = () => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
+    // Verificar que cada campo no sea null antes de llamar a trim() y realizar la validación
+    const isNameValid = name ? name.trim() !== "" : false;
+    const isPhoneValid = phone ? /^[0-9]{9}$/.test(phone.trim()) : false;
+    const isEmailValid = email ? email.trim() !== "" : false; // Asumiendo que el email es obligatorio
+    const isDocumentValid = document ? document.trim() !== "" : false; // Asumiendo que el documento es obligatorio
+    const isCommentsValid = comments ? comments.trim() !== "" : true; // Asumiendo que los comentarios son opcionales
+
     setIsValidForm(
-      inputIsValidName &&
-        inputIsValidPhone &&
-        inputIsValidEmail &&
-        inputIsValidDocument &&
-        inputIsValidComments
+      isNameValid &&
+        isPhoneValid &&
+        isEmailValid &&
+        isDocumentValid &&
+        isCommentsValid
     );
 
     if (!isValidForm) {
@@ -154,15 +161,16 @@ const WorkerABM = () => {
     const dataToUpload = {
       Name: name,
       Phone: phone,
-      Email: email.trim() === "" ? null : email, // Asigna null si el email está vacío
+      Email: email ? email.trim() : null, // Asigna null si el email está vacío
       IdentityDocument: document,
       Comments: comments,
       JobId: ddlSelectedJob ? ddlSelectedJob.id : null,
     };
+
     console.log("dataToUpload:", dataToUpload);
 
     try {
-      await uploadData(dataToUpload, urlWorker);
+      await uploadData(dataToUpload, urlWorker, editMode, worker?.id);
       dispatch(fetchWorkerList());
 
       setTimeout(() => {
@@ -177,8 +185,12 @@ const WorkerABM = () => {
 
   //#region Functions ***********************************
 
-  const inputResetJob = () => {
-    setDdlSelectedJob(null);
+  const validatePhone1Input = (input) => {
+    const maxDigits = 9;
+    const inputValue = input.trim();
+    const isValid = /^\d{0,9}$/.test(inputValue);
+    // return isValid ? inputValue : inputValue.slice(0, maxDigits);
+    return isValid ? inputValue : false;
   };
 
   //#endregion Functions ***********************************
@@ -216,9 +228,16 @@ const WorkerABM = () => {
                   Celular [9 dígitos]
                 </CInputGroupText>
                 <CFormInput
-                  type="text"
+                  type="number"
                   className="cardItem"
-                  onChange={inputChangeHandlerPhone}
+                  onChange={(event) => {
+                    const validatedInput = validatePhone1Input(
+                      event.target.value
+                    );
+                    if (validatedInput) {
+                      inputChangeHandlerPhone(event);
+                    }
+                  }}
                   onBlur={inputBlurHandlerPhone}
                   value={phone}
                 />

@@ -202,7 +202,7 @@ const RentABM = () => {
           console.log(pair[0] + ", " + pair[1]);
         }
 
-        await uploadData(formData, urlRent);
+        await uploadData(formData, urlRent, editMode, rent?.id);
         dispatch(fetchRentList());
         dispatch(fetchEstateList());
 

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Buildyv2.Utilities;
+using Buildyv2.Context;
 
 namespace Buildyv2.Controllers.V1
 {
@@ -18,12 +19,14 @@ namespace Buildyv2.Controllers.V1
     public class WorkersController : CustomBaseController<Worker> // Notice <Worker> here
     {
         private readonly IWorkerRepository _workerRepository; // Servicio que contiene la lógica principal de negocio para Workers.
+        private readonly ContextDB _dbContext;
 
-        public WorkersController(ILogger<WorkersController> logger, IMapper mapper, IWorkerRepository workerRepository)
+        public WorkersController(ILogger<WorkersController> logger, IMapper mapper, IWorkerRepository workerRepository, ContextDB dbContext)
         : base(mapper, logger, workerRepository)
         {
             _response = new();
             _workerRepository = workerRepository;
+            _dbContext = dbContext;
         }
 
         #region Endpoints genéricos
@@ -31,7 +34,15 @@ namespace Buildyv2.Controllers.V1
         [HttpGet("GetWorker")]
         public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
         {
-            return await Get<Worker, WorkerDTO>(paginationDTO: paginationDTO);
+            // 1..n
+            var includes = new List<IncludePropertyConfiguration<Worker>>
+            {
+                 new IncludePropertyConfiguration<Worker>
+                    {
+                        IncludeExpression = b => b.Job
+                    },
+                };
+            return await Get<Worker, WorkerDTO>(paginationDTO: paginationDTO, includes: includes);
         }
 
         [HttpGet("all")]
@@ -67,9 +78,65 @@ namespace Buildyv2.Controllers.V1
 
         [HttpPut("{id:int}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] WorkerCreateDTO workerCreateDTO)
+        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] WorkerCreateDTO workerCreateDto)
         {
-            return await Put<WorkerCreateDTO, WorkerDTO, Worker>(id, workerCreateDTO);
+            try
+            {
+                if (id <= 0)
+                {
+                    _logger.LogError($"Datos de entrada inválidos.");
+                    _response.ErrorMessages = new List<string> { $"Datos de entrada inválidos." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+
+                // 1..n
+                var includes = new List<IncludePropertyConfiguration<Worker>>
+            {
+                 new IncludePropertyConfiguration<Worker>
+                    {
+                        IncludeExpression = b => b.Job
+                    },
+                };
+
+                var worker = await _workerRepository.Get(v => v.Id == id, includes: includes);
+                if (worker == null)
+                {
+                    _logger.LogError($"Trabajo no encontrado ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Trabajo no encontrado ID = {id}" };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound(_response);
+                }
+
+                // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
+                worker.Name = workerCreateDto.Name;
+                worker.Phone = workerCreateDto.Phone;
+                worker.Email = workerCreateDto.Email;
+                worker.IdentityDocument = workerCreateDto.IdentityDocument;
+                worker.Comments = workerCreateDto.Comments;
+                worker.Update = DateTime.Now;
+
+                worker.JobId = workerCreateDto.JobId;
+                worker.Job = await _dbContext.Job.FindAsync(workerCreateDto.JobId);
+
+                var updatedWorker = await _workerRepository.Update(worker);
+
+                _logger.LogInformation($"Se actualizó correctamente el trabajador Id:{id}.");
+                _response.Result = _mapper.Map<EstateDTO>(updatedWorker);
+                _response.StatusCode = HttpStatusCode.OK;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return BadRequest(_response);
         }
 
         [HttpPatch("{id:int}")]
@@ -112,7 +179,7 @@ namespace Buildyv2.Controllers.V1
                 modelo.Update = DateTime.Now;
 
                 await _workerRepository.Create(modelo);
-                _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
+                _logger.LogInformation($"Se creó correctamente el trabajador Id:{modelo.Id}.");
 
                 _response.Result = _mapper.Map<WorkerDTO>(modelo);
                 _response.StatusCode = HttpStatusCode.Created;

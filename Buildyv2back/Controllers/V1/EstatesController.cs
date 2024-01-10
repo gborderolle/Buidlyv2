@@ -103,7 +103,75 @@ namespace Buildyv2.Controllers.V1
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] EstateCreateDTO estateCreateDto)
         {
-            return await Put<EstateCreateDTO, EstateDTO, Estate>(id, estateCreateDto);
+            try
+            {
+                if (id <= 0)
+                {
+                    _logger.LogError($"Datos de entrada inválidos.");
+                    _response.ErrorMessages = new List<string> { $"Datos de entrada inválidos." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+
+                // 1..n
+                var includes = new List<IncludePropertyConfiguration<Estate>>
+            {
+                 new IncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.CityDS
+                    },
+                    new IncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.ListReports
+                    },
+                    new IncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.ListJobs
+                    },
+                    new IncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.ListRents
+                    }
+                };
+
+                var estate = await _estateRepository.Get(v => v.Id == id, includes: includes);
+                if (estate == null)
+                {
+                    _logger.LogError($"Propiedad no encontrada ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Propiedad no encontrada ID = {id}" };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound(_response);
+                }
+
+                // estate = _mapper.Map(estateCreateDto, estate);
+
+                // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
+                estate.Name = estateCreateDto.Name;
+                estate.Address = estateCreateDto.Address;
+                estate.LatLong = estateCreateDto.LatLong;
+                estate.GoogleMapsURL = estateCreateDto.GoogleMapsURL;
+                estate.CityDS = await _dbContext.CityDS.FindAsync(estateCreateDto.CityDSId);
+                estate.Comments = estateCreateDto.Comments;
+                estate.Update = DateTime.Now;
+
+                var updatedEstate = await _estateRepository.Update(estate);
+
+                _logger.LogInformation($"Se actualizó correctamente la propiedad Id:{id}.");
+                _response.Result = _mapper.Map<EstateDTO>(updatedEstate);
+                _response.StatusCode = HttpStatusCode.OK;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return BadRequest(_response);
         }
 
         [HttpPatch("{id:int}")]

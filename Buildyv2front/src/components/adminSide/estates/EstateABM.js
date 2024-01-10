@@ -137,36 +137,41 @@ const EstateABM = () => {
 
     setAddressError(""); // Limpiar errores previos
 
-    await verifyAddress(); // Verificar dirección y obtener latitud y longitud
-    console.log("latLong después de verifyAddress:", latLong);
+    const latLonResult = await verifyAddress();
+    if (latLonResult) {
+      console.log("latLonResult después de verifyAddress:", latLonResult);
 
-    if (latLong && latLong.lat) {
-      const dataToUpload = {
-        Name: estateName,
-        Address: estateAddress,
-        Comments: estateComments,
-        CityDSId: ddlSelectedCity.id,
-        LatLong: `${latLong.lat},${latLong.lon}`,
-        GoogleMapsURL: `https://www.google.com/maps/search/${latLong.lat},${latLong.lon}`,
-      };
-      console.log("dataToUpload:", dataToUpload);
+      if (latLonResult && latLonResult.lat) {
+        const dataToUpload = {
+          Name: estateName,
+          Address: estateAddress,
+          Comments: estateComments,
+          CityDSId: ddlSelectedCity.id,
+          LatLong: `${latLonResult.lat},${latLonResult.lon}`,
+          GoogleMapsURL: `https://www.google.com/maps/search/${latLonResult.lat},${latLonResult.lon}`,
+        };
+        console.log("dataToUpload:", dataToUpload);
 
-      try {
-        await uploadData(dataToUpload, urlEstate);
-        dispatch(fetchEstateList());
+        try {
+          await uploadData(dataToUpload, urlEstate, editMode, estate?.id);
+          dispatch(fetchEstateList());
 
-        setTimeout(() => {
-          navigate("/estates");
-        }, 1000);
-      } catch (error) {
-        console.error("Error al enviar los datos:", error);
-        if (error === "Dirección no encontrada.") {
-          setAddressError(true);
+          setTimeout(() => {
+            navigate("/estates");
+          }, 1000);
+        } catch (error) {
+          console.error("Error al enviar los datos:", error);
+          if (error === "Dirección no encontrada.") {
+            setAddressError(true);
+          }
         }
+      } else {
+        console.error("Error al enviar los datos");
+        setAddressError(true);
       }
     } else {
-      console.error("Error al enviar los datos");
-      setAddressError(true);
+      // Manejo de error si no se obtienen las coordenadas
+      console.error("No se pudo obtener las coordenadas");
     }
   };
 
@@ -288,7 +293,7 @@ const EstateABM = () => {
                 />
                 {addressError && (
                   <CAlert color="danger" className="w-100">
-                    {addressError}
+                    {addressError.toString()}
                   </CAlert>
                 )}
               </CInputGroup>
@@ -370,7 +375,7 @@ const EstateABM = () => {
                 )}
                 {errorAPI && (
                   <CAlert color="danger" className="w-100">
-                    {errorAPI}
+                    {errorAPI.toString()}
                   </CAlert>
                 )}
               </CCardFooter>

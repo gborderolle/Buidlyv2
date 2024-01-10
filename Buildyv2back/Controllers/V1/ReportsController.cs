@@ -90,9 +90,67 @@ namespace Buildyv2.Controllers.V1
 
         [HttpPut("{id:int}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] ReportCreateDTO reportCreateDTO)
+        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] ReportCreateDTO reportCreateDto)
         {
-            return await Put<ReportCreateDTO, ReportDTO, Report>(id, reportCreateDTO);
+            try
+            {
+                if (id <= 0)
+                {
+                    _logger.LogError($"Datos de entrada inválidos.");
+                    _response.ErrorMessages = new List<string> { $"Datos de entrada inválidos." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+
+                // 1..n
+                var includes = new List<IncludePropertyConfiguration<Report>>
+            {
+                    new IncludePropertyConfiguration<Report>
+                    {
+                        IncludeExpression = b => b.Estate
+                    },
+                    new IncludePropertyConfiguration<Report>
+                    {
+                        IncludeExpression = b => b.ListPhotos
+                    },
+            };
+
+                var report = await _reportRepository.Get(v => v.Id == id, includes: includes);
+                if (report == null)
+                {
+                    _logger.LogError($"Trabajo no encontrado ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Trabajo no encontrado ID = {id}" };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound(_response);
+                }
+
+                // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
+                report.Name = reportCreateDto.Name;
+                report.Month = reportCreateDto.Month;
+                report.Comments = reportCreateDto.Comments;
+                report.Update = DateTime.Now;
+
+                report.EstateId = reportCreateDto.EstateId;
+                report.Estate = await _dbContext.Estate.FindAsync(reportCreateDto.EstateId);
+
+                var updatedReporter = await _reportRepository.Update(report);
+
+                _logger.LogInformation($"Se actualizó correctamente el reporte Id:{id}.");
+                _response.Result = _mapper.Map<EstateDTO>(updatedReporter);
+                _response.StatusCode = HttpStatusCode.OK;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return BadRequest(_response);
         }
 
         [HttpPatch("{id:int}")]

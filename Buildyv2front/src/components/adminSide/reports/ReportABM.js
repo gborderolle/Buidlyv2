@@ -167,7 +167,7 @@ const ReportABM = () => {
           console.log(pair[0] + ", " + pair[1]);
         }
 
-        await uploadData(formData, urlReport);
+        await uploadData(formData, urlReport, editMode, report?.id);
         dispatch(fetchReportList());
 
         setTimeout(() => {
