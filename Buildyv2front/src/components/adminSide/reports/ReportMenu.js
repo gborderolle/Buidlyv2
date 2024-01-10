@@ -236,7 +236,7 @@ const ReportMenu = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Fecha</th>
+                    <th>Fecha/mes</th>
                     <th>Casa</th>
                     <th>Dirección</th>
                     <th>Reporte</th>

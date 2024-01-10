@@ -76,10 +76,14 @@ const JobABM = () => {
     defaultEstate || null
   );
 
-  const defaultWorkerId = job?.worker?.id || null;
-  const defaultWorker = workerList.find(
-    (worker) => job?.worker?.id === defaultWorkerId
-  );
+  const defaultWorker =
+    job?.listWorkers?.length > 0
+      ? workerList.find(
+          (worker) =>
+            worker.id === job.listWorkers[job.listWorkers.length - 1].id
+        )
+      : null;
+
   const [ddlSelectedWorker, setDdlSelectedWorker] = useState(
     defaultWorker || null
   );
@@ -120,7 +124,7 @@ const JobABM = () => {
   } = useInput(
     (value) => value.trim() !== "", // validateValue function
     null, // onChangeCallback
-    job ? job.cost : ""
+    job ? job.labourCost.toString() : ""
   );
 
   //#endregion Const ***********************************

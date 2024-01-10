@@ -119,8 +119,12 @@ const JobMenu = () => {
     );
 
     return currentJobs.map((job, index) => {
-      // Formatear la fecha del trabajo, si es necesario
-      const formattedDate = job.month; // Reemplazar con lógica de formateo si job.month es una fecha
+      // Parsear la fecha y formatearla como Año/Mes
+      const jobDate = new Date(job.month);
+      const formattedDate = `${jobDate.getFullYear()}/${(
+        "0" +
+        (jobDate.getMonth() + 1)
+      ).slice(-2)}`; // Añade un cero delante para los meses de un solo dígito
 
       // Crear una cadena con todos los nombres de los trabajadores
       const workerNames =
@@ -135,6 +139,7 @@ const JobMenu = () => {
           <td>{job.estate?.name}</td>
           <td>{job.estate?.address}</td>
           <td>{job.name}</td>
+          <td>{job.labourCost}</td>
           <td>{workerNames}</td>
           <td>{job.comments}</td>
           <td>
@@ -242,10 +247,11 @@ const JobMenu = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Fecha</th>
+                    <th>Fecha/mes</th>
                     <th>Casa</th>
                     <th>Dirección</th>
                     <th>Obra</th>
+                    <th>Costo $</th>
                     <th>Trabajadores</th>
                     <th>Comentarios</th>
                     <th>Opciones</th>
