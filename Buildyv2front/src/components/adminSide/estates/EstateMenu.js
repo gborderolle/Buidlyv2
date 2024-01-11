@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   CCard,
@@ -19,8 +19,6 @@ import {
   faCamera,
   faFile,
   faFileUpload,
-  faFileCirclePlus,
-  faMoneyBillWave,
 } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
@@ -51,9 +49,14 @@ const EstateMenu = () => {
     setEstateList(reduxEstateList);
   }, [reduxEstateList]);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
+
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
@@ -109,8 +112,8 @@ const EstateMenu = () => {
   });
 
   useEffect(() => {
-    // setPageCount(Math.ceil(filteredEstateList.length / itemsPerPage));
-  }, [filteredEstateList]);
+    setPageCount(Math.ceil(filteredEstateList.length / itemsPerPage));
+  }, [filteredEstateList, itemsPerPage]);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -128,6 +131,31 @@ const EstateMenu = () => {
       navigate("/abm-estate");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
   };
+
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Aplicar el ordenamiento a los datos
+  const sortedList = useMemo(() => {
+    let sortableList = [...filteredEstateList];
+    if (sortConfig.key !== null) {
+      sortableList.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableList;
+  }, [filteredEstateList, sortConfig]);
 
   //#endregion Hooks ***********************************
 
@@ -275,11 +303,36 @@ const EstateMenu = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Inquilino</th>
-                    <th>Alquiler $</th>
-                    <th>Comentarios</th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("name")}
+                    >
+                      Nombre
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("address")}
+                    >
+                      Dirección
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("tenant")}
+                    >
+                      Inquilino
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("monthlyValue")}
+                    >
+                      Alquiler $
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("comments")}
+                    >
+                      Comentarios
+                    </th>
                     <th>Opciones</th>
                   </tr>
                 </thead>

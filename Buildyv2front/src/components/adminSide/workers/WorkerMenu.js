@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   CCard,
@@ -18,7 +18,6 @@ import {
   faTrowelBricks,
   faCamera,
   faFile,
-  faFileCirclePlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
@@ -49,9 +48,14 @@ const WorkerMenu = () => {
     setWorkerList(reduxWorkerList);
   }, [reduxWorkerList]);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
+
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
@@ -88,8 +92,8 @@ const WorkerMenu = () => {
   });
 
   useEffect(() => {
-    // setPageCount(Math.ceil(filteredEstateList.length / itemsPerPage));
-  }, [filteredWorkerList]);
+    setPageCount(Math.ceil(filteredWorkerList.length / itemsPerPage));
+  }, [filteredWorkerList, itemsPerPage]);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -108,6 +112,31 @@ const WorkerMenu = () => {
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
   };
 
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Aplicar el ordenamiento a los datos
+  const sortedList = useMemo(() => {
+    let sortableList = [...filteredWorkerList];
+    if (sortConfig.key !== null) {
+      sortableList.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableList;
+  }, [filteredWorkerList, sortConfig]);
+
   //#endregion Hooks ***********************************
 
   //#region Functions ***********************************
@@ -115,10 +144,9 @@ const WorkerMenu = () => {
   const renderWorkerRows = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentWorkers = filteredWorkerList.slice(
-      indexOfFirstItem,
-      indexOfLastItem
-    );
+
+    // Cambio de filteredTenantList a sortedList
+    const currentWorkers = sortedList.slice(indexOfFirstItem, indexOfLastItem);
 
     return currentWorkers.map((worker, index) => (
       <tr key={worker.id}>
@@ -232,11 +260,36 @@ const WorkerMenu = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Nombre</th>
-                    <th>Celular</th>
-                    <th>Email</th>
-                    <th>Cédula</th>
-                    <th>Comentarios</th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("name")}
+                    >
+                      Nombre
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("phone")}
+                    >
+                      Celular
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("email")}
+                    >
+                      Email
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("identityDocument")}
+                    >
+                      Cédula
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("comments")}
+                    >
+                      Comentarios
+                    </th>
                     <th>Opciones</th>
                   </tr>
                 </thead>

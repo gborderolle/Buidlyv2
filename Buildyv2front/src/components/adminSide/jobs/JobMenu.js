@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   CCard,
@@ -18,7 +18,6 @@ import {
   faTrowelBricks,
   faCamera,
   faFile,
-  faFileCirclePlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
@@ -29,8 +28,6 @@ import { authActions } from "../../../store/auth-slice";
 import { fetchJobList } from "../../../store/generalData-actions";
 
 import "./JobMenu.css";
-
-const buttonColor = "dark";
 
 const JobMenu = () => {
   //#region Consts ***********************************
@@ -48,9 +45,14 @@ const JobMenu = () => {
     setJobList(reduxJobList);
   }, [reduxJobList]);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
+
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
@@ -86,8 +88,8 @@ const JobMenu = () => {
   });
 
   useEffect(() => {
-    // setPageCount(Math.ceil(filteredEstateList.length / itemsPerPage));
-  }, [filteredJobList]);
+    setPageCount(Math.ceil(filteredJobList.length / itemsPerPage));
+  }, [filteredJobList, itemsPerPage]);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -106,6 +108,31 @@ const JobMenu = () => {
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
   };
 
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Aplicar el ordenamiento a los datos
+  const sortedList = useMemo(() => {
+    let sortableList = [...filteredJobList];
+    if (sortConfig.key !== null) {
+      sortableList.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableList;
+  }, [filteredJobList, sortConfig]);
+
   //#endregion Hooks ***********************************
 
   //#region Functions ***********************************
@@ -113,10 +140,9 @@ const JobMenu = () => {
   const renderJobRows = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentJobs = filteredJobList.slice(
-      indexOfFirstItem,
-      indexOfLastItem
-    );
+
+    // Cambio de filteredTenantList a sortedList
+    const currentJobs = sortedList.slice(indexOfFirstItem, indexOfLastItem);
 
     return currentJobs.map((job, index) => {
       // Parsear la fecha y formatearla como Año/Mes
@@ -247,13 +273,48 @@ const JobMenu = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Fecha/mes</th>
-                    <th>Casa</th>
-                    <th>Dirección</th>
-                    <th>Obra</th>
-                    <th>Costo $</th>
-                    <th>Trabajadores</th>
-                    <th>Comentarios</th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("month")}
+                    >
+                      Fecha/mes
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("phone1")}
+                    >
+                      Casa
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("address")}
+                    >
+                      Dirección
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("name")}
+                    >
+                      Obra
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("labourCost")}
+                    >
+                      Costo $
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("phone1")}
+                    >
+                      Trabajadores
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("comments")}
+                    >
+                      Comentarios
+                    </th>
                     <th>Opciones</th>
                   </tr>
                 </thead>

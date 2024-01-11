@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   CCard,
@@ -48,9 +48,14 @@ const ReportMenu = () => {
     setReportList(reduxReportList);
   }, [reduxReportList]);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
+
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
@@ -85,6 +90,10 @@ const ReportMenu = () => {
     return match1 || match2 || match3 || match4;
   });
 
+  useEffect(() => {
+    setPageCount(Math.ceil(filteredReportList.length / itemsPerPage));
+  }, [filteredReportList, itemsPerPage]);
+
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -102,6 +111,31 @@ const ReportMenu = () => {
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
   };
 
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Aplicar el ordenamiento a los datos
+  const sortedList = useMemo(() => {
+    let sortableList = [...filteredReportList];
+    if (sortConfig.key !== null) {
+      sortableList.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableList;
+  }, [filteredReportList, sortConfig]);
+
   //#endregion Hooks ***********************************
 
   //#region Functions ***********************************
@@ -109,10 +143,9 @@ const ReportMenu = () => {
   const renderReportRows = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentReports = filteredReportList.slice(
-      indexOfFirstItem,
-      indexOfLastItem
-    );
+
+    // Cambio de filteredTenantList a sortedList
+    const currentReports = sortedList.slice(indexOfFirstItem, indexOfLastItem);
 
     return currentReports.map((report, index) => {
       // Parsear la fecha y formatearla como Año/Mes
@@ -236,12 +269,42 @@ const ReportMenu = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Fecha/mes</th>
-                    <th>Casa</th>
-                    <th>Dirección</th>
-                    <th>Reporte</th>
-                    <th># Fotos</th>
-                    <th>Comentarios</th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("month")}
+                    >
+                      Fecha/mes
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("phone1")}
+                    >
+                      Casa
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("address")}
+                    >
+                      Dirección
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("phone1")}
+                    >
+                      Reporte
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("phone1")}
+                    >
+                      # Fotos
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("comments")}
+                    >
+                      Comentarios
+                    </th>
                     <th>Opciones</th>
                   </tr>
                 </thead>

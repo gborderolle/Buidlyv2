@@ -71,7 +71,7 @@ const Dashboard = () => {
   const [searchCircuit, setSearchCircuit] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Ajusta este número según tus necesidades
+  const itemsPerPage = 20; // Ajusta este número según tus necesidades
   const [pageCount, setPageCount] = useState(0);
 
   const [isBumped, triggerBump] = useBumpEffect();

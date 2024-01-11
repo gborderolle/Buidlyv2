@@ -129,7 +129,7 @@ const JobABM = () => {
     inputBlurHandler: inputBlurHandlerCost,
     reset: inputResetCost,
   } = useInput(
-    (value) => value.trim() !== "", // validateValue function
+    (value) => !isNaN(value) && value.trim() !== "", // validación actualizada
     null, // onChangeCallback
     job ? job.labourCost.toString() : ""
   );
@@ -187,7 +187,7 @@ const JobABM = () => {
         formData.append("Name", name);
         formData.append("Month", month.toISOString()); // Asegúrate de enviar la fecha en un formato adecuado
         formData.append("Comments", comments);
-        formData.append("LabourCost", cost);
+        formData.append("LabourCost", parseFloat(cost).toFixed(2)); // Convertir a float y limitar a 2 decimales
         formData.append("EstateId", ddlSelectedEstate.id);
         formData.append(
           "ListWorkers",

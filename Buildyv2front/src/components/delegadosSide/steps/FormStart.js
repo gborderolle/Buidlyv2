@@ -43,7 +43,7 @@ const FormStart = (props) => {
   );
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Ajusta según sea necesario
+  const itemsPerPage = 20; // Ajusta según sea necesario
   const [pageCount, setPageCount] = useState(0);
 
   const isToastAlreadyShown = useSelector((state) => state.ui.isToastShown);

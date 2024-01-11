@@ -1,3 +1,8 @@
+.table-header {
+  cursor: pointer;
+  user-select: none;
+}
+
 @media (max-width: 768px) {
   .custom-table-responsive {
     overflow-x: auto;
