@@ -142,6 +142,10 @@ const RentABM = () => {
     setSelectedImage(null);
   };
 
+  const handleCancel = () => {
+    navigate("/rents"); // Reemplaza con la ruta deseada
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -454,6 +458,14 @@ const RentABM = () => {
               <br />
               <CButton type="submit" color="dark">
                 Confirmar
+              </CButton>
+              <CButton
+                type="button"
+                color="secondary"
+                onClick={handleCancel}
+                style={{ marginLeft: "10px" }}
+              >
+                Cancelar
               </CButton>
               <br />
               <br />

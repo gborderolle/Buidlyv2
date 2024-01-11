@@ -1,14 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import {
-  AppContent,
-  AppSidebar,
-  AppFooter,
-  AppFooterMobileAdmin,
-  AppFooterMobileDelegados,
-  AppHeader,
-} from "../index";
+import { AppContent, AppSidebar, AppFooter, AppHeader } from "../index";
 
 // Redux import
 import { authActions } from "../../store/auth-slice";
@@ -114,18 +107,6 @@ const DefaultLayout = () => {
         </div>
         {userRoleNumber == 1 && !isMobile && (
           <AppFooter className={classes.AppFooter} />
-        )}
-        {userRoleNumber == 1 && isMobile && (
-          <AppFooterMobileAdmin
-            userRoleNumber={userRoleNumber}
-            className={classes.AppFooter}
-          />
-        )}
-        {userRoleNumber == 2 && (
-          <AppFooterMobileDelegados
-            userRoleNumber={userRoleNumber}
-            className={classes.AppFooter}
-          />
         )}
       </div>
     </div>

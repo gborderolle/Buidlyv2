@@ -116,6 +116,10 @@ const ReportABM = () => {
     setSelectedImage(null);
   };
 
+  const handleCancel = () => {
+    navigate("/reports"); // Reemplaza con la ruta deseada
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -349,6 +353,14 @@ const ReportABM = () => {
               <br />
               <CButton type="submit" color="dark">
                 Confirmar
+              </CButton>
+              <CButton
+                type="button"
+                color="secondary"
+                onClick={handleCancel}
+                style={{ marginLeft: "10px" }}
+              >
+                Cancelar
               </CButton>
               <br />
               <br />

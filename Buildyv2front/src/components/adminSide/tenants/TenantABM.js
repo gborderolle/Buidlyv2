@@ -131,6 +131,10 @@ const TenantABM = () => {
     tenant ? tenant.comments : ""
   );
 
+  const handleCancel = () => {
+    navigate("/tenants"); // Reemplaza con la ruta deseada
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -341,6 +345,14 @@ const TenantABM = () => {
               <br />
               <CButton type="submit" color="dark">
                 Confirmar
+              </CButton>
+              <CButton
+                type="button"
+                color="secondary"
+                onClick={handleCancel}
+                style={{ marginLeft: "10px" }}
+              >
+                Cancelar
               </CButton>
               <br />
               <br />

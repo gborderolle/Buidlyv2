@@ -63,6 +63,10 @@ const GroupInputCity = (props) => {
     reset: inputReset2,
   } = useInput((value) => true);
 
+  const handleCancel = () => {
+    navigate("/workers"); // Reemplaza con la ruta deseada
+  };
+
   //#endregion Consts ***********************************
 
   //#region Functions ***********************************

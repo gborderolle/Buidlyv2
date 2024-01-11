@@ -1,8 +1,6 @@
 import AppBreadcrumb from "./UI/AppBreadcrumb";
 import AppContent from "./UI/AppContent";
 import AppFooter from "./UI/AppFooter";
-import AppFooterMobileAdmin from "./UI/AppFooterMobileAdmin";
-import AppFooterMobileDelegados from "./UI/AppFooterMobileDelegados";
 import AppHeader from "./UI/AppHeader";
 import AppHeaderDropdown from "./header/AppHeaderDropdown";
 import AppSidebar from "./UI/AppSidebar";
@@ -16,8 +14,6 @@ export {
   AppBreadcrumb,
   AppContent,
   AppFooter,
-  AppFooterMobileAdmin,
-  AppFooterMobileDelegados,
   AppHeader,
   AppHeaderDropdown,
   AppSidebar,

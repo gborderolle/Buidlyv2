@@ -23,7 +23,6 @@ import { cilMenu } from "@coreui/icons";
 
 import { AppBreadcrumb } from "../index";
 import { AppHeaderDropdown } from "../header/index";
-import SelectDDL from "../delegadosSide/selectDDL/SelectDDL";
 
 import logoSmall from "src/assets/images/datalexion-logo.png";
 import logoBig from "src/assets/images/datalexion-logo-big.png";
