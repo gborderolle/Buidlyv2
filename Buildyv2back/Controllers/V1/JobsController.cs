@@ -3,6 +3,7 @@ using Buildyv2.Context;
 using Buildyv2.DTOs;
 using Buildyv2.Models;
 using Buildyv2.Repository.Interfaces;
+using Buildyv2.Services;
 using Buildyv2.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,13 +20,17 @@ namespace Buildyv2.Controllers.V1
     public class JobsController : CustomBaseController<Job> // Notice <Job> here
     {
         private readonly IJobRepository _jobRepository; // Servicio que contiene la lógica principal de negocio para Jobs.
+        private readonly IPhotoRepository _photoRepository; // Servicio que contiene la lógica principal de negocio para Reports.
         private readonly ContextDB _dbContext;
+        private readonly IFileStorage _fileStorage;
 
-        public JobsController(ILogger<JobsController> logger, IMapper mapper, IJobRepository jobRepository, ContextDB dbContext)
+        public JobsController(ILogger<JobsController> logger, IMapper mapper, IJobRepository jobRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ContextDB dbContext)
         : base(mapper, logger, jobRepository)
         {
             _response = new();
             _jobRepository = jobRepository;
+            _photoRepository = photoRepository;
+            _fileStorage = fileStorage;
             _dbContext = dbContext;
         }
 
@@ -167,7 +172,7 @@ namespace Buildyv2.Controllers.V1
 
         [HttpPost(Name = "CreateJob")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Post([FromBody] JobCreateDTO jobCreateDto)
+        public async Task<ActionResult<APIResponse>> Post([FromForm] JobCreateDTO jobCreateDto)
         {
             try
             {
@@ -221,6 +226,26 @@ namespace Buildyv2.Controllers.V1
 
                 await _dbContext.SaveChangesAsync(); // Guarda los cambios con los trabajadores asociados
                 _logger.LogInformation($"Se creó correctamente la obra Id:{modelo.Id}.");
+
+                if (jobCreateDto.ListPhotos != null && jobCreateDto.ListPhotos.Count > 0)
+                {
+                    string dynamicContainer = $"uploads/jobs/estate{estate.Id}/{DateTime.Now:yyyy_MM}/job{modelo.Id}";
+                    foreach (var photoForm in jobCreateDto.ListPhotos)
+                    {
+                        Photo newPhoto = new();
+                        newPhoto.Job = modelo;
+
+                        using (var stream = new MemoryStream())
+                        {
+                            await photoForm.CopyToAsync(stream);
+                            var content = stream.ToArray();
+                            var extension = Path.GetExtension(photoForm.FileName);
+                            newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
+                        }
+
+                        await _photoRepository.Create(newPhoto);
+                    }
+                }
 
                 _response.Result = _mapper.Map<JobDTO>(modelo);
                 _response.StatusCode = HttpStatusCode.Created;

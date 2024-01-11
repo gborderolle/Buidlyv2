@@ -69,6 +69,7 @@ namespace Buildyv2.Utilities
 
             CreateMap<JobCreateDTO, Job>()
               .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
+              .ForMember(dest => dest.ListWorkers, opt => opt.Ignore())
               .ReverseMap();
             CreateMap<Job, JobDTO>().ReverseMap();
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import Modal from "react-modal";
 
 import {
   CRow,
@@ -31,6 +32,8 @@ import { authActions } from "../../../store/auth-slice";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "../../../utils/FileUpload.css";
+import FileUpload from "../../../utils/FileUpload.js";
 
 const JobABM = () => {
   //#region Const ***********************************
@@ -49,6 +52,10 @@ const JobABM = () => {
   const monthString = job?.month;
   const monthDate = monthString ? new Date(monthString) : new Date();
   const [month, setMonth] = useState(monthDate);
+
+  const [loadedPhotos, setLoadedPhotos] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // redux
   const dispatch = useDispatch();
@@ -127,6 +134,16 @@ const JobABM = () => {
     job ? job.labourCost.toString() : ""
   );
 
+  const openModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -158,29 +175,39 @@ const JobABM = () => {
         inputIsValidWorker
     );
 
-    if (!isValidForm) {
-      return;
-    }
+    if (isValidForm) {
+      try {
+        // Subir cada foto en loadedPhotos
+        const formData = new FormData();
+        loadedPhotos.forEach((photo, index) => {
+          formData.append(`ListPhotos`, photo.file); // Aquí no uses índice en el nombre del campo
+        });
 
-    const dataToUpload = {
-      Name: name,
-      Month: month.toISOString().split("T")[0], // Asegúrate de formatear la fecha correctamente
-      Comments: comments,
-      LabourCost: cost,
-      EstateId: ddlSelectedEstate.id,
-      ListWorkers: ddlSelectedWorker ? [ddlSelectedWorker] : [], // Enviar como lista
-    };
-    console.log("dataToUpload:", dataToUpload);
+        // Agrega otros campos del formulario a formData
+        formData.append("Name", name);
+        formData.append("Month", month.toISOString()); // Asegúrate de enviar la fecha en un formato adecuado
+        formData.append("Comments", comments);
+        formData.append("LabourCost", cost);
+        formData.append("EstateId", ddlSelectedEstate.id);
+        formData.append(
+          "ListWorkers",
+          ddlSelectedWorker ? [ddlSelectedWorker] : []
+        );
 
-    try {
-      await uploadData(dataToUpload, urlJob, editMode, job?.id);
-      dispatch(fetchJobList());
+        console.log("Archivos cargados:", loadedPhotos);
+        for (var pair of formData.entries()) {
+          console.log(pair[0] + ", " + pair[1]);
+        }
 
-      setTimeout(() => {
-        navigate("/jobs");
-      }, 1000);
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
+        await uploadData(formData, urlJob, editMode, job?.id);
+        dispatch(fetchJobList());
+
+        setTimeout(() => {
+          navigate("/jobs");
+        }, 1000);
+      } catch (error) {
+        console.error("Error al enviar los datos:", error);
+      }
     }
   };
 
@@ -194,6 +221,39 @@ const JobABM = () => {
   //#endregion Events ***********************************
 
   //#region Functions ***********************************
+
+  // Esta función se llama cuando se cargan nuevos archivos
+  const handleFileUpload = (newFiles) => {
+    setLoadedPhotos((currentFiles) => [
+      ...currentFiles,
+      ...newFiles.map((file) => ({
+        file,
+        type: file.type,
+        name: file.name,
+      })),
+    ]);
+  };
+
+  // Modificar la función de renderizado para manejar fotos existentes
+  const renderPhotoPreviews = () => {
+    return (
+      <div style={{ display: "flex", overflowX: "auto", gap: "10px" }}>
+        {loadedPhotos.map((photo, index) => (
+          <div
+            key={index}
+            style={{ flex: "0 0 auto" }}
+            onClick={() => openModal(photo.url)}
+          >
+            <img
+              src={photo.url}
+              alt={`Foto ${index}`}
+              style={{ width: "100px", height: "100px", cursor: "pointer" }}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   //#endregion Functions ***********************************
 
@@ -337,6 +397,33 @@ const JobABM = () => {
                   </CAlert>
                 )}
               </CInputGroup>
+              <br />
+              <FileUpload
+                multiple={true}
+                name="example-upload"
+                maxSize={300000}
+                onUpload={handleFileUpload}
+                label="Cargar fotos"
+              />
+              {editMode && (
+                <>
+                  <br />
+                  <div>{renderPhotoPreviews()}</div>
+
+                  <Modal
+                    isOpen={isModalOpen}
+                    onRequestClose={closeModal}
+                    contentLabel="Imagen Ampliada"
+                  >
+                    <img
+                      src={selectedImage}
+                      alt="Imagen Ampliada"
+                      style={{ width: "500px" }}
+                    />
+                    <button onClick={closeModal}>Cerrar</button>
+                  </Modal>
+                </>
+              )}
               <br />
               <CRow className="justify-content-center">
                 {isLoading && (

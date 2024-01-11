@@ -26,6 +26,9 @@ namespace Buildyv2.Models
         public int? ReportId { get; set; }
         public Report? Report { get; set; }
 
+        public int? JobId { get; set; }
+        public Job? Job { get; set; }
+
         public int? RentId { get; set; }
         public Rent? Rent { get; set; }
 
