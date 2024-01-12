@@ -182,8 +182,8 @@ const EstateMenu = () => {
         </td>
         <td>
           {estate.PresentRentId > 0 && estate.listRents.length > 0
-            ? estate.listRents?.[0].MonthlyValue
-            : ""}
+            ? formatToDollars(estate.listRents?.[0].MonthlyValue)
+            : "$0"}
         </td>
         <td>{estate.comments}</td>
         <td>
@@ -259,6 +259,15 @@ const EstateMenu = () => {
     }
   }
 
+  const formatToDollars = (number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(number);
+  };
+
   //#endregion Functions ***********************************
 
   //#region Events ***********************************
@@ -323,7 +332,7 @@ const EstateMenu = () => {
                       className="table-header"
                       onClick={() => requestSort("monthlyValue")}
                     >
-                      Alquiler $
+                      Renta $
                     </th>
                     <th
                       className="table-header"

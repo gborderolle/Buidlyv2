@@ -12,7 +12,7 @@ const JobView = () => {
   const job = location.state?.job;
 
   // Verificar si el jobe fue recibido correctamente
-  if (!job) {
+  if (!job || !Array.isArray(job.listPhotosURL)) {
     return <div>No se encontró la obra</div>;
   }
 

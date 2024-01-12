@@ -63,6 +63,7 @@ namespace Buildyv2.Utilities
 
       CreateMap<RentCreateDTO, Rent>()
         .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
+        .ForMember(dest => dest.ListTenants, opt => opt.Ignore()) // Ignorar porque lo agrego a mano en el Controller
         .ForMember(dest => dest.ListPhotos, opt => opt.Ignore()) // Ignorar porque lo agrego a mano en el Controller
         .ReverseMap();
 

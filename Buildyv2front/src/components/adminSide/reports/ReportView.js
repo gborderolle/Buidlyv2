@@ -12,7 +12,7 @@ const ReportView = () => {
   const report = location.state?.report;
 
   // Verificar si el reporte fue recibido correctamente
-  if (!report) {
+  if (!report || !Array.isArray(report.listPhotosURL)) {
     return <div>No se encontró el reporte</div>;
   }
 

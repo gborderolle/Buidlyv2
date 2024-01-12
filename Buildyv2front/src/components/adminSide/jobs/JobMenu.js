@@ -12,11 +12,7 @@ import {
 } from "@coreui/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlus,
-  faEye,
-  faCamera,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faEye, faCamera } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
 
@@ -166,15 +162,16 @@ const JobMenu = () => {
           ? job.listWorkers.map((worker) => worker.name).join(", ")
           : "No asignado";
 
+      /* <td>{index + 1 + (currentPage - 1) * itemsPerPage}</td> */
       return (
         <tr key={job.id}>
-          <td>{index + 1 + (currentPage - 1) * itemsPerPage}</td>
+          <td>{index + 1}</td>
           <td>{formattedDate}</td>
           <td>{job.estate?.name}</td>
           <td>{job.estate?.address}</td>
           <td>{job.name}</td>
-          <td>{job.labourCost}</td>
-          <td>{job.listPhotosURL?.length}</td>
+          <td>{formatToDollars(job.labourCost)}</td>
+          <td>{job.listPhotosURL ? job.listPhotosURL?.length : 0}</td>
           <td>{workerNames}</td>
           <td>{job.comments}</td>
           <td>
@@ -220,6 +217,15 @@ const JobMenu = () => {
   function navigateToAlbum(job) {
     navigate("/view-job", { state: { job } });
   }
+
+  const formatToDollars = (number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(number);
+  };
 
   //#endregion Functions ***********************************
 

@@ -166,11 +166,11 @@ const ReportMenu = () => {
       return (
         <tr key={report.id}>
           <td>{index + 1}</td>
-          <td>{formattedDate}</td> {/* Usar la fecha formateada */}
+          <td>{formattedDate}</td>
           <td>{report.estate?.name}</td>
           <td>{report.estate?.address}</td>
           <td>{report.name}</td>
-          <td>{report.listPhotosURL?.length}</td>
+          <td>{report.listPhotosURL ? report.listPhotosURL?.length : 0}</td>
           <td>{report.comments}</td>
           <td>
             <button

@@ -166,6 +166,38 @@ namespace Buildyv2.Controllers.V1
                 modelo.Creation = DateTime.Now;
                 modelo.Update = DateTime.Now;
 
+                if (rentCreateDto.ListTenants != null && rentCreateDto.ListTenants.Count > 0)
+                {
+                    int index = 1;
+                    foreach (var tenant in rentCreateDto.ListTenants)
+                    {
+                        var tenantDB = await _dbContext.Tenant.FindAsync(tenant.Id);
+                        if (tenantDB == null)
+                        {
+                            _logger.LogError($"El inquilino ID={tenant.Id} no existe en el sistema");
+                            _response.ErrorMessages = new List<string> { $"El inquilino ID={tenant.Id} no existe en el sistema." };
+                            _response.IsSuccess = false;
+                            _response.StatusCode = HttpStatusCode.BadRequest;
+                            ModelState.AddModelError("NameAlreadyExists", $"El inquilino ID={tenant.Id} no existe en el sistema.");
+                            return BadRequest(ModelState);
+                        }
+
+                        if (index == 1)
+                        {
+                            modelo.PrimaryTenantId = tenant.Id;
+                        }
+                        // Map TenantCreateDTO to Tenant
+                        var mappedTenant = _mapper.Map<Tenant>(tenant);
+                        // Perform any additional operations on the mapped tenant if needed
+
+                        // Add the mapped tenant to the model
+                        modelo.ListTenants.Add(mappedTenant);
+                        index++;
+                    }
+                }
+                // modelo.ListTenants = rentCreateDto.ListTenants;
+                // modelo.PrimaryTenantId = rentCreateDto.ListTenants[0].Id;
+
                 await _rentRepository.Create(modelo);
                 _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
 

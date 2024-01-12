@@ -18,6 +18,7 @@ import {
   faTrowelBricks,
   faCamera,
   faFile,
+  faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
@@ -28,8 +29,6 @@ import { authActions } from "../../../store/auth-slice";
 import { fetchTenantList } from "../../../store/generalData-actions";
 
 import "./TenantMenu.css";
-
-const buttonColor = "dark";
 
 const TenantMenu = () => {
   //#region Consts ***********************************
@@ -44,9 +43,25 @@ const TenantMenu = () => {
   const reduxTenantList =
     useSelector((state) => state.generalData.tenantList) || [];
 
+  const [rentList, setRentList] = useState([]);
+  const reduxRentList =
+    useSelector((state) => state.generalData.rentList) || [];
+
+  const [estateList, setEstateList] = useState([]);
+  const reduxEstateList =
+    useSelector((state) => state.generalData.estateList) || [];
+
   useEffect(() => {
     setTenantList(reduxTenantList);
   }, [reduxTenantList]);
+
+  useEffect(() => {
+    setRentList(reduxRentList);
+  }, [reduxRentList]);
+
+  useEffect(() => {
+    setEstateList(reduxEstateList);
+  }, [reduxEstateList]);
 
   const itemsPerPage = 20;
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,9 +96,6 @@ const TenantMenu = () => {
       : false;
     const match3 = tenant.email
       ? tenant.email.toLowerCase().includes(searchTerm.toLowerCase())
-      : false;
-    const match4 = tenant.identityDocument
-      ? tenant.identityDocument.toLowerCase().includes(searchTerm.toLowerCase())
       : false;
     const match5 = tenant.comments
       ? tenant.comments.toLowerCase().includes(searchTerm.toLowerCase())
@@ -148,38 +160,44 @@ const TenantMenu = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-    // Cambio de filteredTenantList a sortedList
     const currentTenants = sortedList.slice(indexOfFirstItem, indexOfLastItem);
 
-    return currentTenants.map((tenant, index) => (
-      <tr key={tenant.id}>
-        <td>{index + 1}</td>
-        <td>{tenant.name}</td>
-        <td>{tenant.phone1}</td>
-        <td>{tenant.phone2}</td>
-        <td>{tenant.email}</td>
-        <td>{tenant.identityDocument}</td>
-        <td>{tenant.comments}</td>
-        <td>
-          <button
-            onClick={() => navigateToTenant(tenant)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-            title="Ver detalles"
-          >
-            <FontAwesomeIcon icon={faEye} color="#697588" />
-          </button>
-          <button
-            onClick={() => sendWhatsApp(worker.phone)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-            title="Contactar por WhatsApp"
-          >
-            <FontAwesomeIcon icon={faPaperPlane} color="#697588" />
-          </button>
-        </td>
-      </tr>
-    ));
+    return currentTenants.map((tenant, index) => {
+      const rent = getRentByTenantId(tenant.id);
+      const estate = rent ? getEstateByRentId(rent.id) : null;
+
+      return (
+        <tr key={tenant.id}>
+          <td>{index + 1}</td>
+          <td>{tenant.name}</td>
+          <td>{tenant.phone1}</td>
+          <td>{tenant.phone2}</td>
+          <td>{tenant.email}</td>
+          <td>
+            {estate ? estate.name + " (" + estate.address + ")" : "No tiene"}
+          </td>
+          <td>{tenant.comments}</td>
+          <td>
+            <button
+              onClick={() => navigateToTenant(tenant)}
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+              title="Ver detalles"
+            >
+              <FontAwesomeIcon icon={faEye} color="#697588" />
+            </button>
+            <button
+              onClick={() => sendWhatsApp(tenant.phone1)}
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+              title="Contactar por WhatsApp"
+            >
+              <FontAwesomeIcon icon={faPaperPlane} color="#697588" />
+            </button>
+          </td>
+        </tr>
+      );
+    });
   };
 
   // Determinar el rango de páginas a mostrar alrededor de la página actual
@@ -220,6 +238,16 @@ const TenantMenu = () => {
 
     // Abrir el enlace de WhatsApp
     window.open(whatsappLink, "_blank");
+  };
+
+  const getRentByTenantId = (tenantId) => {
+    // Asume que cada tenant tiene un rentId único
+    return rentList.find((rent) => rent.tenantId === tenantId);
+  };
+
+  const getEstateByRentId = (rentId) => {
+    // Asume que cada rent tiene un estateId único
+    return estateList.find((estate) => estate.rentId === rentId);
   };
 
   //#endregion Functions ***********************************
@@ -290,9 +318,9 @@ const TenantMenu = () => {
                     </th>
                     <th
                       className="table-header"
-                      onClick={() => requestSort("identityDocument")}
+                      onClick={() => requestSort("comments")}
                     >
-                      Cédula
+                      Casa (dirección)
                     </th>
                     <th
                       className="table-header"
