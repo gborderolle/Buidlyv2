@@ -128,7 +128,7 @@ const ReportABM = () => {
       if (confirmDelete) {
         await deleteData(urlReport, report.id);
         dispatch(fetchReportList());
-        navigate("/rents");
+        navigate("/reports");
       }
     }
   };
