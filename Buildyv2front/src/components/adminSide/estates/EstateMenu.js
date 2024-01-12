@@ -16,7 +16,7 @@ import {
   faPlus,
   faEye,
   faTrowelBricks,
-  faCamera,
+  faImages,
   faFile,
   faFileUpload,
 } from "@fortawesome/free-solid-svg-icons";
@@ -29,8 +29,6 @@ import { authActions } from "../../../store/auth-slice";
 import { fetchEstateList } from "../../../store/generalData-actions";
 
 import "./EstateMenu.css";
-
-const buttonColor = "dark";
 
 const EstateMenu = () => {
   //#region Consts ***********************************
@@ -190,7 +188,7 @@ const EstateMenu = () => {
         <td>{estate.comments}</td>
         <td>
           <button
-            onClick={() => navigateToProperty(estate)}
+            onClick={() => navigateToEstate(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
             title="Ver propiedad"
@@ -198,10 +196,10 @@ const EstateMenu = () => {
             <FontAwesomeIcon icon={faEye} color="#697588" />
           </button>
           <button
-            onClick={() => navigateToWorks(estate)}
+            onClick={() => navigateToJobs(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
-            title="Ver trabajos"
+            title="Ver obras"
           >
             <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
           </button>
@@ -211,7 +209,7 @@ const EstateMenu = () => {
             className={isBumped ? "bump" : ""}
             title="Ver reportes"
           >
-            <FontAwesomeIcon icon={faCamera} color="#697588" />
+            <FontAwesomeIcon icon={faImages} color="#697588" />
           </button>
           <button
             onClick={() => navigateToRent(estate)}
@@ -241,16 +239,16 @@ const EstateMenu = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  function navigateToProperty(estate) {
+  function navigateToEstate(estate) {
     navigate("/abm-estate", { state: { estate, editMode: true } });
   }
 
-  function navigateToWorks(estate) {
-    navigate("/jobs", { state: { estate } });
+  function navigateToJobs(estate) {
+    navigate("/jobs", { state: { estate, listMode: true } });
   }
 
   function navigateToReports(estate) {
-    navigate("/reportMenu", { state: { estate } });
+    navigate("/reports", { state: { estate, listMode: true } });
   }
 
   function navigateToRent(estate) {

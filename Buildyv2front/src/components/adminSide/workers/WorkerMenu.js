@@ -12,13 +12,7 @@ import {
 } from "@coreui/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlus,
-  faEye,
-  faTrowelBricks,
-  faCamera,
-  faFile,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faEye, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
 
@@ -28,8 +22,6 @@ import { authActions } from "../../../store/auth-slice";
 import { fetchWorkerList } from "../../../store/generalData-actions";
 
 import "./WorkerMenu.css";
-
-const buttonColor = "dark";
 
 const WorkerMenu = () => {
   //#region Consts ***********************************
@@ -161,29 +153,17 @@ const WorkerMenu = () => {
             onClick={() => navigateToProperty(worker)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
+            title="Ver detalles"
           >
             <FontAwesomeIcon icon={faEye} color="#697588" />
           </button>
           <button
-            onClick={() => navigateToWorks(worker)}
+            onClick={() => sendWhatsApp(worker.phone)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
+            title="Contactar por WhatsApp"
           >
-            <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
-          </button>
-          <button
-            onClick={() => navigateToReports(worker)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faCamera} color="#697588" />
-          </button>
-          <button
-            onClick={() => navigateToRent(worker)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faFile} color="#697588" />
+            <FontAwesomeIcon icon={faPaperPlane} color="#697588" />
           </button>
         </td>
       </tr>
@@ -206,17 +186,29 @@ const WorkerMenu = () => {
     navigate("/abm-worker", { state: { worker, editMode: true } });
   }
 
-  function navigateToWorks(worker) {
-    navigate("/workMenu", { state: { worker } });
-  }
+  const sendWhatsApp = (phone) => {
+    let whatsappLink;
+    let phoneString = String(phone);
 
-  function navigateToReports(worker) {
-    navigate("/reportMenu", { state: { worker } });
-  }
+    // Si el número tiene 9 dígitos, quita el primer dígito y agrega el prefijo
+    if (phoneString.length === 9) {
+      whatsappLink = `https://api.whatsapp.com/send/?phone=598${phoneString.substring(
+        1
+      )}`;
+    }
+    // Si el número tiene 8 dígitos, se usa como viene
+    else if (phoneString.length === 8) {
+      whatsappLink = `https://api.whatsapp.com/send/?phone=598${phoneString}`;
+    }
+    // En caso de que el número no tenga 8 o 9 dígitos, muestra un mensaje de error
+    else {
+      console.log("Número de teléfono inválido para WhatsApp");
+      return;
+    }
 
-  function navigateToRent(worker) {
-    navigate("/rentMenu", { state: { worker } });
-  }
+    // Abrir el enlace de WhatsApp
+    window.open(whatsappLink, "_blank");
+  };
 
   //#endregion Functions ***********************************
 

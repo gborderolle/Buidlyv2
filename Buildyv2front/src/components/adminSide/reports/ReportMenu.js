@@ -29,10 +29,12 @@ import { fetchReportList } from "../../../store/generalData-actions";
 
 import "./ReportMenu.css";
 
-const buttonColor = "dark";
-
 const ReportMenu = () => {
   //#region Consts ***********************************
+
+  const location = useLocation();
+  const estate = location.state?.estate;
+  const listMode = location.state?.listMode ? location.state?.listMode : false;
 
   const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,8 +47,14 @@ const ReportMenu = () => {
     useSelector((state) => state.generalData.reportList) || [];
 
   useEffect(() => {
-    setReportList(reduxReportList);
-  }, [reduxReportList]);
+    // Si listMode es true, usar solo los trabajos de la propiedad específica
+    if (listMode && estate && estate.listReports) {
+      setReportList(estate.listReports);
+    } else {
+      // Si listMode no es true, usar la lista completa de trabajos
+      setReportList(reduxReportList);
+    }
+  }, [reduxReportList, estate, listMode]);
 
   const itemsPerPage = 20;
   const [currentPage, setCurrentPage] = useState(1);
@@ -166,32 +174,20 @@ const ReportMenu = () => {
           <td>{report.comments}</td>
           <td>
             <button
-              onClick={() => navigateToProperty(report)}
+              onClick={() => navigateToReport(report)}
               style={{ border: "none", background: "none" }}
               className={isBumped ? "bump" : ""}
+              title="Ver detalles"
             >
               <FontAwesomeIcon icon={faEye} color="#697588" />
             </button>
             <button
-              onClick={() => navigateToWorks(report)}
+              onClick={() => navigateToAlbum(report)}
               style={{ border: "none", background: "none" }}
               className={isBumped ? "bump" : ""}
-            >
-              <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
-            </button>
-            <button
-              onClick={() => navigateToReports(report)}
-              style={{ border: "none", background: "none" }}
-              className={isBumped ? "bump" : ""}
+              title="Ver álbum"
             >
               <FontAwesomeIcon icon={faCamera} color="#697588" />
-            </button>
-            <button
-              onClick={() => navigateToRent(report)}
-              style={{ border: "none", background: "none" }}
-              className={isBumped ? "bump" : ""}
-            >
-              <FontAwesomeIcon icon={faFile} color="#697588" />
             </button>
           </td>
         </tr>
@@ -211,20 +207,12 @@ const ReportMenu = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  function navigateToProperty(report) {
+  function navigateToReport(report) {
     navigate("/abm-report", { state: { report, editMode: true } });
   }
 
-  function navigateToWorks(report) {
-    navigate("/workMenu", { state: { report } });
-  }
-
-  function navigateToReports(report) {
+  function navigateToAlbum(report) {
     navigate("/reportMenu", { state: { report } });
-  }
-
-  function navigateToRent(report) {
-    navigate("/rentMenu", { state: { report } });
   }
 
   //#endregion Functions ***********************************

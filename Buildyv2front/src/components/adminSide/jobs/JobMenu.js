@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   CCard,
   CCardBody,
@@ -32,6 +32,10 @@ import "./JobMenu.css";
 const JobMenu = () => {
   //#region Consts ***********************************
 
+  const location = useLocation();
+  const estate = location.state?.estate;
+  const listMode = location.state?.listMode ? location.state?.listMode : false;
+
   const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -42,8 +46,14 @@ const JobMenu = () => {
   const reduxJobList = useSelector((state) => state.generalData.jobList) || [];
 
   useEffect(() => {
-    setJobList(reduxJobList);
-  }, [reduxJobList]);
+    // Si listMode es true, usar solo los trabajos de la propiedad específica
+    if (listMode && estate && estate.listJobs) {
+      setJobList(estate.listJobs);
+    } else {
+      // Si listMode no es true, usar la lista completa de trabajos
+      setJobList(reduxJobList);
+    }
+  }, [reduxJobList, estate, listMode]);
 
   const itemsPerPage = 20;
   const [currentPage, setCurrentPage] = useState(1);
@@ -170,32 +180,21 @@ const JobMenu = () => {
           <td>{job.comments}</td>
           <td>
             <button
-              onClick={() => navigateToProperty(job)}
+              onClick={() => navigateToJob(job)}
               style={{ border: "none", background: "none" }}
               className={isBumped ? "bump" : ""}
+              title="Ver detalles"
             >
               <FontAwesomeIcon icon={faEye} color="#697588" />
             </button>
+
             <button
-              onClick={() => navigateToWorks(job)}
+              onClick={() => navigateToAlbum(job)}
               style={{ border: "none", background: "none" }}
               className={isBumped ? "bump" : ""}
-            >
-              <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
-            </button>
-            <button
-              onClick={() => navigateToReports(job)}
-              style={{ border: "none", background: "none" }}
-              className={isBumped ? "bump" : ""}
+              title="Ver álbum"
             >
               <FontAwesomeIcon icon={faCamera} color="#697588" />
-            </button>
-            <button
-              onClick={() => navigateToRent(job)}
-              style={{ border: "none", background: "none" }}
-              className={isBumped ? "bump" : ""}
-            >
-              <FontAwesomeIcon icon={faFile} color="#697588" />
             </button>
           </td>
         </tr>
@@ -215,20 +214,12 @@ const JobMenu = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  function navigateToProperty(job) {
+  function navigateToJob(job) {
     navigate("/abm-job", { state: { job, editMode: true } });
   }
 
-  function navigateToWorks(job) {
-    navigate("/workMenu", { state: { job } });
-  }
-
-  function navigateToReports(job) {
+  function navigateToAlbum(job) {
     navigate("/reportMenu", { state: { job } });
-  }
-
-  function navigateToRent(job) {
-    navigate("/rentMenu", { state: { job } });
   }
 
   //#endregion Functions ***********************************

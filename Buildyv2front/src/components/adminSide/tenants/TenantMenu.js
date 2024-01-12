@@ -162,32 +162,20 @@ const TenantMenu = () => {
         <td>{tenant.comments}</td>
         <td>
           <button
-            onClick={() => navigateToProperty(tenant)}
+            onClick={() => navigateToTenant(tenant)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
+            title="Ver detalles"
           >
             <FontAwesomeIcon icon={faEye} color="#697588" />
           </button>
           <button
-            onClick={() => navigateToWorks(tenant)}
+            onClick={() => sendWhatsApp(worker.phone)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
+            title="Contactar por WhatsApp"
           >
-            <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
-          </button>
-          <button
-            onClick={() => navigateToReports(tenant)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faCamera} color="#697588" />
-          </button>
-          <button
-            onClick={() => navigateToRent(tenant)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-          >
-            <FontAwesomeIcon icon={faFile} color="#697588" />
+            <FontAwesomeIcon icon={faPaperPlane} color="#697588" />
           </button>
         </td>
       </tr>
@@ -206,21 +194,33 @@ const TenantMenu = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  function navigateToProperty(tenant) {
+  function navigateToTenant(tenant) {
     navigate("/abm-tenant", { state: { tenant, editMode: true } });
   }
 
-  function navigateToWorks(tenant) {
-    navigate("/workMenu", { state: { tenant } });
-  }
+  const sendWhatsApp = (phone) => {
+    let whatsappLink;
+    let phoneString = String(phone);
 
-  function navigateToReports(tenant) {
-    navigate("/reportMenu", { state: { tenant } });
-  }
+    // Si el número tiene 9 dígitos, quita el primer dígito y agrega el prefijo
+    if (phoneString.length === 9) {
+      whatsappLink = `https://api.whatsapp.com/send/?phone=598${phoneString.substring(
+        1
+      )}`;
+    }
+    // Si el número tiene 8 dígitos, se usa como viene
+    else if (phoneString.length === 8) {
+      whatsappLink = `https://api.whatsapp.com/send/?phone=598${phoneString}`;
+    }
+    // En caso de que el número no tenga 8 o 9 dígitos, muestra un mensaje de error
+    else {
+      console.log("Número de teléfono inválido para WhatsApp");
+      return;
+    }
 
-  function navigateToRent(tenant) {
-    navigate("/rentMenu", { state: { tenant } });
-  }
+    // Abrir el enlace de WhatsApp
+    window.open(whatsappLink, "_blank");
+  };
 
   //#endregion Functions ***********************************
 
