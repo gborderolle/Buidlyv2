@@ -18,14 +18,20 @@ namespace Buildyv2.Controllers.V1
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class EstatesController : CustomBaseController<Estate> // Notice <Estate> here
     {
-        private readonly IEstateRepository _estateRepository; // Servicio que contiene la lógica principal de negocio para Estates.
+        private readonly IEstateRepository _estateRepository;
+        private readonly IReportRepository _reportRepository;
+        private readonly IJobRepository _jobRepository;
+        private readonly IRentRepository _rentRepository;
         private readonly ContextDB _dbContext;
 
-        public EstatesController(ILogger<EstatesController> logger, IMapper mapper, IEstateRepository estateRepository, ContextDB dbContext)
+        public EstatesController(ILogger<EstatesController> logger, IMapper mapper, IEstateRepository estateRepository, IReportRepository reportRepository, IJobRepository jobRepository, IRentRepository rentRepository, ContextDB dbContext)
         : base(mapper, logger, estateRepository)
         {
             _response = new();
             _estateRepository = estateRepository;
+            _reportRepository = reportRepository;
+            _jobRepository = jobRepository;
+            _rentRepository = rentRepository;
             _dbContext = dbContext;
         }
 
@@ -92,11 +98,80 @@ namespace Buildyv2.Controllers.V1
             return await Get<Estate, EstateDTO>(includes: includes);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}", Name = "DeleteEstate")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
-            return await Delete<Estate>(id);
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+
+                try
+                {
+                    var estate = await _estateRepository.Get(x => x.Id == id, tracked: true, includes: new List<IncludePropertyConfiguration<Estate>>
+        {
+            new IncludePropertyConfiguration<Estate>
+            {
+                IncludeExpression = j => j.ListRents
+            },
+            new IncludePropertyConfiguration<Estate>
+            {
+                IncludeExpression = j => j.ListJobs
+            },
+            new IncludePropertyConfiguration<Estate>
+            {
+                IncludeExpression = j => j.ListReports
+            },
+        });
+
+                    if (estate == null)
+                    {
+                        _logger.LogError($"Propiedad no encontrada ID = {id}.");
+                        _response.ErrorMessages = new List<string> { $"Propiedad no encontrada ID = {id}." };
+                        _response.IsSuccess = false;
+                        _response.StatusCode = HttpStatusCode.NotFound;
+                        return NotFound($"Propiedad no encontrada ID = {id}.");
+                    }
+
+                    if (estate.ListRents != null && estate.ListRents.Count > 0)
+                    {
+                        foreach (var rent in estate.ListRents)
+                        {
+                            await _rentRepository.Remove(rent);
+                        }
+                    }
+                    if (estate.ListJobs != null && estate.ListJobs.Count > 0)
+                    {
+                        foreach (var job in estate.ListJobs)
+                        {
+                            await _jobRepository.Remove(job);
+                        }
+                    }
+                    if (estate.ListReports != null && estate.ListReports.Count > 0)
+                    {
+                        foreach (var report in estate.ListReports)
+                        {
+                            await _reportRepository.Remove(report);
+                        }
+                    }
+
+                    await _estateRepository.Remove(estate);
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation($"Se eliminó correctamente la propiedad Id:{id}.");
+                    _response.StatusCode = HttpStatusCode.NoContent;
+                    return Ok(_response);
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex.ToString());
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.InternalServerError;
+                    _response.ErrorMessages = new List<string> { ex.ToString() };
+                    return BadRequest(_response);
+                }
+            }
         }
 
         [HttpPut("{id:int}")]

@@ -69,11 +69,34 @@ namespace Buildyv2.Controllers.V1
             return await Get<Worker, WorkerDTO>(includes: includes);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}", Name = "DeleteWorker")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
-            return await Delete<Worker>(id);
+            try
+            {
+                var worker = await _workerRepository.Get(x => x.Id == id, tracked: true);
+                if (worker == null)
+                {
+                    _logger.LogError($"Trabajador no encontrado ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Trabajador no encontrado ID = {id}." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound($"Trabajador no encontrado ID = {id}.");
+                }
+                await _workerRepository.Remove(worker);
+                _logger.LogInformation($"Se eliminó correctamente el trabajador Id:{id}.");
+                _response.StatusCode = HttpStatusCode.NoContent;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return BadRequest(_response);
         }
 
         [HttpPut("{id:int}")]

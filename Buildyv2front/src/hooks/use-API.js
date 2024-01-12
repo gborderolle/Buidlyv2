@@ -65,6 +65,25 @@ const useAPI = () => {
     }
   };
 
+  const deleteData = async (apiUrl, id) => {
+    setState({ isLoading: true, isSuccess: false, error: null });
+
+    const authToken = localStorage.getItem("authToken");
+    const headers = { Authorization: `Bearer ${authToken}` };
+
+    try {
+      await axios.delete(`${apiUrl}/${id}`, { headers });
+      setState({ isLoading: false, isSuccess: true, error: null });
+    } catch (error) {
+      let errorMessage = "Error al eliminar";
+      if (error.response && error.response.data) {
+        errorMessage = error.response.data;
+      }
+      setState({ isLoading: false, isSuccess: false, error: errorMessage });
+    }
+  };
+
+
   return { ...state, uploadData };
 };
 

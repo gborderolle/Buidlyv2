@@ -84,12 +84,54 @@ namespace Buildyv2.Controllers.V1
                 };
             return await Get<Job, JobDTO>(includes: includes);
         }
-
-        [HttpDelete("{id:int}")]
+        
+        [HttpDelete("{id:int}", Name = "DeleteJob")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
-            return await Delete<Job>(id);
+            try
+            {
+                var job = await _jobRepository.Get(x => x.Id == id, tracked: true, includes: new List<IncludePropertyConfiguration<Job>>
+        {
+            new IncludePropertyConfiguration<Job>
+            {
+                IncludeExpression = j => j.ListPhotos
+            }
+        });
+
+                if (job == null)
+                {
+                    _logger.LogError($"Obra no encontrada ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Obra no encontrada ID = {id}." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound($"Obra no encontrada ID = {id}.");
+                }
+
+                // Eliminar las fotos asociadas
+                if (job.ListPhotos != null)
+                {
+                    foreach (var photo in job.ListPhotos)
+                    {
+                        var container = $"uploads/jobs/estate{job.EstateId}/{photo.Creation.ToString("yyyy_MM")}/job{job.Id}";
+                        await _fileStorage.DeleteFile(photo.URL, container);
+                        _dbContext.Photo.Remove(photo); // Asegúrate de que el contexto de la base de datos sea correcto
+                    }
+                }
+
+                await _jobRepository.Remove(job);
+                _logger.LogInformation($"Se eliminó correctamente la obra Id:{id}.");
+                _response.StatusCode = HttpStatusCode.NoContent;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return BadRequest(_response);
         }
 
         [HttpPut("{id:int}")]

@@ -148,6 +148,19 @@ const JobABM = () => {
     navigate("/jobs"); // Reemplaza con la ruta deseada
   };
 
+  const handleDelete = async () => {
+    if (job && job.id) {
+      const confirmDelete = window.confirm(
+        "¿Estás seguro de que quieres eliminar esta obra?"
+      );
+      if (confirmDelete) {
+        await deleteData(urlJob, job.id);
+        dispatch(fetchJobList());
+        navigate("/jobs");
+      }
+    }
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -269,6 +282,13 @@ const JobABM = () => {
             <CCardBody>
               <CCardTitle>
                 {editMode ? "Modificar una obra" : "Agregar una obra"}
+                {editMode && job && job.id && (
+                  <CCol xs="auto" className="d-flex justify-content-end">
+                    <CButton color="danger" size="sm" onClick={handleDelete}>
+                      Eliminar
+                    </CButton>
+                  </CCol>
+                )}
               </CCardTitle>
               <br />
               <CInputGroup>

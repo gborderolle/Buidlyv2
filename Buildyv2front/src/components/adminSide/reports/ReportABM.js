@@ -120,6 +120,19 @@ const ReportABM = () => {
     navigate("/reports"); // Reemplaza con la ruta deseada
   };
 
+  const handleDelete = async () => {
+    if (report && report.id) {
+      const confirmDelete = window.confirm(
+        "¿Estás seguro de que quieres eliminar este reporte?"
+      );
+      if (confirmDelete) {
+        await deleteData(urlReport, report.id);
+        dispatch(fetchReportList());
+        navigate("/rents");
+      }
+    }
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -234,6 +247,13 @@ const ReportABM = () => {
             <CCardBody>
               <CCardTitle>
                 {editMode ? "Modificar un reporte" : "Agregar un reporte"}
+                {editMode && report && report.id && (
+                  <CCol xs="auto" className="d-flex justify-content-end">
+                    <CButton color="danger" size="sm" onClick={handleDelete}>
+                      Eliminar
+                    </CButton>
+                  </CCol>
+                )}
               </CCardTitle>
               <br />
               <CInputGroup>

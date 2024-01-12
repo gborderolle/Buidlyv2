@@ -135,6 +135,19 @@ const TenantABM = () => {
     navigate("/tenants"); // Reemplaza con la ruta deseada
   };
 
+  const handleDelete = async () => {
+    if (tenant && tenant.id) {
+      const confirmDelete = window.confirm(
+        "¿Estás seguro de que quieres eliminar este trabajador?"
+      );
+      if (confirmDelete) {
+        await deleteData(urlTenant, tenant.id);
+        dispatch(fetchTenantList());
+        navigate("/tenants");
+      }
+    }
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -218,6 +231,13 @@ const TenantABM = () => {
             <CCardBody>
               <CCardTitle>
                 {editMode ? "Modificar un inquilino" : "Agregar un inquilino"}
+                {editMode && tenant && tenant.id && (
+                  <CCol xs="auto" className="d-flex justify-content-end">
+                    <CButton color="danger" size="sm" onClick={handleDelete}>
+                      Eliminar
+                    </CButton>
+                  </CCol>
+                )}
               </CCardTitle>
               <br />
               <CInputGroup>

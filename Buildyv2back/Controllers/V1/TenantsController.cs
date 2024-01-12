@@ -68,11 +68,34 @@ namespace Buildyv2.Controllers.V1
             return await Get<Tenant, TenantDTO>(includes: includes);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}", Name = "DeleteTenant")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
-            return await Delete<Tenant>(id);
+            try
+            {
+                var tenant = await _tenantRepository.Get(x => x.Id == id, tracked: true);
+                if (tenant == null)
+                {
+                    _logger.LogError($"Inquilino no encontrado ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Inquilino no encontrado ID = {id}." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound($"Inquilino no encontrado ID = {id}.");
+                }
+                await _tenantRepository.Remove(tenant);
+                _logger.LogInformation($"Se eliminó correctamente el inquilino Id:{id}.");
+                _response.StatusCode = HttpStatusCode.NoContent;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return BadRequest(_response);
         }
 
         [HttpPut("{id:int}")]

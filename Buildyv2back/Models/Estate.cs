@@ -44,7 +44,7 @@ namespace Buildyv2.Models
         public List<Job> ListJobs { get; set; } = new();
 
         public List<Rent> ListRents { get; set; } = new();
-        
+
         public int PresentRentId { get; set; } = new();
 
         #endregion

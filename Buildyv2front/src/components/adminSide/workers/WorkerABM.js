@@ -37,7 +37,13 @@ const WorkerABM = () => {
   const editMode = location.state?.editMode ? location.state?.editMode : false;
 
   const [isValidForm, setIsValidForm] = useState(true);
-  const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
+  const {
+    isLoading,
+    isSuccess,
+    error: errorAPI,
+    uploadData,
+    deleteData,
+  } = useAPI();
 
   // redux
   const dispatch = useDispatch();
@@ -132,6 +138,19 @@ const WorkerABM = () => {
     navigate("/workers"); // Reemplaza con la ruta deseada
   };
 
+  const handleDelete = async () => {
+    if (worker && worker.id) {
+      const confirmDelete = window.confirm(
+        "¿Estás seguro de que quieres eliminar este trabajador?"
+      );
+      if (confirmDelete) {
+        await deleteData(urlWorker, worker.id);
+        dispatch(fetchWorkerList());
+        navigate("/workers");
+      }
+    }
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -207,6 +226,13 @@ const WorkerABM = () => {
             <CCardBody>
               <CCardTitle>
                 {editMode ? "Modificar un trabajador" : "Agregar un trabajador"}
+                {editMode && worker && worker.id && (
+                  <CCol xs="auto" className="d-flex justify-content-end">
+                    <CButton color="danger" size="sm" onClick={handleDelete}>
+                      Eliminar
+                    </CButton>
+                  </CCol>
+                )}
               </CCardTitle>
               <br />
               <CInputGroup>

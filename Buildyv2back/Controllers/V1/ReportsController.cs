@@ -81,11 +81,53 @@ namespace Buildyv2.Controllers.V1
             return await Get<Report, ReportDTO>(includes: includes);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}", Name = "DeleteReport")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
-            return await Delete<Report>(id);
+            try
+            {
+                var report = await _reportRepository.Get(x => x.Id == id, tracked: true, includes: new List<IncludePropertyConfiguration<Report>>
+        {
+            new IncludePropertyConfiguration<Report>
+            {
+                IncludeExpression = j => j.ListPhotos
+            }
+        });
+
+                if (report == null)
+                {
+                    _logger.LogError($"Reporte no encontrada ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Reporte no encontrada ID = {id}." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound($"Reporte no encontrada ID = {id}.");
+                }
+
+                // Eliminar las fotos asociadas
+                if (report.ListPhotos != null)
+                {
+                    foreach (var photo in report.ListPhotos)
+                    {
+                        var container = $"uploads/reports/estate{report.EstateId}/{photo.Creation.ToString("yyyy_MM")}/report{report.Id}";
+                        await _fileStorage.DeleteFile(photo.URL, container);
+                        _dbContext.Photo.Remove(photo); // Asegúrate de que el contexto de la base de datos sea correcto
+                    }
+                }
+
+                await _reportRepository.Remove(report);
+                _logger.LogInformation($"Se eliminó correctamente la reporte Id:{id}.");
+                _response.StatusCode = HttpStatusCode.NoContent;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return BadRequest(_response);
         }
 
         [HttpPut("{id:int}")]

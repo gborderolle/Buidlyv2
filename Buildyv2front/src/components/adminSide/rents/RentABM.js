@@ -146,6 +146,19 @@ const RentABM = () => {
     navigate("/rents"); // Reemplaza con la ruta deseada
   };
 
+  const handleDelete = async () => {
+    if (rent && rent.id) {
+      const confirmDelete = window.confirm(
+        "¿Estás seguro de que quieres eliminar esta renta?"
+      );
+      if (confirmDelete) {
+        await deleteData(urlRent, rent.id);
+        dispatch(fetchRentsList());
+        navigate("/rents");
+      }
+    }
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -277,6 +290,13 @@ const RentABM = () => {
             <CCardBody>
               <CCardTitle>
                 {editMode ? "Modificar un alquiler" : "Agregar un alquiler"}
+                {editMode && rent && rent.id && (
+                  <CCol xs="auto" className="d-flex justify-content-end">
+                    <CButton color="danger" size="sm" onClick={handleDelete}>
+                      Eliminar
+                    </CButton>
+                  </CCol>
+                )}
               </CCardTitle>
               <br />
               <CInputGroup>
