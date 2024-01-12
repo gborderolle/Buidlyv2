@@ -49,7 +49,13 @@ const RentABM = () => {
   }
 
   const [isValidForm, setIsValidForm] = useState(true);
-  const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
+  const {
+    isLoading,
+    isSuccess,
+    error: errorAPI,
+    uploadData,
+    removeData,
+  } = useAPI();
 
   // DDLs
   const [inputHasErrorTenant, setInputHasErrorTenant] = useState(false);
@@ -103,7 +109,7 @@ const RentABM = () => {
   } = useInput(
     (value) => value.trim() !== "",
     null, // onChangeCallback
-    rent ? rent.monthlyValue.toString() : "" // Convierte a cadena
+    rent && rent.monthlyValue ? rent.monthlyValue.toString() : "" // Convierte a cadena
   );
 
   const {
@@ -116,7 +122,7 @@ const RentABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    rent ? rent.duration.toString() : "1" // Convierte a cadena
+    rent && rent.duration ? rent.duration.toString() : "1" // Convierte a cadena
   );
 
   const {
@@ -129,7 +135,7 @@ const RentABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    rent ? rent.comments : ""
+    rent && rent.comments ? rent.comments : ""
   );
 
   const openModal = (imageUrl) => {
@@ -152,7 +158,7 @@ const RentABM = () => {
         "¿Estás seguro de que quieres eliminar esta renta?"
       );
       if (confirmDelete) {
-        await deleteData(urlRent, rent.id);
+        await removeData(urlRent, rent.id);
         dispatch(fetchRentsList());
         navigate("/rents");
       }

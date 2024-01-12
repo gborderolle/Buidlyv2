@@ -43,7 +43,13 @@ const ReportABM = () => {
   const editMode = location.state?.editMode ? location.state?.editMode : false;
 
   const [isValidForm, setIsValidForm] = useState(true);
-  const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
+  const {
+    isLoading,
+    isSuccess,
+    error: errorAPI,
+    uploadData,
+    removeData,
+  } = useAPI();
 
   const [inputHasErrorEstate, setInputHasErrorEstate] = useState(false);
 
@@ -90,7 +96,7 @@ const ReportABM = () => {
   } = useInput(
     (value) => value.trim() !== "", // validateValue function
     null, // onChangeCallback
-    report ? report.name : ""
+    report && report.name ? report.name : ""
   );
 
   const {
@@ -103,7 +109,7 @@ const ReportABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    report ? report.comments : ""
+    report && report.comments ? report.comments : ""
   );
 
   const openModal = (imageUrl) => {
@@ -126,7 +132,7 @@ const ReportABM = () => {
         "¿Estás seguro de que quieres eliminar este reporte?"
       );
       if (confirmDelete) {
-        await deleteData(urlReport, report.id);
+        await removeData(urlReport, report.id);
         dispatch(fetchReportList());
         navigate("/reports");
       }

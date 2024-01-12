@@ -33,7 +33,13 @@ const TenantABM = () => {
   const editMode = location.state?.editMode ? location.state?.editMode : false;
 
   const [isValidForm, setIsValidForm] = useState(true);
-  const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
+  const {
+    isLoading,
+    isSuccess,
+    error: errorAPI,
+    uploadData,
+    removeData,
+  } = useAPI();
 
   // redux
   const dispatch = useDispatch();
@@ -64,7 +70,7 @@ const TenantABM = () => {
   } = useInput(
     (value) => value.trim() !== "", // validateValue function
     null, // onChangeCallback
-    tenant ? tenant.name : ""
+    tenant && tenant.name ? tenant.name : ""
   );
 
   const {
@@ -77,7 +83,7 @@ const TenantABM = () => {
   } = useInput(
     (value) => /^[0-9]{9}$/.test(value.trim()), // validateValue function
     null, // onChangeCallback
-    tenant ? tenant.phone1 : ""
+    tenant && tenant.phone1 ? tenant.phone1 : ""
   );
 
   const {
@@ -89,7 +95,7 @@ const TenantABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    tenant ? tenant.phone2 : ""
+    tenant && tenant.phone2 ? tenant.phone2 : ""
   );
 
   const {
@@ -102,7 +108,7 @@ const TenantABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    tenant ? tenant.email : ""
+    tenant && tenant.email ? tenant.email : ""
   );
 
   const {
@@ -115,7 +121,7 @@ const TenantABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    tenant ? tenant.document : ""
+    tenant && tenant.document ? tenant.document : ""
   );
 
   const {
@@ -128,7 +134,7 @@ const TenantABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    tenant ? tenant.comments : ""
+    tenant && tenant.comments ? tenant.comments : ""
   );
 
   const handleCancel = () => {
@@ -141,7 +147,7 @@ const TenantABM = () => {
         "¿Estás seguro de que quieres eliminar este trabajador?"
       );
       if (confirmDelete) {
-        await deleteData(urlTenant, tenant.id);
+        await removeData(urlTenant, tenant.id);
         dispatch(fetchTenantList());
         navigate("/tenants");
       }

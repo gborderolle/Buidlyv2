@@ -42,7 +42,7 @@ const WorkerABM = () => {
     isSuccess,
     error: errorAPI,
     uploadData,
-    deleteData,
+    removeData,
   } = useAPI();
 
   // redux
@@ -79,7 +79,7 @@ const WorkerABM = () => {
   } = useInput(
     (value) => value.trim() !== "", // validateValue function
     null, // onChangeCallback
-    worker ? worker.name : ""
+    worker && worker.name ? worker.name : ""
   );
 
   const {
@@ -144,7 +144,7 @@ const WorkerABM = () => {
         "¿Estás seguro de que quieres eliminar este trabajador?"
       );
       if (confirmDelete) {
-        await deleteData(urlWorker, worker.id);
+        await removeData(urlWorker, worker.id);
         dispatch(fetchWorkerList());
         navigate("/workers");
       }

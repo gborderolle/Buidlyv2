@@ -65,7 +65,7 @@ const useAPI = () => {
     }
   };
 
-  const deleteData = async (apiUrl, id) => {
+  const removeData = async (apiUrl, id) => {
     setState({ isLoading: true, isSuccess: false, error: null });
 
     const authToken = localStorage.getItem("authToken");
@@ -83,8 +83,7 @@ const useAPI = () => {
     }
   };
 
-
-  return { ...state, uploadData };
+  return { ...state, uploadData, removeData };
 };
 
 export default useAPI;

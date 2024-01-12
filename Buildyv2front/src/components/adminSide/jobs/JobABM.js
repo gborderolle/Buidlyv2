@@ -43,7 +43,13 @@ const JobABM = () => {
   const editMode = location.state?.editMode ? location.state?.editMode : false;
 
   const [isValidForm, setIsValidForm] = useState(true);
-  const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
+  const {
+    isLoading,
+    isSuccess,
+    error: errorAPI,
+    uploadData,
+    removeData,
+  } = useAPI();
 
   // DDLs
   const [inputHasErrorEstate, setInputHasErrorEstate] = useState(false);
@@ -105,7 +111,7 @@ const JobABM = () => {
   } = useInput(
     (value) => value.trim() !== "", // validateValue function
     null, // onChangeCallback
-    job ? job.name : ""
+    job && job.name ? job.name : ""
   );
 
   const {
@@ -118,7 +124,7 @@ const JobABM = () => {
   } = useInput(
     (value) => true,
     null, // onChangeCallback
-    job ? job.comments : ""
+    job && job.comments ? job.comments : ""
   );
 
   const {
@@ -131,7 +137,7 @@ const JobABM = () => {
   } = useInput(
     (value) => !isNaN(value) && value.trim() !== "", // validación actualizada
     null, // onChangeCallback
-    job ? job.labourCost.toString() : ""
+    job && job.labourCost ? job.labourCost.toString() : ""
   );
 
   const openModal = (imageUrl) => {
@@ -154,7 +160,7 @@ const JobABM = () => {
         "¿Estás seguro de que quieres eliminar esta obra?"
       );
       if (confirmDelete) {
-        await deleteData(urlJob, job.id);
+        await removeData(urlJob, job.id);
         dispatch(fetchJobList());
         navigate("/jobs");
       }
