@@ -13,6 +13,9 @@ const ReportMenu = React.lazy(() =>
 const ReportABM = React.lazy(() =>
   import("./components/adminSide/reports/ReportABM")
 );
+const ReportView = React.lazy(() =>
+  import("./components/adminSide/reports/ReportView")
+);
 
 const WorkerMenu = React.lazy(() =>
   import("./components/adminSide/workers/WorkerMenu")
@@ -30,6 +33,7 @@ const TenantABM = React.lazy(() =>
 
 const JobMenu = React.lazy(() => import("./components/adminSide/jobs/JobMenu"));
 const JobABM = React.lazy(() => import("./components/adminSide/jobs/JobABM"));
+const JobView = React.lazy(() => import("./components/adminSide/jobs/JobView"));
 
 const RentABM = React.lazy(() =>
   import("./components/adminSide/rents/RentABM")
@@ -46,9 +50,11 @@ const routes = [
 
   { path: "/reports", name: "Reportes", element: ReportMenu },
   { path: "/abm-report", name: "Agregar reportes", element: ReportABM },
+  { path: "/view-report", name: "Ver álbum", element: ReportView },
 
   { path: "/jobs", name: "Obras", element: JobMenu },
   { path: "/abm-job", name: "Agregar obras", element: JobABM },
+  { path: "/view-job", name: "Ver álbum", element: JobView },
 
   { path: "/tenants", name: "Inquilinos", element: TenantMenu },
   { path: "/abm-tenant", name: "Agregar inquilinos", element: TenantABM },

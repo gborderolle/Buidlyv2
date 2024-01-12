@@ -15,9 +15,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
   faEye,
-  faTrowelBricks,
   faCamera,
-  faFile,
 } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
@@ -55,7 +53,7 @@ const JobMenu = () => {
     }
   }, [reduxJobList, estate, listMode]);
 
-  const itemsPerPage = 20;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 
@@ -176,6 +174,7 @@ const JobMenu = () => {
           <td>{job.estate?.address}</td>
           <td>{job.name}</td>
           <td>{job.labourCost}</td>
+          <td>{job.listPhotosURL?.length}</td>
           <td>{workerNames}</td>
           <td>{job.comments}</td>
           <td>
@@ -219,7 +218,7 @@ const JobMenu = () => {
   }
 
   function navigateToAlbum(job) {
-    navigate("/reportMenu", { state: { job } });
+    navigate("/view-job", { state: { job } });
   }
 
   //#endregion Functions ***********************************
@@ -293,6 +292,12 @@ const JobMenu = () => {
                       onClick={() => requestSort("labourCost")}
                     >
                       Costo $
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("listPhotosURL")}
+                    >
+                      Fotos #
                     </th>
                     <th
                       className="table-header"

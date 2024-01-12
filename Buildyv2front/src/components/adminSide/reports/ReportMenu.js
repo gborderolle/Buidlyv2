@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   CCard,
   CCardBody,
@@ -212,7 +212,7 @@ const ReportMenu = () => {
   }
 
   function navigateToAlbum(report) {
-    navigate("/reportMenu", { state: { report } });
+    navigate("/view-report", { state: { report } });
   }
 
   //#endregion Functions ***********************************
@@ -283,7 +283,7 @@ const ReportMenu = () => {
                     </th>
                     <th
                       className="table-header"
-                      onClick={() => requestSort("phone1")}
+                      onClick={() => requestSort("listPhotosURL")}
                     >
                       # Fotos
                     </th>

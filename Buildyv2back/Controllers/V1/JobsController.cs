@@ -205,7 +205,7 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(ModelState);
                 }
 
-                var modelo = _mapper.Map<Job>(jobCreateDto);
+                Job modelo = _mapper.Map<Job>(jobCreateDto);
                 modelo.Estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
                 modelo.Creation = DateTime.Now;
                 modelo.Update = DateTime.Now;
