@@ -235,16 +235,32 @@ const TenantABM = () => {
         <CForm onSubmit={formSubmitHandler}>
           <CCard>
             <CCardBody>
-              <CCardTitle>
-                {editMode ? "Modificar un inquilino" : "Agregar un inquilino"}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <div>
+                  <CCardTitle>
+                    {editMode
+                      ? "Modificar el inquilino"
+                      : "Agregar un inquilino"}
+                  </CCardTitle>
+                </div>
                 {editMode && tenant && tenant.id && (
-                  <CCol xs="auto" className="d-flex justify-content-end">
-                    <CButton color="danger" size="sm" onClick={handleDelete}>
-                      Eliminar
-                    </CButton>
-                  </CCol>
+                  <CButton
+                    color="danger"
+                    size="sm"
+                    onClick={handleDelete}
+                    style={{ marginLeft: "auto" }}
+                  >
+                    Eliminar
+                  </CButton>
                 )}
-              </CCardTitle>
+              </div>
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">

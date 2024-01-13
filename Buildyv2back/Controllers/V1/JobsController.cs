@@ -84,7 +84,7 @@ namespace Buildyv2.Controllers.V1
                 };
             return await Get<Job, JobDTO>(includes: includes);
         }
-        
+
         [HttpDelete("{id:int}", Name = "DeleteJob")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
@@ -107,16 +107,24 @@ namespace Buildyv2.Controllers.V1
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound($"Obra no encontrada ID = {id}.");
                 }
+                string container = null;
 
                 // Eliminar las fotos asociadas
                 if (job.ListPhotos != null)
                 {
                     foreach (var photo in job.ListPhotos)
                     {
-                        var container = $"uploads/jobs/estate{job.EstateId}/{photo.Creation.ToString("yyyy_MM")}/job{job.Id}";
+                        container = $"uploads/jobs/estate{job.EstateId}/{photo.Creation.ToString("yyyy_MM")}/job{job.Id}";
                         await _fileStorage.DeleteFile(photo.URL, container);
                         _dbContext.Photo.Remove(photo); // Asegúrate de que el contexto de la base de datos sea correcto
                     }
+
+                }
+
+                if (container != null)
+                {
+                    // Eliminar la carpeta del contenedor una sola vez
+                    await _fileStorage.DeleteFolder(container);
                 }
 
                 await _jobRepository.Remove(job);

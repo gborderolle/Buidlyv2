@@ -286,16 +286,30 @@ const JobABM = () => {
         <CForm onSubmit={formSubmitHandler}>
           <CCard>
             <CCardBody>
-              <CCardTitle>
-                {editMode ? "Modificar una obra" : "Agregar una obra"}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <div>
+                  <CCardTitle>
+                    {editMode ? "Modificar la obra" : "Agregar una obra"}
+                  </CCardTitle>
+                </div>
                 {editMode && job && job.id && (
-                  <CCol xs="auto" className="d-flex justify-content-end">
-                    <CButton color="danger" size="sm" onClick={handleDelete}>
-                      Eliminar
-                    </CButton>
-                  </CCol>
+                  <CButton
+                    color="danger"
+                    size="sm"
+                    onClick={handleDelete}
+                    style={{ marginLeft: "auto" }}
+                  >
+                    Eliminar
+                  </CButton>
                 )}
-              </CCardTitle>
+              </div>
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">

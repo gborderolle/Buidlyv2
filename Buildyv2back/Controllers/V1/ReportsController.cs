@@ -107,12 +107,15 @@ namespace Buildyv2.Controllers.V1
                 // Eliminar las fotos asociadas
                 if (report.ListPhotos != null)
                 {
+                    var container = $"uploads/reports/estate{report.EstateId}/{report.Creation.ToString("yyyy_MM")}/report{report.Id}";
                     foreach (var photo in report.ListPhotos)
                     {
-                        var container = $"uploads/reports/estate{report.EstateId}/{photo.Creation.ToString("yyyy_MM")}/report{report.Id}";
                         await _fileStorage.DeleteFile(photo.URL, container);
-                        _dbContext.Photo.Remove(photo); // Asegúrate de que el contexto de la base de datos sea correcto
+                        _dbContext.Photo.Remove(photo);
                     }
+
+                    // Eliminar la carpeta del contenedor
+                    await _fileStorage.DeleteFolder(container);
                 }
 
                 await _reportRepository.Remove(report);

@@ -78,6 +78,8 @@ const Login = () => {
   const [isMobile] = useState(isMobileDevice());
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [supportsBiometrics, setSupportsBiometrics] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -116,9 +118,32 @@ const Login = () => {
     dispatch(authActions.resetAuthState());
   }, []);
 
+  useEffect(() => {
+    if (isMobileDevice()) {
+      if (navigator.credentials && navigator.credentials.create) {
+        // Comprueba si el navegador soporta la API de credenciales
+        setSupportsBiometrics(true);
+      }
+    }
+  }, []);
+
   //#endregion Hooks
 
   //#region Functions
+
+  const handleBiometricAuth = async () => {
+    if (supportsBiometrics) {
+      try {
+        const publicKey = {
+          /* tu configuración para la solicitud de credenciales */
+        };
+        const credential = await navigator.credentials.create({ publicKey });
+        // Procesa la credencial obtenida para iniciar sesión
+      } catch (error) {
+        console.error("Autenticación biométrica fallida:", error);
+      }
+    }
+  };
 
   const emailChangeHandler = (event) => {
     dispatchEmail({ type: "USER_INPUT", val: event.target.value });
@@ -218,6 +243,12 @@ const Login = () => {
                       <CButton color="link" className="px-0">
                         ¿Olvidó la contraseña?
                       </CButton>
+                      <br />
+                      {supportsBiometrics && (
+                        <CButton color="primary" onClick={handleBiometricAuth}>
+                          Login con Huella Digital
+                        </CButton>
+                      )}
                     </CRow>
                   </CForm>
                 </CCardBody>

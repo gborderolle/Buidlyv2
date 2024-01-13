@@ -37,7 +37,13 @@ const EstateABM = () => {
   const editMode = location.state?.editMode ? location.state?.editMode : false;
 
   const [isValidForm, setIsValidForm] = useState(true);
-  const { isLoading, isSuccess, error: errorAPI, uploadData } = useAPI();
+  const {
+    isLoading,
+    isSuccess,
+    error: errorAPI,
+    uploadData,
+    removeData,
+  } = useAPI();
 
   const [inputHasErrorCity, setInputHasErrorCity] = useState(false);
 
@@ -108,6 +114,19 @@ const EstateABM = () => {
 
   const handleCancel = () => {
     navigate("/estates"); // Reemplaza con la ruta deseada
+  };
+
+  const handleDelete = async () => {
+    if (estate && estate.id) {
+      const confirmDelete = window.confirm(
+        "¿Estás seguro de que quieres eliminar esta propiedad?"
+      );
+      if (confirmDelete) {
+        await removeData(urlEstate, estate.id);
+        dispatch(fetchEstateList());
+        navigate("/estates");
+      }
+    }
   };
 
   //#endregion Const ***********************************
@@ -262,10 +281,34 @@ const EstateABM = () => {
         <CForm onSubmit={formSubmitHandler}>
           <CCard>
             <CCardBody>
-              <CCardTitle>
-                {editMode ? "Modificar una propiedad" : "Agregar una propiedad"}
-              </CCardTitle>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <div>
+                  <CCardTitle>
+                    {editMode
+                      ? "Modificar la propiedad"
+                      : "Agregar una propiedad"}
+                  </CCardTitle>
+                </div>
+                {editMode && estate && estate.id && (
+                  <CButton
+                    color="danger"
+                    size="sm"
+                    onClick={handleDelete}
+                    style={{ marginLeft: "auto" }}
+                  >
+                    Eliminar
+                  </CButton>
+                )}
+              </div>
               <br />
+
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
                   Nombre propiedad

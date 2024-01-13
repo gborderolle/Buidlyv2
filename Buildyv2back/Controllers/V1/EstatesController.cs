@@ -104,24 +104,14 @@ namespace Buildyv2.Controllers.V1
         {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
-
                 try
                 {
                     var estate = await _estateRepository.Get(x => x.Id == id, tracked: true, includes: new List<IncludePropertyConfiguration<Estate>>
-        {
-            new IncludePropertyConfiguration<Estate>
             {
-                IncludeExpression = j => j.ListRents
-            },
-            new IncludePropertyConfiguration<Estate>
-            {
-                IncludeExpression = j => j.ListJobs
-            },
-            new IncludePropertyConfiguration<Estate>
-            {
-                IncludeExpression = j => j.ListReports
-            },
-        });
+                new IncludePropertyConfiguration<Estate> { IncludeExpression = j => j.ListRents },
+                new IncludePropertyConfiguration<Estate> { IncludeExpression = j => j.ListJobs },
+                new IncludePropertyConfiguration<Estate> { IncludeExpression = j => j.ListReports },
+            });
 
                     if (estate == null)
                     {
@@ -132,26 +122,23 @@ namespace Buildyv2.Controllers.V1
                         return NotFound($"Propiedad no encontrada ID = {id}.");
                     }
 
-                    if (estate.ListRents != null && estate.ListRents.Count > 0)
+                    // Crear listas temporales para eliminar elementos
+                    var rentsToRemove = estate.ListRents?.ToList() ?? new List<Rent>();
+                    var jobsToRemove = estate.ListJobs?.ToList() ?? new List<Job>();
+                    var reportsToRemove = estate.ListReports?.ToList() ?? new List<Report>();
+
+                    // Eliminar elementos fuera del bucle
+                    foreach (var rent in rentsToRemove)
                     {
-                        foreach (var rent in estate.ListRents)
-                        {
-                            await _rentRepository.Remove(rent);
-                        }
+                        await _rentRepository.Remove(rent);
                     }
-                    if (estate.ListJobs != null && estate.ListJobs.Count > 0)
+                    foreach (var job in jobsToRemove)
                     {
-                        foreach (var job in estate.ListJobs)
-                        {
-                            await _jobRepository.Remove(job);
-                        }
+                        await _jobRepository.Remove(job);
                     }
-                    if (estate.ListReports != null && estate.ListReports.Count > 0)
+                    foreach (var report in reportsToRemove)
                     {
-                        foreach (var report in estate.ListReports)
-                        {
-                            await _reportRepository.Remove(report);
-                        }
+                        await _reportRepository.Remove(report);
                     }
 
                     await _estateRepository.Remove(estate);

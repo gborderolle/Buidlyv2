@@ -69,7 +69,10 @@ const useAPI = () => {
     setState({ isLoading: true, isSuccess: false, error: null });
 
     const authToken = localStorage.getItem("authToken");
-    const headers = { Authorization: `Bearer ${authToken}` };
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      "x-version": "1",
+    };
 
     try {
       await axios.delete(`${apiUrl}/${id}`, { headers });

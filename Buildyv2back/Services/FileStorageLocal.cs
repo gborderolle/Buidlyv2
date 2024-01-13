@@ -51,5 +51,14 @@
             return Path.Combine(currentUrl, container, fileName).Replace("\\", "/");
         }
 
+        public async Task DeleteFolder(string container)
+        {
+            string folderPath = Path.Combine(_environment.WebRootPath, container);
+            if (Directory.Exists(folderPath))
+            {
+                await Task.Run(() => Directory.Delete(folderPath, true));
+            }
+        }
+
     }
 }

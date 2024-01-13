@@ -251,17 +251,32 @@ const ReportABM = () => {
         <CForm onSubmit={formSubmitHandler}>
           <CCard>
             <CCardBody>
-              <CCardTitle>
-                {editMode ? "Modificar un reporte" : "Agregar un reporte"}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <div>
+                  <CCardTitle>
+                    {editMode ? "Modificar el reporte" : "Agregar un reporte"}
+                  </CCardTitle>
+                </div>
                 {editMode && report && report.id && (
-                  <CCol xs="auto" className="d-flex justify-content-end">
-                    <CButton color="danger" size="sm" onClick={handleDelete}>
-                      Eliminar
-                    </CButton>
-                  </CCol>
+                  <CButton
+                    color="danger"
+                    size="sm"
+                    onClick={handleDelete}
+                    style={{ marginLeft: "auto" }}
+                  >
+                    Eliminar
+                  </CButton>
                 )}
-              </CCardTitle>
+              </div>
               <br />
+
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
                   Propiedad

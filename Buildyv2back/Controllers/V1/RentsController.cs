@@ -93,11 +93,61 @@ namespace Buildyv2.Controllers.V1
             return await Get<Rent, RentDTO>(includes: includes);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}", Name = "DeleteRent")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
-            return await Delete<Rent>(id);
+            try
+            {
+                var rent = await _rentRepository.Get(x => x.Id == id, tracked: true, includes: new List<IncludePropertyConfiguration<Rent>>
+        {
+            new IncludePropertyConfiguration<Rent>
+            {
+                IncludeExpression = j => j.ListPhotos
+            }
+        });
+
+                if (rent == null)
+                {
+                    _logger.LogError($"Renta no encontrada ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Renta no encontrada ID = {id}." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound($"Renta no encontrada ID = {id}.");
+                }
+                string container = null;
+
+                // Eliminar las fotos asociadas
+                if (rent.ListPhotos != null)
+                {
+                    foreach (var photo in rent.ListPhotos)
+                    {
+                        container = $"uploads/rents/estate{rent.EstateId}/{photo.Creation.ToString("yyyy_MM")}/rent{rent.Id}";
+                        await _fileStorage.DeleteFile(photo.URL, container);
+                        _dbContext.Photo.Remove(photo); // Asegúrate de que el contexto de la base de datos sea correcto
+                    }
+
+                }
+
+                if (container != null)
+                {
+                    // Eliminar la carpeta del contenedor una sola vez
+                    await _fileStorage.DeleteFolder(container);
+                }
+
+                await _rentRepository.Remove(rent);
+                _logger.LogInformation($"Se eliminó correctamente la renta Id:{id}.");
+                _response.StatusCode = HttpStatusCode.NoContent;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return BadRequest(_response);
         }
 
         [HttpPut("{id:int}")]
@@ -126,112 +176,57 @@ namespace Buildyv2.Controllers.V1
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError($"Ocurrió un error en el servidor.");
-                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _logger.LogError("Ocurrió un error en el servidor.");
                     return BadRequest(ModelState);
                 }
 
                 var estate = await _dbContext.Estate.FindAsync(rentCreateDto.EstateId);
                 if (estate == null)
                 {
-                    _logger.LogError($"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema");
-                    _response.ErrorMessages = new List<string> { $"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema." };
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    ModelState.AddModelError("NameAlreadyExists", $"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema.");
-                    return BadRequest(ModelState);
+                    return NotFound($"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema.");
                 }
 
-                if (rentCreateDto.ListTenants != null && rentCreateDto.ListTenants.Count > 0)
+                using (var transaction = await _dbContext.Database.BeginTransactionAsync())
                 {
-                    foreach (var tenant in rentCreateDto.ListTenants)
+                    Rent modelo = _mapper.Map<Rent>(rentCreateDto);
+                    modelo.Estate = estate;
+                    modelo.Creation = DateTime.Now;
+                    modelo.Update = DateTime.Now;
+
+                    // Procesamiento de inquilinos
+                    if (rentCreateDto.ListTenants != null && rentCreateDto.ListTenants.Count > 0)
                     {
-                        var tenantDB = await _dbContext.Tenant.FindAsync(tenant.Id);
-                        if (tenantDB == null)
+                        foreach (var tenantDto in rentCreateDto.ListTenants)
                         {
-                            _logger.LogError($"El inquilino ID={tenant.Id} no existe en el sistema");
-                            _response.ErrorMessages = new List<string> { $"El inquilino ID={tenant.Id} no existe en el sistema." };
-                            _response.IsSuccess = false;
-                            _response.StatusCode = HttpStatusCode.BadRequest;
-                            ModelState.AddModelError("NameAlreadyExists", $"El inquilino ID={tenant.Id} no existe en el sistema.");
-                            return BadRequest(ModelState);
+                            var tenantDB = await _dbContext.Tenant.FindAsync(tenantDto.Id);
+                            if (tenantDB == null)
+                            {
+                                return NotFound($"El inquilino ID={tenantDto.Id} no existe en el sistema.");
+                            }
+                            modelo.ListTenants.Add(tenantDB);
                         }
                     }
-                }
 
-                Rent modelo = _mapper.Map<Rent>(rentCreateDto);
-                modelo.Estate = estate;
-                modelo.Creation = DateTime.Now;
-                modelo.Update = DateTime.Now;
+                    await _rentRepository.Create(modelo);
 
-                if (rentCreateDto.ListTenants != null && rentCreateDto.ListTenants.Count > 0)
-                {
-                    int index = 1;
-                    foreach (var tenant in rentCreateDto.ListTenants)
+                    // Actualizar la propiedad
+                    estate.PresentRentId = modelo.Id;
+                    estate.EstateIsRented = true;
+                    await _estateRepository.Update(estate);
+
+                    // Procesamiento de fotos
+                    if (rentCreateDto.ListPhotos != null && rentCreateDto.ListPhotos.Count > 0)
                     {
-                        var tenantDB = await _dbContext.Tenant.FindAsync(tenant.Id);
-                        if (tenantDB == null)
-                        {
-                            _logger.LogError($"El inquilino ID={tenant.Id} no existe en el sistema");
-                            _response.ErrorMessages = new List<string> { $"El inquilino ID={tenant.Id} no existe en el sistema." };
-                            _response.IsSuccess = false;
-                            _response.StatusCode = HttpStatusCode.BadRequest;
-                            ModelState.AddModelError("NameAlreadyExists", $"El inquilino ID={tenant.Id} no existe en el sistema.");
-                            return BadRequest(ModelState);
-                        }
-
-                        if (index == 1)
-                        {
-                            modelo.PrimaryTenantId = tenant.Id;
-                        }
-                        // Map TenantCreateDTO to Tenant
-                        var mappedTenant = _mapper.Map<Tenant>(tenant);
-                        // Perform any additional operations on the mapped tenant if needed
-
-                        // Add the mapped tenant to the model
-                        modelo.ListTenants.Add(mappedTenant);
-                        index++;
+                        await ProcessRentPhotos(modelo, rentCreateDto.ListPhotos);
                     }
+
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
+                    _response.Result = _mapper.Map<RentDTO>(modelo);
+                    _response.StatusCode = HttpStatusCode.Created;
+                    return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
                 }
-                // modelo.ListTenants = rentCreateDto.ListTenants;
-                // modelo.PrimaryTenantId = rentCreateDto.ListTenants[0].Id;
-
-                await _rentRepository.Create(modelo);
-                _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
-
-                // Actualizo la propiedad con el ID del alquiler
-                estate.PresentRentId = modelo.Id;
-                estate.EstateIsRented = true;
-                await _estateRepository.Update(estate);
-
-                if (rentCreateDto.ListPhotos != null && rentCreateDto.ListPhotos.Count > 0)
-                {
-                    string dynamicContainer = $"uploads/rents/estate{estate.Id}/{DateTime.Now:yyyy_MM}/rent{modelo.Id}";
-                    foreach (var photoForm in rentCreateDto.ListPhotos)
-                    {
-                        Photo newPhoto = new();
-                        newPhoto.Rent = modelo;
-
-                        using (var stream = new MemoryStream())
-                        {
-                            await photoForm.CopyToAsync(stream);
-                            var content = stream.ToArray();
-                            var extension = Path.GetExtension(photoForm.FileName);
-                            newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
-                        }
-
-                        await _photoRepository.Create(newPhoto);
-                    }
-                }
-
-                _response.Result = _mapper.Map<RentDTO>(modelo);
-                _response.StatusCode = HttpStatusCode.Created;
-
-                // CreatedAtRoute -> Nombre de la ruta (del método): GetEstateById
-                // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816172#notes
-                return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -239,8 +234,25 @@ namespace Buildyv2.Controllers.V1
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.InternalServerError;
                 _response.ErrorMessages = new List<string> { ex.ToString() };
+                return _response;
             }
-            return _response;
+        }
+
+        private async Task ProcessRentPhotos(Rent rent, IEnumerable<IFormFile> photos)
+        {
+            string dynamicContainer = $"uploads/rents/estate{rent.EstateId}/{DateTime.Now:yyyy_MM}/rent{rent.Id}";
+            foreach (var photoForm in photos)
+            {
+                Photo newPhoto = new() { Rent = rent };
+                using (var stream = new MemoryStream())
+                {
+                    await photoForm.CopyToAsync(stream);
+                    var content = stream.ToArray();
+                    var extension = Path.GetExtension(photoForm.FileName);
+                    newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
+                }
+                await _photoRepository.Create(newPhoto);
+            }
         }
 
         #endregion

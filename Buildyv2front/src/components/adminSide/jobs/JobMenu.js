@@ -242,7 +242,9 @@ const JobMenu = () => {
               alignItems: "center",
             }}
           >
-            Panel de obras
+            {listMode && estate
+              ? `Panel de obras de propiedad: ${estate.name} (Dir: ${estate.address})`
+              : "Panel de obras (todas)"}
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <CFormInput
                 type="text"

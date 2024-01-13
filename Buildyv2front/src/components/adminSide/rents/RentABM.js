@@ -294,20 +294,34 @@ const RentABM = () => {
         <CForm onSubmit={formSubmitHandler}>
           <CCard>
             <CCardBody>
-              <CCardTitle>
-                {editMode ? "Modificar un alquiler" : "Agregar un alquiler"}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <div>
+                  <CCardTitle>
+                    {editMode ? "Modificar un alquiler" : "Agregar un alquiler"}
+                  </CCardTitle>
+                </div>
                 {editMode && rent && rent.id && (
-                  <CCol xs="auto" className="d-flex justify-content-end">
-                    <CButton color="danger" size="sm" onClick={handleDelete}>
-                      Eliminar
-                    </CButton>
-                  </CCol>
+                  <CButton
+                    color="danger"
+                    size="sm"
+                    onClick={handleDelete}
+                    style={{ marginLeft: "auto" }}
+                  >
+                    Eliminar
+                  </CButton>
                 )}
-              </CCardTitle>
+              </div>
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Inquilino
+                  Seleccionar inquilinos
                 </CInputGroupText>
                 <div
                   style={{

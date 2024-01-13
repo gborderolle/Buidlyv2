@@ -230,7 +230,10 @@ const ReportMenu = () => {
               alignItems: "center",
             }}
           >
-            Panel de reportes
+            {listMode && estate
+              ? `Panel de reportes de propiedad: ${estate.name} (Dir: ${estate.address})`
+              : "Panel de reportes (todos)"}
+
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <CFormInput
                 type="text"
