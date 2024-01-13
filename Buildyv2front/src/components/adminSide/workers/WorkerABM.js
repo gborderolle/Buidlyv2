@@ -204,6 +204,10 @@ const WorkerABM = () => {
     }
   };
 
+  const handleSelectDdlJob = (item) => {
+    setDdlSelectedJob(item);
+  };
+
   //#endregion Events ***********************************
 
   //#region Functions ***********************************

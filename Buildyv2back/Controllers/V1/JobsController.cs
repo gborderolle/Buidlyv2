@@ -189,7 +189,20 @@ namespace Buildyv2.Controllers.V1
 
                 job.EstateId = jobCreateDto.EstateId;
                 job.Estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
-                job.ListWorkers = jobCreateDto.ListWorkers;
+
+                // Procesamiento de trabajadores
+                if (jobCreateDto.ListWorkers != null && jobCreateDto.ListWorkers.Count > 0)
+                {
+                    foreach (var workerDto in jobCreateDto.ListWorkers)
+                    {
+                        var workerDB = await _dbContext.Worker.FindAsync(workerDto.Id);
+                        if (workerDB == null)
+                        {
+                            return NotFound($"El trabajador ID={workerDto.Id} no existe en el sistema.");
+                        }
+                        job.ListWorkers.Add(workerDB);
+                    }
+                }
 
                 var updatedJob = await _jobRepository.Update(job);
 
@@ -255,55 +268,58 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(ModelState);
                 }
 
-                Job modelo = _mapper.Map<Job>(jobCreateDto);
-                modelo.Estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
-                modelo.Creation = DateTime.Now;
-                modelo.Update = DateTime.Now;
-
-                // Primero, agrega el trabajo sin los trabajadores
-                _dbContext.Job.Add(modelo);
-                await _dbContext.SaveChangesAsync(); // Guarda el trabajo en la base de datos
-
-                // Luego, asocia los trabajadores al trabajo creado
-                foreach (var workerDto in jobCreateDto.ListWorkers)
+                using (var transaction = await _dbContext.Database.BeginTransactionAsync())
                 {
-                    var existingWorker = await _dbContext.Worker.FindAsync(workerDto.Id);
-                    if (existingWorker != null)
+                    Job modelo = _mapper.Map<Job>(jobCreateDto);
+                    modelo.Estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
+                    modelo.Creation = DateTime.Now;
+                    modelo.Update = DateTime.Now;
+
+                    // Procesamiento de trabajadores
+                    if (jobCreateDto.ListWorkers != null && jobCreateDto.ListWorkers.Count > 0)
                     {
-                        modelo.ListWorkers.Add(existingWorker);
-                    }
-                }
-
-                await _dbContext.SaveChangesAsync(); // Guarda los cambios con los trabajadores asociados
-                _logger.LogInformation($"Se creó correctamente la obra Id:{modelo.Id}.");
-
-                if (jobCreateDto.ListPhotos != null && jobCreateDto.ListPhotos.Count > 0)
-                {
-                    string dynamicContainer = $"uploads/jobs/estate{estate.Id}/{DateTime.Now:yyyy_MM}/job{modelo.Id}";
-                    foreach (var photoForm in jobCreateDto.ListPhotos)
-                    {
-                        Photo newPhoto = new();
-                        newPhoto.Job = modelo;
-
-                        using (var stream = new MemoryStream())
+                        foreach (var workerDto in jobCreateDto.ListWorkers)
                         {
-                            await photoForm.CopyToAsync(stream);
-                            var content = stream.ToArray();
-                            var extension = Path.GetExtension(photoForm.FileName);
-                            newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
+                            var workerDB = await _dbContext.Worker.FindAsync(workerDto.Id);
+                            if (workerDB == null)
+                            {
+                                return NotFound($"El trabajador ID={workerDto.Id} no existe en el sistema.");
+                            }
+                            modelo.ListWorkers.Add(workerDB);
                         }
-
-                        await _photoRepository.Create(newPhoto);
                     }
+
+                    await _jobRepository.Create(modelo);
+
+                    if (jobCreateDto.ListPhotos != null && jobCreateDto.ListPhotos.Count > 0)
+                    {
+                        string dynamicContainer = $"uploads/jobs/estate{estate.Id}/{DateTime.Now:yyyy_MM}/job{modelo.Id}";
+                        foreach (var photoForm in jobCreateDto.ListPhotos)
+                        {
+                            Photo newPhoto = new();
+                            newPhoto.Job = modelo;
+
+                            using (var stream = new MemoryStream())
+                            {
+                                await photoForm.CopyToAsync(stream);
+                                var content = stream.ToArray();
+                                var extension = Path.GetExtension(photoForm.FileName);
+                                newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
+                            }
+
+                            await _photoRepository.Create(newPhoto);
+                        }
+                    }
+
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation($"Se creó correctamente la obra Id:{modelo.Id}.");
+                    _response.Result = _mapper.Map<JobDTO>(modelo);
+                    _response.StatusCode = HttpStatusCode.Created;
+                    return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
                 }
-
-                _response.Result = _mapper.Map<JobDTO>(modelo);
-                _response.StatusCode = HttpStatusCode.Created;
-
-                // CreatedAtRoute -> Nombre de la ruta (del método): GetEstateById
-                // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816172#notes
-                return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
             }
+
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
