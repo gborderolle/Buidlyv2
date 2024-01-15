@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Buildyv2.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class migracion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -385,8 +385,8 @@ namespace Buildyv2.Migrations
                     Update = table.Column<DateTime>(type: "datetime2", nullable: false),
                     URL = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ReportId = table.Column<int>(type: "int", nullable: true),
-                    RentId = table.Column<int>(type: "int", nullable: true),
-                    JobId = table.Column<int>(type: "int", nullable: true)
+                    JobId = table.Column<int>(type: "int", nullable: true),
+                    RentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -418,14 +418,14 @@ namespace Buildyv2.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "893d52d8-3627-42e1-b84b-6c23b45dc459", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAEGxggzkWj/Jak9EUbm63/MqGGSkqZna4WVkii8oyxPDRKyuutMMnLwlF66I0OXlVCg==", null, false, "f8fe336e-ebb0-4c6c-be75-cf32c3fcbc4e", false, "Sr.Admin" },
-                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "cb77df2f-ecb1-49b7-ba8f-ab0b223792c7", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEL3quWu9+BRHQ2YWI/Rxcm8JdDvkaUHolApqVFHm9QWd9kxHiTxvU78yXI8gwSYmbg==", null, false, "2bb9d810-f60d-4c8b-a34b-c94d34f6d555", false, "Sr.Normal" }
+                    { "c2ee6493-5a73-46f3-a3f2-46d1d11d7176", 0, "4b124dc0-bf25-4468-90ca-6cdfdcd0e112", "admin@buildy2.uy", false, false, null, "admin@buildy2.uy", "admin@buildy2.uy", "AQAAAAIAAYagAAAAELRj7NOp3qllbn0EO2/Nk390WreGHlfei+V/eMRQU6EKRqM2PwBDrqGzBJqwQLWfeA==", null, false, "dfc244a1-065e-4570-ad13-2c5ba12ba727", false, "Sr.Admin" },
+                    { "e0765c93-676c-4199-b7ee-d7877c471821", 0, "a26bc94a-81bd-4b9e-8e89-c6053c5279db", "normal@buildy2.uy", false, false, null, "normal@buildy2.uy", "normal@buildy2.uy", "AQAAAAIAAYagAAAAEALy3oNFhNkPcg6bgaiJv+X3JNXJ+KigRT6EU8EdFAy/b61ATsIVEtRK3B6KOhbeZw==", null, false, "6a7fb76c-be00-4d74-a904-00fcf53834c2", false, "Sr.Normal" }
                 });
 
             migrationBuilder.InsertData(
                 table: "CountryDS",
                 columns: new[] { "Id", "Creation", "Name", "NominatimCountryCode", "Update" },
-                values: new object[] { 1, new DateTime(2024, 1, 10, 19, 42, 45, 840, DateTimeKind.Local).AddTicks(3711), "Uruguay", "UY", new DateTime(2024, 1, 10, 19, 42, 45, 840, DateTimeKind.Local).AddTicks(3745) });
+                values: new object[] { 1, new DateTime(2024, 1, 14, 22, 52, 43, 366, DateTimeKind.Local).AddTicks(552), "Uruguay", "UY", new DateTime(2024, 1, 14, 22, 52, 43, 366, DateTimeKind.Local).AddTicks(595) });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserClaims",
@@ -437,8 +437,8 @@ namespace Buildyv2.Migrations
                 columns: new[] { "Id", "CountryDSId", "Creation", "Name", "NominatimProvinceCode", "Update" },
                 values: new object[,]
                 {
-                    { 1, 1, new DateTime(2024, 1, 10, 19, 42, 45, 840, DateTimeKind.Local).AddTicks(3897), "Cerro Largo", "CL", new DateTime(2024, 1, 10, 19, 42, 45, 840, DateTimeKind.Local).AddTicks(3900) },
-                    { 2, 1, new DateTime(2024, 1, 10, 19, 42, 45, 840, DateTimeKind.Local).AddTicks(3903), "Montevideo", "MO", new DateTime(2024, 1, 10, 19, 42, 45, 840, DateTimeKind.Local).AddTicks(3904) }
+                    { 1, 1, new DateTime(2024, 1, 14, 22, 52, 43, 366, DateTimeKind.Local).AddTicks(662), "Cerro Largo", "CL", new DateTime(2024, 1, 14, 22, 52, 43, 366, DateTimeKind.Local).AddTicks(663) },
+                    { 2, 1, new DateTime(2024, 1, 14, 22, 52, 43, 366, DateTimeKind.Local).AddTicks(667), "Montevideo", "MO", new DateTime(2024, 1, 14, 22, 52, 43, 366, DateTimeKind.Local).AddTicks(667) }
                 });
 
             migrationBuilder.InsertData(
@@ -446,8 +446,8 @@ namespace Buildyv2.Migrations
                 columns: new[] { "Id", "Creation", "Name", "NominatimCityCode", "ProvinceDSId", "Update" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 1, 10, 19, 42, 45, 840, DateTimeKind.Local).AddTicks(4027), "Melo", "ME", 1, new DateTime(2024, 1, 10, 19, 42, 45, 840, DateTimeKind.Local).AddTicks(4029) },
-                    { 2, new DateTime(2024, 1, 10, 19, 42, 45, 840, DateTimeKind.Local).AddTicks(4032), "Montevideo", "MO", 2, new DateTime(2024, 1, 10, 19, 42, 45, 840, DateTimeKind.Local).AddTicks(4032) }
+                    { 1, new DateTime(2024, 1, 14, 22, 52, 43, 366, DateTimeKind.Local).AddTicks(708), "Melo", "ME", 1, new DateTime(2024, 1, 14, 22, 52, 43, 366, DateTimeKind.Local).AddTicks(708) },
+                    { 2, new DateTime(2024, 1, 14, 22, 52, 43, 366, DateTimeKind.Local).AddTicks(712), "Montevideo", "MO", 2, new DateTime(2024, 1, 14, 22, 52, 43, 366, DateTimeKind.Local).AddTicks(713) }
                 });
 
             migrationBuilder.CreateIndex(

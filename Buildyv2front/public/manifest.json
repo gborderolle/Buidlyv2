@@ -1,6 +1,6 @@
 {
-  "name": "Datalexion",
-  "short_name": "DX",
+  "name": "buildyv2",
+  "short_name": "Buildy",
   "dir": "ltr",
   "lang": "es-UY",
   "orientation": "portrait-primary",
@@ -8,7 +8,7 @@
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "display": "standalone",
-  "description": "Datalexion es un dashboard analítico para optimizar y procesar la información en tiempo real.",
+  "description": "Con Buildy, los usuarios pueden realizar diversas tareas relacionadas con la administración de propiedades de manera centralizada.",
   "icons": [
     {
       "src": "datalexion.ico",

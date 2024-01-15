@@ -9,12 +9,14 @@ using Buildyv2.Utilities;
 using EmailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetTopologySuite;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
@@ -200,6 +202,15 @@ namespace Buildyv2
             {
                 options.ConnectionString = Configuration["ApplicationInsights:ConnectionString"];
             });
+
+            services.Configure<RequestLocalizationOptions>(options =>
+    {
+        var supportedCultures = new[] { new CultureInfo("es-UY") };
+        options.DefaultRequestCulture = new RequestCulture("es-UY");
+        options.SupportedCultures = supportedCultures;
+        options.SupportedUICultures = supportedCultures;
+    });
+
         }
 
         /// <summary>
@@ -212,6 +223,7 @@ namespace Buildyv2
         {
             // Middleware customizado: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/26839760#notes
             app.UseLogResponseHTTP();
+            app.UseRequestLocalization(); // Asegúrate de que esta línea esté antes de app.UseEndpoints
 
             if (env.IsDevelopment())
             {

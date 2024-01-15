@@ -237,6 +237,8 @@ namespace Buildyv2.Controllers.V1
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromForm] JobCreateDTO jobCreateDto)
         {
+            _logger.LogInformation($"Valor de LabourCost recibido: {jobCreateDto.LabourCost}");
+            Console.WriteLine($"Valor de LabourCost recibido: {jobCreateDto.LabourCost}");
             try
             {
                 if (!ModelState.IsValid)
