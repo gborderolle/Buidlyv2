@@ -404,7 +404,7 @@ const EstateABM = () => {
                 )}
               </CRow>
               <br />
-              <CButton type="submit" color="dark">
+              <CButton type="submit" color="primary">
                 Confirmar
               </CButton>
               <CButton

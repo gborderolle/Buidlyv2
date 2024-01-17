@@ -149,7 +149,7 @@ const RentABM = () => {
   };
 
   const handleCancel = () => {
-    navigate("/rents"); // Reemplaza con la ruta deseada
+    navigate("/estates"); // Reemplaza con la ruta deseada
   };
 
   const handleDelete = async () => {
@@ -170,8 +170,8 @@ const RentABM = () => {
   //#region Hooks ***********************************
 
   useEffect(() => {
-    if (editMode && rent?.listPhotosURL) {
-      const existingPhotos = rent.listPhotosURL.map((url) => ({
+    if (editMode && rent?.listPhotos) {
+      const existingPhotos = rent.listPhotos.map((url) => ({
         url, // URL de la foto existente
         isExisting: true, // Marca para identificar que es una foto ya existente
       }));
@@ -273,10 +273,10 @@ const RentABM = () => {
           <div
             key={index}
             style={{ flex: "0 0 auto" }}
-            onClick={() => openModal(photo.url)}
+            onClick={() => openModal(photo.url.url)}
           >
             <img
-              src={photo.url}
+              src={photo.url.url}
               alt={`Foto ${index}`}
               style={{ width: "100px", height: "100px", cursor: "pointer" }}
             />
@@ -472,18 +472,74 @@ const RentABM = () => {
                 <>
                   <br />
                   <div>{renderPhotoPreviews()}</div>
-
                   <Modal
+                    appElement={document.getElementById("root")}
                     isOpen={isModalOpen}
                     onRequestClose={closeModal}
                     contentLabel="Imagen Ampliada"
+                    style={{
+                      overlay: {
+                        zIndex: 1000, // Un valor alto para asegurar que esté por encima de todo
+                      },
+                      content: {
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center", // Centrar horizontalmente
+                        justifyContent: "center", // Centrar verticalmente (opcional)
+                        background: "white", // Fondo blanco
+                        padding: "20px", // Espaciado interno
+                        borderRadius: "10px", // Bordes redondeados
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Sombra para dar efecto de elevación
+                      },
+                    }}
                   >
-                    <img
-                      src={selectedImage}
-                      alt="Imagen Ampliada"
-                      style={{ width: "500px" }}
-                    />
-                    <button onClick={closeModal}>Cerrar</button>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          border: "4px solid rgb(60 75 100)", // Un borde marrón oscuro para simular el marco
+                          padding: "5px", // Espacio entre el borde y la imagen
+                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)", // Sombra para dar efecto de profundidad
+                          margin: "20px", // Margen alrededor del marco
+                        }}
+                      >
+                        <img
+                          src={selectedImage}
+                          alt="Imagen"
+                          style={{ width: "440px", marginTop: "60px" }}
+                        />
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            marginTop: "10px",
+                          }}
+                        >
+                          <a href={selectedImage} download>
+                            <CButton
+                              size="sm"
+                              color="secondary"
+                              style={{ marginRight: "10px" }}
+                            >
+                              Descargar
+                            </CButton>
+                          </a>
+                          <CButton
+                            size="sm"
+                            color="secondary"
+                            onClick={closeModal}
+                          >
+                            Cerrar
+                          </CButton>
+                        </div>
+                      </div>
+                    </div>
                   </Modal>
                 </>
               )}
@@ -496,7 +552,7 @@ const RentABM = () => {
                 )}
               </CRow>
               <br />
-              <CButton type="submit" color="dark">
+              <CButton type="submit" color="primary">
                 Confirmar
               </CButton>
               <CButton

@@ -63,7 +63,7 @@ namespace Buildyv2
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Buildy React",
+                    Title = "Buildy 2.0",
                     Version = "v1",
                     Description = "API de Buildy",
                     Contact = new OpenApiContact
@@ -232,7 +232,7 @@ namespace Buildyv2
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Buildy React");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Buildy 2.0");
             });
 
             app.UseHttpsRedirection();

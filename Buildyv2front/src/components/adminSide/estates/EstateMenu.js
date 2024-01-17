@@ -215,7 +215,7 @@ const EstateMenu = () => {
             onClick={() => navigateToRent(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
-            title="Agregar alquiler"
+            title={estate.presentRentId > 0 ? "Ver alquiler" : "Agregar alquiler"}
           >
             <FontAwesomeIcon
               icon={estate.presentRentId > 0 ? faFile : faFileUpload}

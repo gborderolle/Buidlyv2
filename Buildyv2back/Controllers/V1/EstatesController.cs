@@ -40,6 +40,7 @@ namespace Buildyv2.Controllers.V1
         [HttpGet("GetEstate")]
         public async Task<ActionResult<APIResponse>> Get([FromQuery] PaginationDTO paginationDTO)
         {
+            // 1..n
             var includes = new List<IncludePropertyConfiguration<Estate>>
             {
                     new IncludePropertyConfiguration<Estate>
@@ -59,7 +60,17 @@ namespace Buildyv2.Controllers.V1
                         IncludeExpression = b => b.ListRents
                     }
                 };
-            return await Get<Estate, EstateDTO>(paginationDTO: paginationDTO, includes: includes);
+            // 1..n..n
+            var thenIncludes = new List<ThenIncludePropertyConfiguration<Estate>>
+            {
+                    // actores
+                    new ThenIncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.ListRents,
+                        ThenIncludeExpression = ab => ((Rent)ab).ListPhotos
+                    },
+            };
+            return await Get<Estate, EstateDTO>(paginationDTO: paginationDTO, includes: includes, thenIncludes: thenIncludes);
         }
 
         [HttpGet("all")]
@@ -95,7 +106,17 @@ namespace Buildyv2.Controllers.V1
                         IncludeExpression = b => b.ListRents
                     }
                 };
-            return await Get<Estate, EstateDTO>(includes: includes);
+            // 1..n..n
+            var thenIncludes = new List<ThenIncludePropertyConfiguration<Estate>>
+            {
+                    // actores
+                    new ThenIncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.ListRents,
+                        ThenIncludeExpression = ab => ((Rent)ab).ListPhotos
+                    },
+            };
+            return await Get<Estate, EstateDTO>(includes: includes, thenIncludes: thenIncludes);
         }
 
         [HttpDelete("{id:int}", Name = "DeleteEstate")]
