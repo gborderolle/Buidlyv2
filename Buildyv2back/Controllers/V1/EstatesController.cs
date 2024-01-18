@@ -69,6 +69,11 @@ namespace Buildyv2.Controllers.V1
                         IncludeExpression = b => b.ListRents,
                         ThenIncludeExpression = ab => ((Rent)ab).ListPhotos
                     },
+                    new ThenIncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.ListRents,
+                        ThenIncludeExpression = ab => ((Rent)ab).ListTenants
+                    },
             };
             return await Get<Estate, EstateDTO>(paginationDTO: paginationDTO, includes: includes, thenIncludes: thenIncludes);
         }
@@ -114,6 +119,11 @@ namespace Buildyv2.Controllers.V1
                     {
                         IncludeExpression = b => b.ListRents,
                         ThenIncludeExpression = ab => ((Rent)ab).ListPhotos
+                    },
+                    new ThenIncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.ListRents,
+                        ThenIncludeExpression = ab => ((Rent)ab).ListTenants
                     },
             };
             return await Get<Estate, EstateDTO>(includes: includes, thenIncludes: thenIncludes);

@@ -175,14 +175,16 @@ const EstateMenu = () => {
         <td>
           {estate.listRents &&
           estate.listRents.length > 0 &&
-          estate.listRents[0].listTenants &&
-          estate.listRents[0].listTenants.length > 0
-            ? estate.listRents[0].listTenants[0].name
+          estate.listRents[estate.listRents.length - 1].listTenants &&
+          estate.listRents[estate.listRents.length - 1].listTenants.length > 0
+            ? estate.listRents[estate.listRents.length - 1].listTenants[0].name
             : ""}
         </td>
         <td>
-          {estate.PresentRentId > 0 && estate.listRents.length > 0
-            ? formatToDollars(estate.listRents?.[0].MonthlyValue)
+          {estate.presentRentId > 0 && estate.listRents.length > 0
+            ? formatToDollars(
+                estate.listRents?.[estate.listRents.length - 1].monthlyValue
+              )
             : "$0"}
         </td>
         <td>{estate.comments}</td>
@@ -215,7 +217,9 @@ const EstateMenu = () => {
             onClick={() => navigateToRent(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
-            title={estate.presentRentId > 0 ? "Ver alquiler" : "Agregar alquiler"}
+            title={
+              estate.presentRentId > 0 ? "Ver alquiler" : "Agregar alquiler"
+            }
           >
             <FontAwesomeIcon
               icon={estate.presentRentId > 0 ? faFile : faFileUpload}
