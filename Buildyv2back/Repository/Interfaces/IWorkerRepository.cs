@@ -9,6 +9,7 @@ namespace Buildyv2.Repository.Interfaces
         Task<Worker> Update(Worker entity);
 #pragma warning restore CS0108 // Member hides inherited member; missing new keyword
         IQueryable<Worker> GetAllQueryable();
+        Task<List<Worker>> FindWorkersByJobId(int jobId);
     }
 }
 

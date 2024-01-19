@@ -30,5 +30,26 @@ namespace Buildyv2.Repository
             return dbSet.AsQueryable();
         }
 
+        public async Task<List<Photo>> FindPhotosByJobId(int jobId)
+        {
+            return await _dbContext.Set<Photo>() // Use Set<Worker>() instead of Workers
+                                   .Where(photo => photo.JobId == jobId)
+                                   .ToListAsync();
+        }
+
+        public async Task<List<Photo>> FindPhotosByReportId(int reportId)
+        {
+            return await _dbContext.Set<Photo>() // Use Set<Worker>() instead of Workers
+                                   .Where(photo => photo.ReportId == reportId)
+                                   .ToListAsync();
+        }
+
+        public async Task<List<Photo>> FindPhotosByRentId(int rentId)
+        {
+            return await _dbContext.Set<Photo>() // Use Set<Worker>() instead of Workers
+                                   .Where(photo => photo.RentId == rentId)
+                                   .ToListAsync();
+        }
+
     }
 }

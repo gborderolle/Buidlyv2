@@ -9,6 +9,7 @@ namespace Buildyv2.Repository.Interfaces
         Task<Tenant> Update(Tenant entity);
 #pragma warning restore CS0108 // Member hides inherited member; missing new keyword
         IQueryable<Tenant> GetAllQueryable();
+        Task<List<Tenant>> FindTenantsByRentId(int rentId);
     }
 }
 

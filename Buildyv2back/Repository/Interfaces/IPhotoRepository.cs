@@ -9,6 +9,10 @@ namespace Buildyv2.Repository.Interfaces
         Task<Photo> Update(Photo entity);
 #pragma warning restore CS0108 // Member hides inherited member; missing new keyword
         IQueryable<Photo> GetAllQueryable();
+        Task<List<Photo>> FindPhotosByJobId(int jobId);
+        Task<List<Photo>> FindPhotosByReportId(int reportId);
+        Task<List<Photo>> FindPhotosByRentId(int rentId);
+
     }
 }
 

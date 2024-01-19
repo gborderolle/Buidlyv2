@@ -30,5 +30,11 @@ namespace Buildyv2.Repository
             return dbSet.AsQueryable();
         }
 
+        public async Task<List<Tenant>> FindTenantsByRentId(int rentId)
+        {
+            return await _dbContext.Set<Tenant>() // Use Set<Worker>() instead of Workers
+                                   .Where(tenant => tenant.RentId == rentId)
+                                   .ToListAsync();
+        }
     }
 }

@@ -22,9 +22,12 @@ namespace Buildyv2.Controllers.V1
         private readonly IReportRepository _reportRepository;
         private readonly IJobRepository _jobRepository;
         private readonly IRentRepository _rentRepository;
+        private readonly IWorkerRepository _workerRepository;
+        private readonly ITenantRepository _tenantRepository;
+        private readonly IPhotoRepository _photoRepository;
         private readonly ContextDB _dbContext;
 
-        public EstatesController(ILogger<EstatesController> logger, IMapper mapper, IEstateRepository estateRepository, IReportRepository reportRepository, IJobRepository jobRepository, IRentRepository rentRepository, ContextDB dbContext)
+        public EstatesController(ILogger<EstatesController> logger, IMapper mapper, IEstateRepository estateRepository, IReportRepository reportRepository, IJobRepository jobRepository, IRentRepository rentRepository, IWorkerRepository workerRepository, ITenantRepository tenantRepository, IPhotoRepository photoRepository, ContextDB dbContext)
         : base(mapper, logger, estateRepository)
         {
             _response = new();
@@ -32,6 +35,9 @@ namespace Buildyv2.Controllers.V1
             _reportRepository = reportRepository;
             _jobRepository = jobRepository;
             _rentRepository = rentRepository;
+            _workerRepository = workerRepository;
+            _tenantRepository = tenantRepository;
+            _photoRepository = photoRepository;
             _dbContext = dbContext;
         }
 
@@ -137,12 +143,15 @@ namespace Buildyv2.Controllers.V1
             {
                 try
                 {
-                    var estate = await _estateRepository.Get(x => x.Id == id, tracked: true, includes: new List<IncludePropertyConfiguration<Estate>>
-            {
-                new IncludePropertyConfiguration<Estate> { IncludeExpression = j => j.ListRents },
-                new IncludePropertyConfiguration<Estate> { IncludeExpression = j => j.ListJobs },
-                new IncludePropertyConfiguration<Estate> { IncludeExpression = j => j.ListReports },
-            });
+                    var estate = await _estateRepository.Get(
+                        x => x.Id == id,
+                        tracked: true,
+                        includes: new List<IncludePropertyConfiguration<Estate>>
+                        {
+                    new IncludePropertyConfiguration<Estate> { IncludeExpression = j => j.ListRents },
+                    new IncludePropertyConfiguration<Estate> { IncludeExpression = j => j.ListJobs },
+                    new IncludePropertyConfiguration<Estate> { IncludeExpression = j => j.ListReports },
+                        });
 
                     if (estate == null)
                     {
@@ -153,22 +162,58 @@ namespace Buildyv2.Controllers.V1
                         return NotFound($"Propiedad no encontrada ID = {id}.");
                     }
 
-                    // Crear listas temporales para eliminar elementos
-                    var rentsToRemove = estate.ListRents?.ToList() ?? new List<Rent>();
-                    var jobsToRemove = estate.ListJobs?.ToList() ?? new List<Job>();
-                    var reportsToRemove = estate.ListReports?.ToList() ?? new List<Report>();
+                    // Asumiendo que tienes un repositorio para los trabajadores (Worker)
+                    foreach (var job in estate.ListJobs.ToList())
+                    {
+                        var workersRelatedToJob = await _workerRepository.FindWorkersByJobId(job.Id);
+                        foreach (var worker in workersRelatedToJob)
+                        {
+                            // Actualiza o elimina los registros de Worker
+                            worker.JobId = null; // o asignar a otro JobId según tu lógica de negocio
+                            await _workerRepository.Update(worker);
+                        }
+                        var photosRelatedToJob = await _photoRepository.FindPhotosByJobId(job.Id);
+                        foreach (var photo in photosRelatedToJob)
+                        {
+                            // Actualiza o elimina los registros de Worker
+                            photo.JobId = null; // o asignar a otro JobId según tu lógica de negocio
+                            await _photoRepository.Update(photo);
+                        }
 
-                    // Eliminar elementos fuera del bucle
-                    foreach (var rent in rentsToRemove)
-                    {
-                        await _rentRepository.Remove(rent);
-                    }
-                    foreach (var job in jobsToRemove)
-                    {
                         await _jobRepository.Remove(job);
                     }
-                    foreach (var report in reportsToRemove)
+
+                    foreach (var rent in estate.ListRents.ToList())
                     {
+                        var tenantsRelatedToRent = await _tenantRepository.FindTenantsByRentId(rent.Id);
+                        foreach (var tenant in tenantsRelatedToRent)
+                        {
+                            // Actualiza o elimina los registros de Worker
+                            tenant.RentId = null; // o asignar a otro JobId según tu lógica de negocio
+                            await _tenantRepository.Update(tenant);
+                        }
+
+                        var photosRelatedToRent = await _photoRepository.FindPhotosByRentId(rent.Id);
+                        foreach (var photo in photosRelatedToRent)
+                        {
+                            photo.RentId = null; // o asignar a otro JobId según tu lógica de negocio
+                            await _photoRepository.Update(photo);
+                        }
+
+                        await _rentRepository.Remove(rent);
+                    }
+
+                    // Asumiendo que tienes un repositorio para los trabajadores (Worker)
+                    foreach (var report in estate.ListReports.ToList())
+                    {
+                        var photosRelatedToReport = await _photoRepository.FindPhotosByReportId(report.Id);
+                        foreach (var photo in photosRelatedToReport)
+                        {
+                            // Actualiza o elimina los registros de Worker
+                            photo.ReportId = null; // o asignar a otro JobId según tu lógica de negocio
+                            await _photoRepository.Update(photo);
+                        }
+
                         await _reportRepository.Remove(report);
                     }
 
