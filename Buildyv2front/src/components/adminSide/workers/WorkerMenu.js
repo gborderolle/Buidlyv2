@@ -28,6 +28,7 @@ const WorkerMenu = () => {
 
   const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedWorker, setSelectedWorker] = useState(null);
 
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth.authToken);
@@ -59,6 +60,10 @@ const WorkerMenu = () => {
     }
   }, [userEmail, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
+
+  const handleSelectWorker = (worker) => {
+    setSelectedWorker(worker);
+  };
 
   //#endregion Consts ***********************************
 
@@ -142,12 +147,54 @@ const WorkerMenu = () => {
 
     return currentWorkers.map((worker, index) => (
       <tr key={worker.id}>
-        <td>{index + 1}</td>
-        <td>{worker.name}</td>
-        <td>{worker.phone}</td>
-        <td>{worker.email}</td>
-        <td>{worker.identityDocument}</td>
-        <td>{worker.comments}</td>
+        <td
+          style={worker.id === selectedWorker?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectWorker(worker)}
+        >
+          <button
+            style={{
+              border: "none",
+              background: "none",
+              padding: 0,
+              color: "blue",
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+            onClick={() => handleSelectWorker(worker)}
+          >
+            {index + 1}
+          </button>
+        </td>
+        <td
+          style={worker.id === selectedWorker?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectWorker(worker)}
+        >
+          {worker.name}
+        </td>
+        <td
+          style={worker.id === selectedWorker?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectWorker(worker)}
+        >
+          {worker.phone}
+        </td>
+        <td
+          style={worker.id === selectedWorker?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectWorker(worker)}
+        >
+          {worker.email}
+        </td>
+        <td
+          style={worker.id === selectedWorker?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectWorker(worker)}
+        >
+          {worker.identityDocument}
+        </td>
+        <td
+          style={worker.id === selectedWorker?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectWorker(worker)}
+        >
+          {worker.comments}
+        </td>
         <td>
           <button
             onClick={() => navigateToProperty(worker)}

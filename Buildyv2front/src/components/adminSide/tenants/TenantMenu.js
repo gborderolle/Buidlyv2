@@ -12,14 +12,7 @@ import {
 } from "@coreui/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlus,
-  faEye,
-  faTrowelBricks,
-  faCamera,
-  faFile,
-  faPaperPlane,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faEye, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
 
@@ -35,6 +28,7 @@ const TenantMenu = () => {
 
   const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTenant, setSelectedTenant] = useState(null);
 
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth.authToken);
@@ -82,6 +76,10 @@ const TenantMenu = () => {
     }
   }, [userEmail, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
+
+  const handleSelectTenant = (tenant) => {
+    setSelectedTenant(tenant);
+  };
 
   //#endregion Consts ***********************************
 
@@ -168,15 +166,60 @@ const TenantMenu = () => {
 
       return (
         <tr key={tenant.id}>
-          <td>{index + 1}</td>
-          <td>{tenant.name}</td>
-          <td>{tenant.phone1}</td>
-          <td>{tenant.phone2}</td>
-          <td>{tenant.email}</td>
-          <td>
+          <td
+            style={tenant.id === selectedTenant?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectTenant(tenant)}
+          >
+            <button
+              style={{
+                border: "none",
+                background: "none",
+                padding: 0,
+                color: "blue",
+                textDecoration: "underline",
+                cursor: "pointer",
+              }}
+              onClick={() => handleSelectTenant(tenant)}
+            >
+              {index + 1}
+            </button>
+          </td>
+          <td
+            style={tenant.id === selectedTenant?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectTenant(tenant)}
+          >
+            {tenant.name}
+          </td>
+          <td
+            style={tenant.id === selectedTenant?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectTenant(tenant)}
+          >
+            {tenant.phone1}
+          </td>
+          <td
+            style={tenant.id === selectedTenant?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectTenant(tenant)}
+          >
+            {tenant.phone2}
+          </td>
+          <td
+            style={tenant.id === selectedTenant?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectTenant(tenant)}
+          >
+            {tenant.email}
+          </td>
+          <td
+            style={tenant.id === selectedTenant?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectTenant(tenant)}
+          >
             {estate ? estate.name + " (" + estate.address + ")" : "No tiene"}
           </td>
-          <td>{tenant.comments}</td>
+          <td
+            style={tenant.id === selectedTenant?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectTenant(tenant)}
+          >
+            {tenant.comments}
+          </td>
           <td>
             <button
               onClick={() => navigateToTenant(tenant)}

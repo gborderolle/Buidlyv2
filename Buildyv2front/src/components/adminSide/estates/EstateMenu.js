@@ -17,8 +17,7 @@ import {
   faEye,
   faTrowelBricks,
   faImages,
-  faFile,
-  faFileUpload,
+  faDollarSign,
 } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
@@ -35,6 +34,7 @@ const EstateMenu = () => {
 
   const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedEstate, setSelectedEstate] = useState(null);
 
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth.authToken);
@@ -66,6 +66,11 @@ const EstateMenu = () => {
     }
   }, [userEmail, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
+
+  const handleSelectEstate = (estate) => {
+    setSelectedEstate(estate);
+    console.log("Estate seleccionado:", estate);
+  };
 
   //#endregion Consts ***********************************
 
@@ -169,10 +174,28 @@ const EstateMenu = () => {
 
     return currentEstates.map((estate, index) => (
       <tr key={estate.id}>
-        <td>{index + 1}</td>
-        <td>{estate.name}</td>
-        <td>{estate.address}</td>
-        <td>
+        <td
+          style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectEstate(estate)}
+        >
+          {index + 1 + (currentPage - 1) * itemsPerPage}
+        </td>
+        <td
+          style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectEstate(estate)}
+        >
+          {estate.name}
+        </td>
+        <td
+          style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectEstate(estate)}
+        >
+          {estate.address}
+        </td>
+        <td
+          style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectEstate(estate)}
+        >
           {estate.listRents &&
           estate.listRents.length > 0 &&
           estate.listRents[estate.listRents.length - 1].listTenants &&
@@ -180,15 +203,23 @@ const EstateMenu = () => {
             ? estate.listRents[estate.listRents.length - 1].listTenants[0].name
             : ""}
         </td>
-        <td>
+        <td
+          style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectEstate(estate)}
+        >
           {estate.presentRentId > 0 && estate.listRents.length > 0
             ? formatToDollars(
                 estate.listRents?.[estate.listRents.length - 1].monthlyValue
               )
             : "$0"}
         </td>
-        <td>{estate.comments}</td>
-        <td>
+        <td
+          style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectEstate(estate)}
+        >
+          {estate.comments}
+        </td>
+        <td style={estate.id === selectedEstate?.id ? { color: "blue" } : null}>
           <button
             onClick={() => navigateToEstate(estate)}
             style={{ border: "none", background: "none" }}
@@ -203,7 +234,14 @@ const EstateMenu = () => {
             className={isBumped ? "bump" : ""}
             title="Ver obras"
           >
-            <FontAwesomeIcon icon={faTrowelBricks} color="#697588" />
+            <FontAwesomeIcon
+              icon={faTrowelBricks}
+              color={
+                estate.listJobs && estate.listJobs.length > 0
+                  ? "#697588"
+                  : "lightgray"
+              }
+            />
           </button>
           <button
             onClick={() => navigateToReports(estate)}
@@ -211,7 +249,14 @@ const EstateMenu = () => {
             className={isBumped ? "bump" : ""}
             title="Ver reportes"
           >
-            <FontAwesomeIcon icon={faImages} color="#697588" />
+            <FontAwesomeIcon
+              icon={faImages}
+              color={
+                estate.listReports && estate.listReports.length > 0
+                  ? "#697588"
+                  : "lightgray"
+              }
+            />
           </button>
           <button
             onClick={() => navigateToRent(estate)}
@@ -222,8 +267,8 @@ const EstateMenu = () => {
             }
           >
             <FontAwesomeIcon
-              icon={estate.presentRentId > 0 ? faFile : faFileUpload}
-              color={estate.presentRentId > 0 ? "darkgreen" : "orange"}
+              icon={faDollarSign}
+              color={estate.presentRentId > 0 ? "#697588" : "lightgray"}
             />
           </button>
         </td>

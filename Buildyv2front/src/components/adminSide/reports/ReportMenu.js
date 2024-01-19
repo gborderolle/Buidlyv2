@@ -12,13 +12,7 @@ import {
 } from "@coreui/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlus,
-  faEye,
-  faTrowelBricks,
-  faCamera,
-  faFile,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faEye, faCamera } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
 
@@ -38,6 +32,7 @@ const ReportMenu = () => {
 
   const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedReport, setSelectedReport] = useState(null);
 
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth.authToken);
@@ -75,6 +70,10 @@ const ReportMenu = () => {
     }
   }, [userEmail, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
+
+  const handleSelectReport = (report) => {
+    setSelectedReport(report);
+  };
 
   //#endregion Consts ***********************************
 
@@ -165,13 +164,60 @@ const ReportMenu = () => {
 
       return (
         <tr key={report.id}>
-          <td>{index + 1}</td>
-          <td>{formattedDate}</td>
-          <td>{report.estate?.name}</td>
-          <td>{report.estate?.address}</td>
-          <td>{report.name}</td>
-          <td>{report.listPhotosURL ? report.listPhotosURL?.length : 0}</td>
-          <td>{report.comments}</td>
+          <td
+            style={report.id === selectedReport?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectReport(report)}
+          >
+            <button
+              style={{
+                border: "none",
+                background: "none",
+                padding: 0,
+                color: "blue",
+                textDecoration: "underline",
+                cursor: "pointer",
+              }}
+              onClick={() => handleSelectReport(report)}
+            >
+              {index + 1}
+            </button>
+          </td>
+          <td
+            style={report.id === selectedReport?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectReport(report)}
+          >
+            {formattedDate}
+          </td>
+          <td
+            style={report.id === selectedReport?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectReport(report)}
+          >
+            {report.estate?.name}
+          </td>
+          <td
+            style={report.id === selectedReport?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectReport(report)}
+          >
+            {report.estate?.address}
+          </td>
+          <td
+            style={report.id === selectedReport?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectReport(report)}
+          >
+            {report.name}
+          </td>
+          <td
+            style={report.id === selectedReport?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectReport(report)}
+          >
+            {report.listPhotosURL ? report.listPhotosURL?.length : 0}
+          </td>
+          <td
+            style={report.id === selectedReport?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectReport(report)}
+          >
+            {report.comments}
+          </td>
           <td>
             <button
               onClick={() => navigateToReport(report)}
@@ -187,7 +233,14 @@ const ReportMenu = () => {
               className={isBumped ? "bump" : ""}
               title="Ver álbum"
             >
-              <FontAwesomeIcon icon={faCamera} color="#697588" />
+              <FontAwesomeIcon
+                icon={faCamera}
+                color={
+                  report.listPhotosURL && report.listPhotosURL.length > 0
+                    ? "#697588"
+                    : "lightgray"
+                }
+              />
             </button>
           </td>
         </tr>

@@ -32,6 +32,7 @@ const JobMenu = () => {
 
   const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedJob, setSelectedJob] = useState(null);
 
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth.authToken);
@@ -68,6 +69,10 @@ const JobMenu = () => {
     }
   }, [userEmail, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
+
+  const handleSelectJob = (job) => {
+    setSelectedJob(job);
+  };
 
   //#endregion Consts ***********************************
 
@@ -162,18 +167,74 @@ const JobMenu = () => {
           ? job.listWorkers.map((worker) => worker.name).join(", ")
           : "No asignado";
 
-      /* <td>{index + 1 + (currentPage - 1) * itemsPerPage}</td> */
       return (
         <tr key={job.id}>
-          <td>{index + 1}</td>
-          <td>{formattedDate}</td>
-          <td>{job.estate?.name}</td>
-          <td>{job.estate?.address}</td>
-          <td>{job.name}</td>
-          <td>{formatToDollars(job.labourCost)}</td>
-          <td>{job.listPhotosURL ? job.listPhotosURL?.length : 0}</td>
-          <td>{workerNames}</td>
-          <td>{job.comments}</td>
+          <td
+            style={job.id === selectedJob?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectJob(job)}
+          >
+            <button
+              style={{
+                border: "none",
+                background: "none",
+                padding: 0,
+                color: "blue",
+                textDecoration: "underline",
+                cursor: "pointer",
+              }}
+              onClick={() => handleSelectJob(job)}
+            >
+              {index + 1}
+            </button>
+          </td>
+          <td
+            style={job.id === selectedJob?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectJob(job)}
+          >
+            {formattedDate}
+          </td>
+          <td
+            style={job.id === selectedJob?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectJob(job)}
+          >
+            {job.estate?.name}
+          </td>
+          <td
+            style={job.id === selectedJob?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectJob(job)}
+          >
+            {job.estate?.address}
+          </td>
+          <td
+            style={job.id === selectedJob?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectJob(job)}
+          >
+            {job.name}
+          </td>
+          <td
+            style={job.id === selectedJob?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectJob(job)}
+          >
+            {formatToDollars(job.labourCost)}
+          </td>
+          <td
+            style={job.id === selectedJob?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectJob(job)}
+          >
+            {job.listPhotosURL ? job.listPhotosURL?.length : 0}
+          </td>
+          <td
+            style={job.id === selectedJob?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectJob(job)}
+          >
+            {workerNames}
+          </td>
+          <td
+            style={job.id === selectedJob?.id ? { color: "blue" } : null}
+            onClick={() => handleSelectJob(job)}
+          >
+            {job.comments}
+          </td>
           <td>
             <button
               onClick={() => navigateToJob(job)}
@@ -190,7 +251,14 @@ const JobMenu = () => {
               className={isBumped ? "bump" : ""}
               title="Ver álbum"
             >
-              <FontAwesomeIcon icon={faCamera} color="#697588" />
+              <FontAwesomeIcon
+                icon={faCamera}
+                color={
+                  job.listPhotosURL && job.listPhotosURL.length > 0
+                    ? "#697588"
+                    : "lightgray"
+                }
+              />
             </button>
           </td>
         </tr>
