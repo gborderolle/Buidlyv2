@@ -178,7 +178,20 @@ const EstateMenu = () => {
           style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
           onClick={() => handleSelectEstate(estate)}
         >
-          {index + 1 + (currentPage - 1) * itemsPerPage}
+          {" "}
+          <button
+            style={{
+              border: "none",
+              background: "none",
+              padding: 0,
+              color: "blue",
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+            onClick={() => handleSelectEstate(estate)}
+          >
+            {index + 1}
+          </button>
         </td>
         <td
           style={estate.id === selectedEstate?.id ? { color: "blue" } : null}

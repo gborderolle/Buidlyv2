@@ -217,8 +217,8 @@ const RentABM = () => {
         formData.append("RentIsEnded", false);
         formData.append("Comments", comments);
         formData.append("EstateId", estate.id);
-        // formData.append("ListTenants", JSON.stringify(selectedTenants));
-        formData.append("ListTenants", selectedTenants);
+        formData.append("ListTenants", JSON.stringify(selectedTenants));
+        // formData.append("ListTenants", selectedTenants);
 
         console.log("Archivos cargados:", loadedPhotos);
         for (var pair of formData.entries()) {
