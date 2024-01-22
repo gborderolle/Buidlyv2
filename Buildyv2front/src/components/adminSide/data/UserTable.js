@@ -33,12 +33,12 @@ import useAPI from "../../../hooks/use-API";
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchCityList,
-  fetchProvinceList,
+  fetchUserList,
+  fetchUserRoleList,
 } from "../../../store/generalData-actions";
-import { urlCity } from "../../../endpoints";
+import { urlUser } from "../../../endpoints";
 
-const CityTable = (props) => {
+const UserTable = (props) => {
   //#region Consts ***********************************
 
   const [isValidForm, setIsValidForm] = useState(true);
@@ -56,38 +56,29 @@ const CityTable = (props) => {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [idToDelete, setIdToDelete] = useState(null);
 
-  const [ddlSelectedProvince, setDdlSelectedProvince] = useState(null);
-  const [inputHasErrorProvince, setInputHasErrorProvince] = useState(false);
+  const [ddlSelectedUserRole, setDdlSelectedUserRole] = useState(null);
+  const [inputHasErrorUserRole, setInputHasErrorUserRole] = useState(false);
 
   // redux
   const dispatch = useDispatch();
 
   // Redux
-  const cityList = useSelector((state) => state.generalData.cityList);
-  const provinceList = useSelector((state) => state.generalData.provinceList);
+  const userList = useSelector((state) => state.generalData.userList);
+  const userRoleList = useSelector((state) => state.generalData.userRoleList);
 
   useEffect(() => {
-    dispatch(fetchCityList());
-    dispatch(fetchProvinceList());
+    dispatch(fetchUserList());
+    dispatch(fetchUserRoleList());
   }, [dispatch]);
 
   const {
-    value: cityName,
+    value: userName,
     isValid: inputIsValid1,
     hasError: inputHasError1,
     valueChangeHandler: inputChangeHandler1,
     inputBlurHandler: inputBlurHandler1,
     reset: inputReset1,
   } = useInput((value) => value.trim() !== "");
-
-  const {
-    value: nominatimCode,
-    isValid: inputIsValid2,
-    hasError: inputHasError2,
-    valueChangeHandler: inputChangeHandler2,
-    inputBlurHandler: inputBlurHandler2,
-    reset: inputReset2,
-  } = useInput((value) => true);
 
   //#endregion Consts ***********************************
 
@@ -115,21 +106,21 @@ const CityTable = (props) => {
 
   const confirmDelete = async () => {
     if (idToDelete) {
-      await removeData(urlCity, idToDelete);
-      dispatch(fetchCityList());
+      await removeData(urlUser, idToDelete);
+      dispatch(fetchUserList());
       closeDeleteModal();
     }
   };
 
-  const inputResetProvince = () => {
-    setDdlSelectedProvince(null);
-    setInputHasErrorProvince(false);
+  const inputResetUserRole = () => {
+    setDdlSelectedUserRole(null);
+    setInputHasErrorUserRole(false);
   };
 
   const handleDelete = async (objectId) => {
-    const response = await removeData(urlCity, objectId);
+    const response = await removeData(urlUser, objectId);
     if (response) {
-      dispatch(fetchCityList());
+      dispatch(fetchUserList());
     }
     closeDeleteModal();
   };
@@ -142,9 +133,9 @@ const CityTable = (props) => {
     event.preventDefault();
 
     // Verificar si se seleccionó una provincia
-    const inputIsValidProvince = ddlSelectedProvince !== null;
+    const inputIsValidProvince = ddlSelectedUserRole !== null;
     if (!inputIsValidProvince) {
-      setInputHasErrorProvince(true);
+      setInputHasErrorUserRole(true);
       return;
     }
 
@@ -155,18 +146,17 @@ const CityTable = (props) => {
     }
 
     const dataToUpload = {
-      Name: cityName,
-      NominatimCityCode: nominatimCode,
-      ProvinceDSId: ddlSelectedProvince.id,
+      Name: userName,
+      UserRoleId: ddlSelectedUserRole.id,
     };
 
     try {
-      const response = await uploadData(dataToUpload, urlCity);
+      const response = await uploadData(dataToUpload, urlUser);
       if (response) {
-        dispatch(fetchCityList());
+        dispatch(fetchUserList());
         inputReset1();
         inputReset2();
-        inputResetProvince();
+        inputResetUserRole();
         closeModal();
       }
     } catch (error) {
@@ -175,8 +165,8 @@ const CityTable = (props) => {
     }
   };
 
-  const handleSelectDdlProvince = (item) => {
-    setDdlSelectedProvince(item);
+  const handleSelectDdlUserRole = (item) => {
+    setDdlSelectedUserRole(item);
   };
 
   //#endregion Events ***********************************
@@ -191,36 +181,34 @@ const CityTable = (props) => {
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Nombre</CTableHeaderCell>
-            <CTableHeaderCell>Código nominatim</CTableHeaderCell>
-            <CTableHeaderCell>Departamento</CTableHeaderCell>
+            <CTableHeaderCell>Rol</CTableHeaderCell>
             <CTableHeaderCell>Acciones</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {cityList.map((city) => {
-            const province = provinceList.find(
-              (province) => province.id === city.provinceDSId
+          {userList.map((user) => {
+            const userRole = userRoleList.find(
+              (userRole) => userRole.id === user.userRoleId
             );
-            const provinceName = province ? province.name : "No definido";
+            const roleName = userRole ? userRole.name : "No definido";
 
             return (
-              <CTableRow key={city.id}>
-                <CTableDataCell>{city.id}</CTableDataCell>
-                <CTableDataCell>{city.name}</CTableDataCell>
-                <CTableDataCell>{city.nominatimCityCode}</CTableDataCell>
-                <CTableDataCell>{provinceName}</CTableDataCell>
+              <CTableRow key={user.id}>
+                <CTableDataCell>{user.id}</CTableDataCell>
+                <CTableDataCell>{user.name}</CTableDataCell>
+                <CTableDataCell>{roleName}</CTableDataCell>
                 <CTableDataCell>
                   <CButton
                     color="dark"
                     size="sm"
-                    onClick={() => openModal(city)}
+                    onClick={() => openModal(user)}
                   >
                     Editar
                   </CButton>
                   <CButton
                     color="danger"
                     size="sm"
-                    onClick={() => openDeleteModal(city.id)}
+                    onClick={() => openDeleteModal(user.id)}
                     style={{ marginLeft: 10 }}
                   >
                     Eliminar
@@ -235,7 +223,7 @@ const CityTable = (props) => {
       <CModal visible={isModalVisible} onClose={closeModal}>
         <CModalHeader>
           <CModalTitle>
-            {currentCity ? "Editar ciudad" : "Agregar ciudad"}
+            {currentCity ? "Editar usuario" : "Agregar usuario"}
           </CModalTitle>
         </CModalHeader>
         <CForm onSubmit={formSubmitHandler}>
@@ -251,7 +239,7 @@ const CityTable = (props) => {
                     className="cardItem"
                     onChange={inputChangeHandler1}
                     onBlur={inputBlurHandler1}
-                    value={cityName}
+                    value={userName}
                   />
                   {inputHasError1 && (
                     <CAlert color="danger" className="w-100">
@@ -262,48 +250,30 @@ const CityTable = (props) => {
                 <br />
                 <CInputGroup>
                   <CInputGroupText className="cardItem custom-input-group-text">
-                    {props.nominatimCode}
-                  </CInputGroupText>
-                  <CFormInput
-                    type="text"
-                    className="cardItem"
-                    onChange={inputChangeHandler2}
-                    onBlur={inputBlurHandler2}
-                    value={nominatimCode}
-                  />
-                  {inputHasError2 && (
-                    <CAlert color="danger" className="w-100">
-                      Entrada inválida
-                    </CAlert>
-                  )}
-                </CInputGroup>
-                <br />
-                <CInputGroup>
-                  <CInputGroupText className="cardItem custom-input-group-text">
-                    Departamento
+                    Rol de usuario
                   </CInputGroupText>
                   <CDropdown>
-                    <CDropdownToggle id="ddlProvince" color="secondary">
-                      {ddlSelectedProvince
-                        ? ddlSelectedProvince.name
+                    <CDropdownToggle id="ddlUserRole" color="secondary">
+                      {ddlSelectedUserRole
+                        ? ddlSelectedUserRole.name
                         : "Seleccionar"}
                     </CDropdownToggle>
                     <CDropdownMenu>
-                      {provinceList &&
-                        provinceList.length > 0 &&
-                        provinceList.map((province) => (
+                      {userRoleList &&
+                        userRoleList.length > 0 &&
+                        userRoleList.map((userRole) => (
                           <CDropdownItem
-                            key={province.id}
-                            onClick={() => handleSelectDdlProvince(province)}
+                            key={userRole.id}
+                            onClick={() => handleSelectDdlUserRole(userRole)}
                             style={{ cursor: "pointer" }}
-                            value={province.id}
+                            value={userRole.id}
                           >
-                            {province.id}: {province.name}
+                            {userRole.id}: {userRole.name}
                           </CDropdownItem>
                         ))}
                     </CDropdownMenu>
                   </CDropdown>
-                  {inputHasErrorProvince && (
+                  {inputHasErrorUserRole && (
                     <CAlert color="danger" className="w-100">
                       Entrada inválida
                     </CAlert>
@@ -369,4 +339,4 @@ const CityTable = (props) => {
   );
 };
 
-export default CityTable;
+export default UserTable;

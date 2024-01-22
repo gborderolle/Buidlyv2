@@ -160,7 +160,7 @@ const CountryTable = (props) => {
       <CTable>
         <CTableHead>
           <CTableRow>
-            <CTableHeaderCell>ID</CTableHeaderCell>
+            <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Nombre</CTableHeaderCell>
             <CTableHeaderCell>Código nominatim</CTableHeaderCell>
             <CTableHeaderCell>Acciones</CTableHeaderCell>

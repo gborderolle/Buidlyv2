@@ -189,7 +189,7 @@ const ProvinceTable = (props) => {
       <CTable>
         <CTableHead>
           <CTableRow>
-            <CTableHeaderCell>ID</CTableHeaderCell>
+            <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Nombre</CTableHeaderCell>
             <CTableHeaderCell>Código nominatim</CTableHeaderCell>
             <CTableHeaderCell>País</CTableHeaderCell>
@@ -207,7 +207,9 @@ const ProvinceTable = (props) => {
               <CTableRow key={province.id}>
                 <CTableDataCell>{province.id}</CTableDataCell>
                 <CTableDataCell>{province.name}</CTableDataCell>
-                <CTableDataCell>{province.nominatimProvinceCode}</CTableDataCell>
+                <CTableDataCell>
+                  {province.nominatimProvinceCode}
+                </CTableDataCell>
                 <CTableDataCell>{countryName}</CTableDataCell>
                 <CTableDataCell>
                   <CButton

@@ -147,3 +147,29 @@ export const fetchCountryList = () => {
     }
   };
 };
+
+export const fetchUserList = () => {
+  return async (dispatch) => {
+    try {
+      const data = await fetchApi(urlCountry + "/GetUser");
+      if (data.result) {
+        dispatch(generalDataActions.setUserList(data.result));
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+};
+
+export const fetchUserRoleList = () => {
+  return async (dispatch) => {
+    try {
+      const data = await fetchApi(urlCountry + "/GetRole");
+      if (data.result) {
+        dispatch(generalDataActions.setUserRoleList(data.result));
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+};

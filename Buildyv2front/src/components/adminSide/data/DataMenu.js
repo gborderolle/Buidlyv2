@@ -12,9 +12,6 @@ import {
   CCardHeader,
   CCardBody,
 } from "@coreui/react";
-import GroupInputCity from "./GroupInputCity";
-import GroupInputProvince from "./GroupInputProvince";
-import GroupInputCountry from "./GroupInputCountry";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
@@ -22,6 +19,8 @@ import { authActions } from "../../../store/auth-slice";
 import CityTable from "./CityTable";
 import ProvinceTable from "./ProvinceTable";
 import CountryTable from "./CountryTable";
+import UserRoleTable from "./UserRoleTable";
+import UserTable from "./UserTable";
 
 const DataMenu = () => {
   //#region Const ***********************************
@@ -61,6 +60,19 @@ const DataMenu = () => {
   const countryData = async (countryName) => {
     return {
       countryName,
+    };
+  };
+
+  const userData = async (userName, roleId) => {
+    return {
+      userName,
+      roleId,
+    };
+  };
+
+  const userRoleData = async (roleName) => {
+    return {
+      roleName,
     };
   };
 
@@ -132,6 +144,45 @@ const DataMenu = () => {
           </CAccordionItem>
         </CAccordion>
         <br />
+        <CAccordion>
+          <CAccordionItem itemKey={1}>
+            <CAccordionHeader className="custom-accordion-header">
+              Menú usuarios
+            </CAccordionHeader>
+            <CAccordionBody>
+              <CCard>
+                <CCardHeader>Tabla de datos</CCardHeader>
+                <CCardBody>
+                  <UserTable
+                    title="Menú usuarios"
+                    inputName="Nombre"
+                    createDataToUpload={userRoleData}
+                  />
+                </CCardBody>
+              </CCard>
+            </CAccordionBody>
+          </CAccordionItem>
+        </CAccordion>
+        <br />
+        <CAccordion>
+          <CAccordionItem itemKey={1}>
+            <CAccordionHeader className="custom-accordion-header">
+              Menú roles de usuario
+            </CAccordionHeader>
+            <CAccordionBody>
+              <CCard>
+                <CCardHeader>Tabla de datos</CCardHeader>
+                <CCardBody>
+                  <UserRoleTable
+                    title="Menú roles de usuario"
+                    inputName="Nombre"
+                    createDataToUpload={userRoleData}
+                  />
+                </CCardBody>
+              </CCard>
+            </CAccordionBody>
+          </CAccordionItem>
+        </CAccordion>
         <br />
       </CCol>
     </CRow>

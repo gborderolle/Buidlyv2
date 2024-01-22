@@ -12,6 +12,8 @@ const generalDataSlice = createSlice({
     countryList: [],
     provinceList: [],
     cityList: [],
+    userList: [],
+    userRoleList: [],
   },
   reducers: {
     setEstateList: (state, action) => {
@@ -40,6 +42,12 @@ const generalDataSlice = createSlice({
     },
     setCityList: (state, action) => {
       state.cityList = action.payload;
+    },
+    setUserList: (state, action) => {
+      state.userList = action.payload;
+    },
+    setUserRoleList: (state, action) => {
+      state.userRoleList = action.payload;
     },
   },
 });
