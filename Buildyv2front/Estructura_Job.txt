@@ -79,7 +79,8 @@ public class Job : IId
         public int EstateId { get; set; }
         public Estate Estate { get; set; }
 
-        public List<WorkerCreateDTO> ListWorkers { get; set; } = new();
+        // public List<WorkerCreateDTO> ListWorkers { get; set; } = new();
+        public List<int> WorkerIds { get; set; } = new List<int>();
 
         #endregion
     }
@@ -300,22 +301,21 @@ public class Job : IId
 
         #region Endpoints específicos
 
-        [HttpPost(Name = "CreateJob")]
+         [HttpPost(Name = "CreateJob")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromForm] JobCreateDTO jobCreateDto)
         {
-            _logger.LogInformation($"Valor de LabourCost recibido: {jobCreateDto.LabourCost}");
-            Console.WriteLine($"Valor de LabourCost recibido: {jobCreateDto.LabourCost}");
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError($"Ocurrió un error en el servidor.");
-                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _logger.LogError("Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { "Ocurrió un error en el servidor." };
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(ModelState);
                 }
+
                 if (await _jobRepository.Get(v => v.Name.ToLower() == jobCreateDto.Name.ToLower()) != null)
                 {
                     _logger.LogError($"El nombre {jobCreateDto.Name} ya existe en el sistema");
@@ -329,33 +329,29 @@ public class Job : IId
                 var estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
                 if (estate == null)
                 {
-                    _logger.LogError($"La obra ID={jobCreateDto.EstateId} no existe en el sistema");
-                    _response.ErrorMessages = new List<string> { $"La obra ID={jobCreateDto.EstateId} no existe en el sistema." };
+                    _logger.LogError($"La propiedad ID={jobCreateDto.EstateId} no existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"La propiedad ID={jobCreateDto.EstateId} no existe en el sistema." };
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    ModelState.AddModelError("NameAlreadyExists", $"La obra ID={jobCreateDto.EstateId} no existe en el sistema.");
+                    ModelState.AddModelError("NameAlreadyExists", $"La propiedad ID={jobCreateDto.EstateId} no existe en el sistema.");
                     return BadRequest(ModelState);
                 }
 
                 using (var transaction = await _dbContext.Database.BeginTransactionAsync())
                 {
                     Job modelo = _mapper.Map<Job>(jobCreateDto);
-                    modelo.Estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
+                    modelo.Estate = estate;
                     modelo.Creation = DateTime.Now;
                     modelo.Update = DateTime.Now;
 
-                    // Procesamiento de trabajadores
-                    if (jobCreateDto.ListWorkers != null && jobCreateDto.ListWorkers.Count > 0)
+                    foreach (var workerId in jobCreateDto.WorkerIds)
                     {
-                        foreach (var workerDto in jobCreateDto.ListWorkers)
+                        var worker = await _dbContext.Worker.FindAsync(workerId);
+                        if (worker == null)
                         {
-                            var workerDB = await _dbContext.Worker.FindAsync(workerDto.Id);
-                            if (workerDB == null)
-                            {
-                                return NotFound($"El trabajador ID={workerDto.Id} no existe en el sistema.");
-                            }
-                            modelo.ListWorkers.Add(workerDB);
+                            return NotFound($"El trabajador ID={workerId} no existe en el sistema.");
                         }
+                        modelo.ListWorkers.Add(worker);
                     }
 
                     await _jobRepository.Create(modelo);
@@ -385,18 +381,18 @@ public class Job : IId
                     _logger.LogInformation($"Se creó correctamente la obra Id:{modelo.Id}.");
                     _response.Result = _mapper.Map<JobDTO>(modelo);
                     _response.StatusCode = HttpStatusCode.Created;
+
                     return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
                 }
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.InternalServerError;
                 _response.ErrorMessages = new List<string> { ex.ToString() };
+                return _response;
             }
-            return _response;
         }
 
         #endregion

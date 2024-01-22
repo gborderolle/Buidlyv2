@@ -131,7 +131,8 @@ public class Rent : IId
         public int EstateId { get; set; }
         public Estate Estate { get; set; }
 
-        public List<Tenant> ListTenants { get; set; } = new();
+        // public List<TenantCreateDTO> ListTenants { get; set; } = new();
+        public List<int> TenantIds { get; set; } = new List<int>();  // Cambio aquí
 
         public int PrimaryTenantId { get; set; }
 
@@ -214,11 +215,77 @@ public class Rent : IId
 
         #region Endpoints específicos
 
-        [HttpPost(Name = "CreateRent")]
+         [HttpPost(Name = "CreateRent")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Post([FromBody] RentCreateDTO rentCreateDto)
+        public async Task<ActionResult<APIResponse>> Post([FromForm] RentCreateDTO rentCreateDto)
         {
-            return Ok();
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
+                var estate = await _dbContext.Estate.FindAsync(rentCreateDto.EstateId);
+                if (estate == null)
+                {
+                    _logger.LogError($"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema.");
+                    _response.ErrorMessages = new List<string> { $"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound($"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema.");
+                }
+
+                using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+                {
+                    Rent modelo = _mapper.Map<Rent>(rentCreateDto);
+                    modelo.Estate = estate;
+                    modelo.Creation = DateTime.Now;
+                    modelo.Update = DateTime.Now;
+
+                    // Procesamiento de inquilinos
+                    foreach (int tenantId in rentCreateDto.TenantIds)
+                    {
+                        var tenant = await _dbContext.Tenant.FindAsync(tenantId);
+                        if (tenant == null)
+                        {
+                            return NotFound($"El inquilino ID={tenantId} no existe en el sistema.");
+                        }
+                        modelo.ListTenants.Add(tenant);
+                    }
+
+                    await _rentRepository.Create(modelo);
+
+                    // Actualizar la propiedad
+                    estate.PresentRentId = modelo.Id;
+                    estate.EstateIsRented = true;
+                    await _estateRepository.Update(estate);
+
+                    // Procesamiento de fotos
+                    if (rentCreateDto.ListPhotos != null && rentCreateDto.ListPhotos.Count > 0)
+                    {
+                        await ProcessRentPhotos(modelo, rentCreateDto.ListPhotos);
+                    }
+
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
+                    _response.Result = _mapper.Map<RentDTO>(modelo);
+                    _response.StatusCode = HttpStatusCode.Created;
+                    return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return _response;
+            }
         }
 
         #endregion
