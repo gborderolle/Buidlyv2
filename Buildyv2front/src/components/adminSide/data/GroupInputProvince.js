@@ -25,7 +25,10 @@ import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProvinceList } from "../../../store/generalData-actions";
+import {
+  fetchProvinceList,
+  fetchCountryList,
+} from "../../../store/generalData-actions";
 import { urlProvince } from "../../../endpoints";
 
 import "./GroupInput.css";

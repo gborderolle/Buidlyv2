@@ -64,7 +64,7 @@ const routes = [
 
   { path: "/abm-rent", name: "Agregar alquiler", element: RentABM },
 
-  { path: "/data", name: "Datos", element: DataMenu },
+  { path: "/data", name: "Datos base", element: DataMenu },
 ];
 
 export default routes;

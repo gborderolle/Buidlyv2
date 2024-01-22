@@ -10,7 +10,7 @@
         public DateTime Update { get; set; } = DateTime.Now;
         public string NominatimCountryCode { get; set; }
 
-#endregion
+        #endregion
 
         #region External
 

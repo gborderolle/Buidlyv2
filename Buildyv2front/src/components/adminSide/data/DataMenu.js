@@ -1,7 +1,17 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { CCol, CRow } from "@coreui/react";
+import {
+  CCol,
+  CRow,
+  CAccordion,
+  CAccordionItem,
+  CAccordionHeader,
+  CAccordionBody,
+  CCard,
+  CCardHeader,
+  CCardBody,
+} from "@coreui/react";
 import GroupInputCity from "./GroupInputCity";
 import GroupInputProvince from "./GroupInputProvince";
 import GroupInputCountry from "./GroupInputCountry";
@@ -9,6 +19,9 @@ import GroupInputCountry from "./GroupInputCountry";
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
+import CityTable from "./CityTable";
+import ProvinceTable from "./ProvinceTable";
+import CountryTable from "./CountryTable";
 
 const DataMenu = () => {
   //#region Const ***********************************
@@ -56,26 +69,68 @@ const DataMenu = () => {
   return (
     <CRow>
       <CCol xs>
-        <GroupInputCity
-          title="Agregar ciudad"
-          inputName="Nombre"
-          nominatimCode="Código Nominatim"
-          createDataToUpload={cityData}
-        />
+        <CAccordion>
+          <CAccordionItem itemKey={1}>
+            <CAccordionHeader className="custom-accordion-header">
+              Menú ciudades
+            </CAccordionHeader>
+            <CAccordionBody>
+              <CCard>
+                <CCardHeader>Tabla de datos</CCardHeader>
+                <CCardBody>
+                  <CityTable
+                    title="Menú ciudades"
+                    inputName="Nombre"
+                    nominatimCode="Código nominatim"
+                    createDataToUpload={cityData}
+                  />
+                </CCardBody>
+              </CCard>
+            </CAccordionBody>
+          </CAccordionItem>
+        </CAccordion>
         <br />
-        <GroupInputProvince
-          title="Agregar departamento"
-          inputName="Nombre"
-          nominatimCode="Código Nominatim"
-          createDataToUpload={provinceData}
-        />
+        <CAccordion>
+          <CAccordionItem itemKey={1}>
+            <CAccordionHeader className="custom-accordion-header">
+              Menú departamentos
+            </CAccordionHeader>
+            <CAccordionBody>
+              <CCard>
+                <CCardHeader>Tabla de datos</CCardHeader>
+                <CCardBody>
+                  <ProvinceTable
+                    title="Menú departamentos"
+                    inputName="Nombre"
+                    nominatimCode="Código nominatim"
+                    createDataToUpload={provinceData}
+                  />
+                </CCardBody>
+              </CCard>
+            </CAccordionBody>
+          </CAccordionItem>
+        </CAccordion>
         <br />
-        <GroupInputCountry
-          title="Agregar país"
-          inputName="Nombre"
-          nominatimCode="Código Nominatim [UY]"
-          createDataToUpload={countryData}
-        />
+        <CAccordion>
+          <CAccordionItem itemKey={1}>
+            <CAccordionHeader className="custom-accordion-header">
+              Menú países
+            </CAccordionHeader>
+            <CAccordionBody>
+              <CCard>
+                <CCardHeader>Tabla de datos</CCardHeader>
+                <CCardBody>
+                  <CountryTable
+                    title="Menú países"
+                    inputName="Nombre"
+                    nominatimCode="Código nominatim"
+                    createDataToUpload={countryData}
+                  />
+                </CCardBody>
+              </CCard>
+            </CAccordionBody>
+          </CAccordionItem>
+        </CAccordion>
         <br />
         <br />
       </CCol>

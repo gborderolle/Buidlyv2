@@ -1,9 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using Buildyv2.Validations;
-using Buildyv2.Models;
-
-namespace Buildyv2.DTOs
+﻿namespace Buildyv2.DTOs
 {
     public class CityDSDTO
     {
@@ -18,14 +13,8 @@ namespace Buildyv2.DTOs
 
         #region External
 
-
-
-
         public int ProvinceDSId { get; set; }
 
         #endregion
-
-
-
     }
 }

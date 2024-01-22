@@ -49,7 +49,7 @@ const _nav = [
   {
     roles: [1], // roles que pueden ver este elemento
     component: CNavItem,
-    name: "Datos",
+    name: "Datos base",
     to: "/data",
     icon: <CIcon icon={cilStorage} customClassName="nav-icon" />,
   },

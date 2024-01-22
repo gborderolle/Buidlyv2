@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   CRow,
   CButton,
-  CCardFooter,
   CSpinner,
   CFormInput,
   CInputGroup,
@@ -19,9 +18,15 @@ import {
   CDropdownToggle,
   CDropdownMenu,
   CDropdownItem,
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardFooter,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
+
+import CityTable from "./CityTable"; // Ajusta la ruta según tu estructura de archivos
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
@@ -62,10 +67,6 @@ const GroupInputCity = (props) => {
     inputBlurHandler: inputBlurHandler2,
     reset: inputReset2,
   } = useInput((value) => true);
-
-  const handleCancel = () => {
-    navigate("/workers"); // Reemplaza con la ruta deseada
-  };
 
   //#endregion Consts ***********************************
 
@@ -121,119 +122,131 @@ const GroupInputCity = (props) => {
   //#endregion Events ***********************************
 
   return (
-    <CForm onSubmit={formSubmitHandler}>
-      <CAccordion>
-        <CAccordionItem itemKey={1}>
-          <CAccordionHeader className="custom-accordion-header">
-            {props.title}
-          </CAccordionHeader>
-          <CAccordionBody>
-            <CInputGroup>
-              <CInputGroupText className="cardItem custom-input-group-text">
-                {props.inputName}
-              </CInputGroupText>
-              <CFormInput
-                type="text"
-                className="cardItem"
-                onChange={inputChangeHandler1}
-                onBlur={inputBlurHandler1}
-                value={cityName}
-              />
-              {inputHasError1 && (
-                <CAlert color="danger" className="w-100">
-                  Entrada inválida
-                </CAlert>
-              )}
-            </CInputGroup>
-            <br />
-            <CInputGroup>
-              <CInputGroupText className="cardItem custom-input-group-text">
-                {props.nominatimCode}
-              </CInputGroupText>
-              <CFormInput
-                type="text"
-                className="cardItem"
-                onChange={inputChangeHandler2}
-                onBlur={inputBlurHandler2}
-                value={nominatimCode}
-              />
-              {inputHasError2 && (
-                <CAlert color="danger" className="w-100">
-                  Entrada inválida
-                </CAlert>
-              )}
-            </CInputGroup>
-            <br />
-
-            <CInputGroup>
-              <CInputGroupText className="cardItem custom-input-group-text">
-                Departamento
-              </CInputGroupText>
-              {/*  */}
-              <CDropdown>
-                <CDropdownToggle id="ddlProvince" color="secondary">
-                  {ddlSelectedProvince
-                    ? ddlSelectedProvince.name
-                    : "Seleccionar"}
-                </CDropdownToggle>
-                <CDropdownMenu>
-                  {provinceList &&
-                    provinceList.length > 0 &&
-                    provinceList.map((province) => (
-                      <CDropdownItem
-                        key={province.id}
-                        onClick={() => handleSelectDdlProvince(province)}
-                        style={{ cursor: "pointer" }}
-                        value={province.id}
-                      >
-                        {province.id}: {province.name}
-                      </CDropdownItem>
-                    ))}
-                </CDropdownMenu>
-              </CDropdown>
-              {/*  */}
-              {inputHasErrorProvince && (
-                <CAlert color="danger" className="w-100">
-                  Entrada inválida
-                </CAlert>
-              )}
-            </CInputGroup>
-            <br />
-
-            <CRow className="justify-content-center">
-              {isLoading && (
-                <div className="text-center">
-                  <CSpinner />
-                </div>
-              )}
-            </CRow>
-            <br />
-            <CButton type="submit" color="secondary">
-              Confirmar
-            </CButton>
-            <br />
-            <br />
-            <CCardFooter className="text-medium-emphasis">
-              {!isValidForm && (
-                <CAlert color="danger" className="w-100">
-                  El formulario no es válido
-                </CAlert>
-              )}
-              {isSuccess && (
-                <CAlert color="success" className="w-100">
-                  Datos ingresados correctamente
-                </CAlert>
-              )}
-              {errorAPI && (
-                <CAlert color="danger" className="w-100">
-                  {errorAPI}
-                </CAlert>
-              )}
-            </CCardFooter>
-          </CAccordionBody>
-        </CAccordionItem>
-      </CAccordion>
-    </CForm>
+    <>
+      <CForm onSubmit={formSubmitHandler}>
+        <CAccordion>
+          <CAccordionItem itemKey={1}>
+            <CAccordionHeader className="custom-accordion-header">
+              {props.title}
+            </CAccordionHeader>
+            <CAccordionBody>
+              <CCard>
+                <CCardHeader>Tabla de datos</CCardHeader>
+                <CCardBody>
+                  <CityTable />
+                </CCardBody>
+              </CCard>
+              <br />
+              <br />
+              {/*
+              <CCard>
+                <CCardHeader>Agregar nuevo</CCardHeader>
+                <CCardBody>
+                  <CInputGroup>
+                    <CInputGroupText className="cardItem custom-input-group-text">
+                      {props.inputName}
+                    </CInputGroupText>
+                    <CFormInput
+                      type="text"
+                      className="cardItem"
+                      onChange={inputChangeHandler1}
+                      onBlur={inputBlurHandler1}
+                      value={cityName}
+                    />
+                    {inputHasError1 && (
+                      <CAlert color="danger" className="w-100">
+                        Entrada inválida
+                      </CAlert>
+                    )}
+                  </CInputGroup>
+                  <br />
+                  <CInputGroup>
+                    <CInputGroupText className="cardItem custom-input-group-text">
+                      {props.nominatimCode}
+                    </CInputGroupText>
+                    <CFormInput
+                      type="text"
+                      className="cardItem"
+                      onChange={inputChangeHandler2}
+                      onBlur={inputBlurHandler2}
+                      value={nominatimCode}
+                    />
+                    {inputHasError2 && (
+                      <CAlert color="danger" className="w-100">
+                        Entrada inválida
+                      </CAlert>
+                    )}
+                  </CInputGroup>
+                  <br />
+                  <CInputGroup>
+                    <CInputGroupText className="cardItem custom-input-group-text">
+                      Departamento
+                    </CInputGroupText>
+                    <CDropdown>
+                      <CDropdownToggle id="ddlProvince" color="secondary">
+                        {ddlSelectedProvince
+                          ? ddlSelectedProvince.name
+                          : "Seleccionar"}
+                      </CDropdownToggle>
+                      <CDropdownMenu>
+                        {provinceList &&
+                          provinceList.length > 0 &&
+                          provinceList.map((province) => (
+                            <CDropdownItem
+                              key={province.id}
+                              onClick={() => handleSelectDdlProvince(province)}
+                              style={{ cursor: "pointer" }}
+                              value={province.id}
+                            >
+                              {province.id}: {province.name}
+                            </CDropdownItem>
+                          ))}
+                      </CDropdownMenu>
+                    </CDropdown>
+                    {inputHasErrorProvince && (
+                      <CAlert color="danger" className="w-100">
+                        Entrada inválida
+                      </CAlert>
+                    )}
+                  </CInputGroup>
+                  <br />
+                  <CRow className="justify-content-center">
+                    {isLoading && (
+                      <div className="text-center">
+                        <CSpinner />
+                      </div>
+                    )}
+                  </CRow>
+                  <br />
+                  <CButton type="submit" color="secondary">
+                    Confirmar
+                  </CButton>
+                  <br />
+                  <br />
+                  <CCardFooter className="text-medium-emphasis">
+                    {!isValidForm && (
+                      <CAlert color="danger" className="w-100">
+                        El formulario no es válido
+                      </CAlert>
+                    )}
+                    {isSuccess && (
+                      <CAlert color="success" className="w-100">
+                        Datos ingresados correctamente
+                      </CAlert>
+                    )}
+                    {errorAPI && (
+                      <CAlert color="danger" className="w-100">
+                        {errorAPI}
+                      </CAlert>
+                    )}
+                  </CCardFooter>
+                </CCardBody>
+              </CCard> */}
+            </CAccordionBody>
+          </CAccordionItem>
+        </CAccordion>
+      </CForm>
+    </>
   );
 };
 
