@@ -131,13 +131,27 @@ const ReportMenu = () => {
     let sortableList = [...filteredReportList];
     if (sortConfig.key !== null) {
       sortableList.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
+        if (sortConfig.key === "listPhotosURL") {
+          const photoURLA = a.listPhotos?.[0]?.URL || "";
+          const photoURLB = b.listPhotos?.[0]?.URL || "";
+
+          if (photoURLA < photoURLB) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (photoURLA > photoURLB) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        } else {
+          // Ordenamiento para las demás propiedades
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
         }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
       });
     }
     return sortableList;
@@ -321,7 +335,7 @@ const ReportMenu = () => {
                     </th>
                     <th
                       className="table-header"
-                      onClick={() => requestSort("phone1")}
+                      onClick={() => requestSort("name")}
                     >
                       Casa
                     </th>

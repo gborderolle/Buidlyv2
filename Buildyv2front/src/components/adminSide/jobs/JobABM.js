@@ -216,27 +216,14 @@ const JobABM = () => {
           formData.append(`ListPhotos`, photo.file); // Aquí no uses índice en el nombre del campo
         });
 
-        // Agrega otros campos del formulario a formData
         formData.append("Name", name);
         formData.append("Month", month.toISOString()); // Asegúrate de enviar la fecha en un formato adecuado
         formData.append("Comments", comments);
-
-        console.log("Valor de cost antes de la conversión: ", cost);
         formData.append("LabourCost", parseFloat(cost).toFixed(2));
-        console.log(
-          "Valor de LabourCost después de la conversión: ",
-          parseFloat(cost).toFixed(2)
-        );
-
         formData.append("EstateId", ddlSelectedEstate.id);
-        formData.append(
-          "ListWorkers",
-          ddlSelectedWorker ? [ddlSelectedWorker] : []
-        );
 
-        console.log("Archivos cargados:", loadedPhotos);
-        for (var pair of formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
+        if (ddlSelectedWorker) {
+          formData.append("WorkerIds", ddlSelectedWorker.id);
         }
 
         await uploadData(formData, urlJob, editMode, job?.id);
@@ -550,7 +537,7 @@ const JobABM = () => {
                 )}
               </CRow>
               <br />
-              <CButton type="submit" color="primary">
+              <CButton type="submit" color="dark">
                 Confirmar
               </CButton>
               <CButton

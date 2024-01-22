@@ -59,16 +59,6 @@ const WorkerABM = () => {
   }, [userEmail, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
 
-  // Redux
-  const cityList = useSelector((state) => state.generalData.cityList);
-  const provinceList = useSelector((state) => state.generalData.provinceList);
-  const countryList = useSelector((state) => state.generalData.countryList);
-  const jobList = useSelector((state) => state.generalData.jobList);
-
-  const defaultJobId = worker?.job?.id || null;
-  const defaultJob = jobList.find((job) => job.id === defaultJobId);
-  const [ddlSelectedJob, setDdlSelectedJob] = useState(defaultJob || null);
-
   const {
     value: name,
     isValid: inputIsValidName,
@@ -162,32 +152,23 @@ const WorkerABM = () => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
-    // Verificar que cada campo no sea null antes de llamar a trim() y realizar la validación
-    const isNameValid = name ? name.trim() !== "" : false;
-    const isPhoneValid = phone ? /^[0-9]{9}$/.test(phone.trim()) : false;
-    const isEmailValid = email ? email.trim() !== "" : false; // Asumiendo que el email es obligatorio
-    const isDocumentValid = document ? document.trim() !== "" : false; // Asumiendo que el documento es obligatorio
-    const isCommentsValid = comments ? comments.trim() !== "" : true; // Asumiendo que los comentarios son opcionales
+    // Validación: Nombre y Teléfono son los campos obligatorios
+    const isNameValid = name.trim() !== "";
+    const isPhoneValid = phone.trim() !== "" && /^[0-9]{9}$/.test(phone.trim()); // Asumiendo que el teléfono debe tener 9 dígitos
 
-    setIsValidForm(
-      isNameValid &&
-        isPhoneValid &&
-        isEmailValid &&
-        isDocumentValid &&
-        isCommentsValid
-    );
+    setIsValidForm(isNameValid && isPhoneValid);
 
     if (!isValidForm) {
       return;
     }
 
+    // Si todos los campos requeridos son válidos, procede con la lógica de envío
     const dataToUpload = {
       Name: name,
       Phone: phone,
-      Email: email ? email.trim() : null, // Asigna null si el email está vacío
-      IdentityDocument: document,
-      Comments: comments,
-      JobId: ddlSelectedJob ? ddlSelectedJob.id : null,
+      Email: email.trim() !== "" ? email : null, // Asigna null si el campo está vacío
+      IdentityDocument: document.trim() !== "" ? document : null, // Asigna null si el campo está vacío
+      Comments: comments.trim() !== "" ? comments : null, // Asigna null si el campo está vacío
     };
 
     console.log("dataToUpload:", dataToUpload);
@@ -202,10 +183,6 @@ const WorkerABM = () => {
     } catch (error) {
       console.error("Error al enviar los datos:", error);
     }
-  };
-
-  const handleSelectDdlJob = (item) => {
-    setDdlSelectedJob(item);
   };
 
   //#endregion Events ***********************************
@@ -352,34 +329,6 @@ const WorkerABM = () => {
                 )}
               </CInputGroup>
               <br />
-              <CInputGroup>
-                <CInputGroupText className="cardItem custom-input-group-text">
-                  Obra
-                </CInputGroupText>
-                {/*  */}
-                <CDropdown>
-                  <CDropdownToggle id="ddJob" color="secondary">
-                    {ddlSelectedJob ? ddlSelectedJob.name : "Seleccionar"}
-                  </CDropdownToggle>
-                  <CDropdownMenu>
-                    {jobList &&
-                      jobList.length > 0 &&
-                      jobList.map((job) => (
-                        <CDropdownItem
-                          key={job.id}
-                          onClick={() => handleSelectDdlJob(job)}
-                          style={{ cursor: "pointer" }}
-                          value={job.id}
-                        >
-                          {job.id}: {job.name}
-                        </CDropdownItem>
-                      ))}
-                  </CDropdownMenu>
-                </CDropdown>
-
-                {/*  */}
-              </CInputGroup>
-              <br />
               <CRow className="justify-content-center">
                 {isLoading && (
                   <div className="text-center">
@@ -388,7 +337,7 @@ const WorkerABM = () => {
                 )}
               </CRow>
               <br />
-              <CButton type="submit" color="primary">
+              <CButton type="submit" color="dark">
                 Confirmar
               </CButton>
               <CButton

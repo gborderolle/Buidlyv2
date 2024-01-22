@@ -86,18 +86,7 @@ const RentABM = () => {
   //#endregion RUTA PROTEGIDA
 
   // Redux
-  const cityList = useSelector((state) => state.generalData.cityList);
-  const provinceList = useSelector((state) => state.generalData.provinceList);
-  const countryList = useSelector((state) => state.generalData.countryList);
   const tenantList = useSelector((state) => state.generalData.tenantList);
-
-  const defaultTenantId = rent?.tenant?.id || null;
-  const defaultTenant = tenantList.find(
-    (tenant) => tenant.id === defaultTenantId
-  );
-  const [ddlSelectedTenant, setDdlSelectedTenant] = useState(
-    defaultTenant || null
-  );
 
   const {
     value: monthlyValue,
@@ -177,6 +166,15 @@ const RentABM = () => {
       }));
       setLoadedPhotos(existingPhotos);
     }
+
+    if (editMode && rent?.listTenants) {
+      const initialTenants = rent.listTenants.map((tenant) => ({
+        id: tenant.id,
+        name: tenant.name,
+        phone1: tenant.phone1, // Asegúrate de incluir aquí todas las propiedades necesarias
+      }));
+      setSelectedTenants(initialTenants);
+    }
   }, [editMode, rent]);
 
   //#endregion Hooks ***********************************
@@ -217,8 +215,10 @@ const RentABM = () => {
         formData.append("RentIsEnded", false);
         formData.append("Comments", comments);
         formData.append("EstateId", estate.id);
-        formData.append("ListTenants", JSON.stringify(selectedTenants));
-        // formData.append("ListTenants", selectedTenants);
+
+        selectedTenants.forEach((tenant) => {
+          formData.append("TenantIds", tenant.id);
+        });
 
         console.log("Archivos cargados:", loadedPhotos);
         for (var pair of formData.entries()) {
@@ -338,7 +338,7 @@ const RentABM = () => {
                     <CFormCheck
                       key={tenant.id}
                       id={`tenant-${tenant.id}`}
-                      label={`${tenant.id}: ${tenant.name} (${tenant.phone1})`}
+                      label={`${tenant.name} (${tenant.phone1})`}
                       checked={selectedTenants.some((t) => t.id === tenant.id)}
                       onChange={(event) =>
                         handleSelectCheckboxTenant(event, tenant)
@@ -347,8 +347,8 @@ const RentABM = () => {
                         color: "#0d6efd",
                         fontWeight: "bold",
                         cursor: "pointer",
-                        marginBottom: "10px",
-                        marginLeft: "1px",
+                        marginLeft: "0.5px",
+                        marginRight: "5px",
                       }}
                     />
                   ))}
@@ -552,7 +552,7 @@ const RentABM = () => {
                 )}
               </CRow>
               <br />
-              <CButton type="submit" color="primary">
+              <CButton type="submit" color="dark">
                 Confirmar
               </CButton>
               <CButton

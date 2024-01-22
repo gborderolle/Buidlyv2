@@ -47,7 +47,8 @@ namespace Buildyv2.DTOs
         public int EstateId { get; set; }
         public Estate Estate { get; set; }
 
-        public List<TenantCreateDTO> ListTenants { get; set; } = new();
+        // public List<TenantCreateDTO> ListTenants { get; set; } = new();
+        public List<int> TenantIds { get; set; } = new List<int>();  // Cambio aquí
 
         public int PrimaryTenantId { get; set; }
 

@@ -10,7 +10,6 @@ using System.Net;
 using Buildyv2.Utilities;
 using Buildyv2.Context;
 using Buildyv2.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace Buildyv2.Controllers.V1
 {
@@ -126,7 +125,6 @@ namespace Buildyv2.Controllers.V1
                         await _fileStorage.DeleteFile(photo.URL, container);
                         _dbContext.Photo.Remove(photo); // Asegúrate de que el contexto de la base de datos sea correcto
                     }
-
                 }
 
                 if (container != null)
@@ -176,13 +174,19 @@ namespace Buildyv2.Controllers.V1
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError("Ocurrió un error en el servidor.");
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(ModelState);
                 }
-
                 var estate = await _dbContext.Estate.FindAsync(rentCreateDto.EstateId);
                 if (estate == null)
                 {
+                    _logger.LogError($"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema.");
+                    _response.ErrorMessages = new List<string> { $"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound($"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema.");
                 }
 
@@ -194,17 +198,14 @@ namespace Buildyv2.Controllers.V1
                     modelo.Update = DateTime.Now;
 
                     // Procesamiento de inquilinos
-                    if (rentCreateDto.ListTenants != null && rentCreateDto.ListTenants.Count > 0)
+                    foreach (int tenantId in rentCreateDto.TenantIds)
                     {
-                        foreach (var tenantDto in rentCreateDto.ListTenants)
+                        var tenant = await _dbContext.Tenant.FindAsync(tenantId);
+                        if (tenant == null)
                         {
-                            var tenantDB = await _dbContext.Tenant.FindAsync(tenantDto.Id);
-                            if (tenantDB == null)
-                            {
-                                return NotFound($"El inquilino ID={tenantDto.Id} no existe en el sistema.");
-                            }
-                            modelo.ListTenants.Add(tenantDB);
+                            return NotFound($"El inquilino ID={tenantId} no existe en el sistema.");
                         }
+                        modelo.ListTenants.Add(tenant);
                     }
 
                     await _rentRepository.Create(modelo);

@@ -1,9 +1,4 @@
-﻿using Buildyv2.Models;
-using Buildyv2.Validations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace Buildyv2.DTOs
+﻿namespace Buildyv2.DTOs
 {
     public class TenantDTO
     {

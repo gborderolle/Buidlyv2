@@ -206,7 +206,7 @@ const GroupInputProvince = (props) => {
               )}
             </CRow>
             <br />
-            <CButton type="submit" color="dark">
+            <CButton type="submit" color="secondary">
               Confirmar
             </CButton>
             <br />

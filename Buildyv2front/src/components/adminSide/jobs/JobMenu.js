@@ -130,13 +130,28 @@ const JobMenu = () => {
     let sortableList = [...filteredJobList];
     if (sortConfig.key !== null) {
       sortableList.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
+        // Si ordenamos por 'estateName', necesitamos acceder a la propiedad anidada
+        if (sortConfig.key === "estateName") {
+          const estateNameA = a.estate?.name || "";
+          const estateNameB = b.estate?.name || "";
+
+          if (estateNameA < estateNameB) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (estateNameA > estateNameB) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        } else {
+          // Ordenamiento para las demás propiedades
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
         }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
       });
     }
     return sortableList;
@@ -347,7 +362,7 @@ const JobMenu = () => {
                     </th>
                     <th
                       className="table-header"
-                      onClick={() => requestSort("phone1")}
+                      onClick={() => requestSort("estateName")}
                     >
                       Casa
                     </th>

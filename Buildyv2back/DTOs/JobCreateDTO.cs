@@ -43,7 +43,8 @@ namespace Buildyv2.DTOs
         public int EstateId { get; set; }
         public Estate Estate { get; set; }
 
-        public List<WorkerCreateDTO> ListWorkers { get; set; } = new();
+        // public List<WorkerCreateDTO> ListWorkers { get; set; } = new();
+        public List<int> WorkerIds { get; set; } = new List<int>();
 
         #endregion
     }
