@@ -1,4 +1,4 @@
-﻿using Buildyv2.ApiBehavior;
+using Buildyv2.ApiBehavior;
 using Buildyv2.Context;
 using Buildyv2.Filters;
 using Buildyv2.Middlewares;
@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using NetTopologySuite;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
@@ -137,7 +136,6 @@ namespace Buildyv2
             //services.AddScoped<MovieExistsAttribute>();
 
             // Servicios extra
-            services.AddSingleton(x => NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
 
             // Manejo de archivos en el servidor 
             services.AddSingleton<IFileStorage, FileStorageLocal>();

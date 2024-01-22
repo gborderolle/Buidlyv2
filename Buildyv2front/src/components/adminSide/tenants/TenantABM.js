@@ -385,7 +385,7 @@ const TenantABM = () => {
                 )}
               </CRow>
               <br />
-              <CButton type="submit" color="primary">
+              <CButton type="submit" color="dark">
                 Confirmar
               </CButton>
               <CButton

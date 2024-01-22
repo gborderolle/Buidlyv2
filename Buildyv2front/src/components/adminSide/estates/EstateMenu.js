@@ -148,13 +148,44 @@ const EstateMenu = () => {
     let sortableList = [...filteredEstateList];
     if (sortConfig.key !== null) {
       sortableList.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
+        // Propiedades anidadas
+        if (sortConfig.key === "monthlyValue") {
+          const lastRentA =
+            a.listRents?.[a.listRents.length - 1]?.monthlyValue || 0;
+          const lastRentB =
+            b.listRents?.[b.listRents.length - 1]?.monthlyValue || 0;
+
+          if (lastRentA < lastRentB) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (lastRentA > lastRentB) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        } else if (sortConfig.key === "tenant") {
+          // Obtiene el nombre del primer inquilino del último alquiler
+          const tenantNameA =
+            a.listRents?.[a.listRents.length - 1]?.listTenants?.[0]?.name || "";
+          const tenantNameB =
+            b.listRents?.[b.listRents.length - 1]?.listTenants?.[0]?.name || "";
+
+          if (tenantNameA.toLowerCase() < tenantNameB.toLowerCase()) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (tenantNameA.toLowerCase() > tenantNameB.toLowerCase()) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        } else {
+          // Ordenamiento para las demás propiedades
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
         }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
       });
     }
     return sortableList;
@@ -167,10 +198,7 @@ const EstateMenu = () => {
   const renderEstateRows = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentEstates = filteredEstateList.slice(
-      indexOfFirstItem,
-      indexOfLastItem
-    );
+    const currentEstates = sortedList.slice(indexOfFirstItem, indexOfLastItem);
 
     return currentEstates.map((estate, index) => (
       <tr key={estate.id}>
@@ -178,7 +206,20 @@ const EstateMenu = () => {
           style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
           onClick={() => handleSelectEstate(estate)}
         >
-          {index + 1 + (currentPage - 1) * itemsPerPage}
+          {" "}
+          <button
+            style={{
+              border: "none",
+              background: "none",
+              padding: 0,
+              color: "blue",
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+            onClick={() => handleSelectEstate(estate)}
+          >
+            {index + 1}
+          </button>
         </td>
         <td
           style={estate.id === selectedEstate?.id ? { color: "blue" } : null}

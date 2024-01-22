@@ -189,7 +189,7 @@ const AppHeader = () => {
         {circuitNameIsVisible && reduxSelectedCircuit && (
           <div style={{ position: "relative" }}>
             <CBadge
-              color="dark"
+              color="secondary"
               style={{
                 position: "absolute",
                 top: "50%",

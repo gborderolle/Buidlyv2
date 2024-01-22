@@ -1,6 +1,14 @@
-import React from 'react'
-import { CButton, CCard, CCardBody, CCardHeader, CCol, CBadge, CRow } from '@coreui/react'
-import { DocsExample } from 'src/components'
+import React from "react";
+import {
+  CButton,
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CCol,
+  CBadge,
+  CRow,
+} from "@coreui/react";
+import { DocsExample } from "src/components";
 
 const Badges = () => {
   return (
@@ -12,8 +20,8 @@ const Badges = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-              Bootstrap badge scale to suit the size of the parent element by using relative font
-              sizing and <code>em</code> units.
+              Bootstrap badge scale to suit the size of the parent element by
+              using relative font sizing and <code>em</code> units.
             </p>
             <DocsExample href="components/badge">
               <h1>
@@ -36,7 +44,8 @@ const Badges = () => {
               </h6>
             </DocsExample>
             <p className="text-medium-emphasis small">
-              Badges can be used as part of links or buttons to provide a counter.
+              Badges can be used as part of links or buttons to provide a
+              counter.
             </p>
             <DocsExample href="components/badge">
               <CButton color="primary">
@@ -44,12 +53,13 @@ const Badges = () => {
               </CButton>
             </DocsExample>
             <p className="text-medium-emphasis small">
-              Remark that depending on how you use them, badges may be complicated for users of
-              screen readers and related assistive technologies.
+              Remark that depending on how you use them, badges may be
+              complicated for users of screen readers and related assistive
+              technologies.
             </p>
             <p className="text-medium-emphasis small">
-              Unless the context is clear, consider including additional context with a visually
-              hidden piece of additional text.
+              Unless the context is clear, consider including additional context
+              with a visually hidden piece of additional text.
             </p>
             <DocsExample href="components/badge">
               <CButton color="primary">
@@ -67,8 +77,8 @@ const Badges = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-              Add any of the below-mentioned <code>color</code> props to modify the presentation of
-              a badge.
+              Add any of the below-mentioned <code>color</code> props to modify
+              the presentation of a badge.
             </p>
             <DocsExample href="components/badge#contextual-variations">
               <CBadge color="primary">primary</CBadge>
@@ -77,7 +87,7 @@ const Badges = () => {
               <CBadge color="warning">warning</CBadge>
               <CBadge color="info">info</CBadge>
               <CBadge color="light">light</CBadge>
-              <CBadge color="dark">dark</CBadge>
+              <CBadge color="secondary">dark</CBadge>
             </DocsExample>
           </CCardBody>
         </CCard>
@@ -87,7 +97,8 @@ const Badges = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-              Apply the <code>shape=&#34;rounded-pill&#34;</code> prop to make badges rounded.
+              Apply the <code>shape=&#34;rounded-pill&#34;</code> prop to make
+              badges rounded.
             </p>
             <DocsExample href="components/badge#pill-badges">
               <CBadge color="primary" shape="rounded-pill">
@@ -108,7 +119,7 @@ const Badges = () => {
               <CBadge color="light" shape="rounded-pill">
                 light
               </CBadge>
-              <CBadge color="dark" shape="rounded-pill">
+              <CBadge color="secondary" shape="rounded-pill">
                 dark
               </CBadge>
             </DocsExample>
@@ -116,7 +127,7 @@ const Badges = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
-}
+  );
+};
 
-export default Badges
+export default Badges;

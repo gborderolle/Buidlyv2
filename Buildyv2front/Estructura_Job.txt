@@ -1,22 +1,90 @@
-﻿using AutoMapper;
-using Buildyv2.Context;
-using Buildyv2.DTOs;
-using Buildyv2.Models;
-using Buildyv2.Repository.Interfaces;
-using Buildyv2.Services;
-using Buildyv2.Utilities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
+Estructura de Job (obra).
+Junto a sus respectivos DTO, CreateDTO y su Controller en el Backend.
 
-namespace Buildyv2.Controllers.V1
-{
-    [ApiController]
-    [HasHeader("x-version", "1")]
-    [Route("api/jobs")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class Job : IId
+    {
+        #region Internal
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        [StringLength(maximumLength: 100, ErrorMessage = "El campo {0} no puede tener más de {1} caracteres")]
+        [FirstCharCapitalValidation]
+        public string Name { get; set; }
+
+        public string Month { get; set; }
+
+        public DateTime Creation { get; set; } = DateTime.Now;
+
+        public DateTime Update { get; set; } = DateTime.Now;
+
+        public string Comments { get; set; }
+
+        // Uniques
+
+        public decimal LabourCost { get; set; }
+
+        public List<Photo> ListPhotos { get; set; }
+
+        #endregion
+
+        #region External
+
+        [Required(ErrorMessage = "El campo {0} es requerido")] // n..0 (0=no existe este sin el padre)
+        public int EstateId { get; set; }
+        public Estate Estate { get; set; }
+
+        public List<Worker> ListWorkers { get; set; } = new();
+
+        #endregion
+    }
+
+  public class JobCreateDTO
+    {
+        #region Internal
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        [StringLength(maximumLength: 100, ErrorMessage = "El campo {0} no puede tener más de {1} caracteres")]
+        [FirstCharCapitalValidation]
+        public string Name { get; set; }
+
+        public string Month { get; set; }
+
+        public DateTime Creation { get; set; } = DateTime.Now;
+
+        public DateTime Update { get; set; } = DateTime.Now;
+
+        public string Comments { get; set; }
+
+        // Uniques
+
+        public decimal LabourCost { get; set; }
+
+        //public List<Photo> ListPhotos { get; set; }
+        [FileSizeValidation(maxSizeMB: 4)]
+        [FileTypeValidation(fileTypeGroup: FileTypeGroup.Image)]
+        public List<IFormFile> ListPhotos { get; set; } // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/19983788#notes
+
+        #endregion
+
+        #region External
+
+        [Required(ErrorMessage = "El campo {0} es requerido")] // n..0 (0=no existe este sin el padre)
+        public int EstateId { get; set; }
+        public Estate Estate { get; set; }
+
+        // public List<WorkerCreateDTO> ListWorkers { get; set; } = new();
+        public List<int> WorkerIds { get; set; } = new List<int>();
+
+        #endregion
+    }
+
     public class JobsController : CustomBaseController<Job> // Notice <Job> here
     {
         private readonly IJobRepository _jobRepository; // Servicio que contiene la lógica principal de negocio para Jobs.
@@ -157,11 +225,20 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(_response);
                 }
 
-                var job = await _jobRepository.Get(v => v.Id == id, includes: new List<IncludePropertyConfiguration<Job>> {
-            new IncludePropertyConfiguration<Job> { IncludeExpression = b => b.ListWorkers },
-            new IncludePropertyConfiguration<Job> { IncludeExpression = b => b.ListPhotos }
-        });
+                // 1..n
+                var includes = new List<IncludePropertyConfiguration<Job>>
+            {
+                    new IncludePropertyConfiguration<Job>
+                    {
+                        IncludeExpression = b => b.ListWorkers
+                    },
+                new IncludePropertyConfiguration<Job>
+                    {
+                        IncludeExpression = b => b.ListPhotos
+                    },
+                };
 
+                var job = await _jobRepository.Get(v => v.Id == id, includes: includes);
                 if (job == null)
                 {
                     _logger.LogError($"Trabajo no encontrado ID = {id}.");
@@ -171,38 +248,34 @@ namespace Buildyv2.Controllers.V1
                     return NotFound(_response);
                 }
 
+                // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
                 job.Name = jobCreateDto.Name;
                 job.Month = jobCreateDto.Month;
                 job.LabourCost = jobCreateDto.LabourCost;
                 job.Comments = jobCreateDto.Comments;
                 job.Update = DateTime.Now;
+
                 job.EstateId = jobCreateDto.EstateId;
                 job.Estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
 
-                if (jobCreateDto.WorkerIds != null)
+                // Procesamiento de trabajadores
+                if (jobCreateDto.ListWorkers != null && jobCreateDto.ListWorkers.Count > 0)
                 {
-                    // Primero, limpia la lista actual de trabajadores
-                    job.ListWorkers.Clear();
-
-                    // Luego, agrega los nuevos trabajadores basado en los IDs
-                    foreach (var workerId in jobCreateDto.WorkerIds)
+                    foreach (var workerDto in jobCreateDto.ListWorkers)
                     {
-                        var worker = await _dbContext.Worker.FindAsync(workerId);
-                        if (worker != null)
+                        var workerDB = await _dbContext.Worker.FindAsync(workerDto.Id);
+                        if (workerDB == null)
                         {
-                            job.ListWorkers.Add(worker);
+                            return NotFound($"El trabajador ID={workerDto.Id} no existe en el sistema.");
                         }
-                        else
-                        {
-                            _logger.LogWarning($"Trabajador no encontrado ID = {workerId}.");
-                        }
+                        job.ListWorkers.Add(workerDB);
                     }
                 }
 
                 var updatedJob = await _jobRepository.Update(job);
 
                 _logger.LogInformation($"Se actualizó correctamente La obra Id:{id}.");
-                _response.Result = _mapper.Map<JobDTO>(updatedJob);
+                _response.Result = _mapper.Map<EstateDTO>(updatedJob);
                 _response.StatusCode = HttpStatusCode.OK;
 
                 return Ok(_response);
@@ -228,7 +301,7 @@ namespace Buildyv2.Controllers.V1
 
         #region Endpoints específicos
 
-        [HttpPost(Name = "CreateJob")]
+         [HttpPost(Name = "CreateJob")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromForm] JobCreateDTO jobCreateDto)
         {
@@ -329,4 +402,3 @@ namespace Buildyv2.Controllers.V1
         #endregion
 
     }
-}
