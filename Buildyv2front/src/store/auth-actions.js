@@ -9,27 +9,20 @@ export const loginHandler =
     try {
       const response = await axios.post(
         `${urlAccount}/login`,
-        {
-          email: email,
-          password: password,
-        },
-        {
-          headers: {
-            "x-version": "1",
-          },
-        }
+        { email, password },
+        { headers: { "x-version": "1" } }
       );
-      // Aquí, asumimos que la API devuelve un objeto con un token y posiblemente más datos
-      const { token, userRoles } = response.data.result;
 
-      // Lógica para manejar la respuesta de la API
-      if (token) {
+      // Asegúrate de que la respuesta contenga el resultado esperado
+      if (response.data && response.data.result && response.data.result.token) {
+        const { token, userRoles } = response.data.result;
+
+        // Manejo exitoso del login
         await showToastMessage({
           title: "Login correcto",
           icon: "success",
           callback: () => {
             setTimeout(() => {
-              // redux set
               dispatch(
                 authActions.login({
                   userEmail: email,
@@ -38,12 +31,13 @@ export const loginHandler =
                   userRole: userRoles[0],
                 })
               );
-
               navigate("/estates");
             }, 500);
           },
         });
       } else {
+        // Manejar el caso donde no se recibe un token válido
+        setErrorMessage("Login incorrecto. No se recibió un token válido.");
         await showToastMessage({
           title: "Login incorrecto",
           icon: "error",
