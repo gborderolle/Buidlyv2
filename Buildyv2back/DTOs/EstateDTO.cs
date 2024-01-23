@@ -1,4 +1,4 @@
-﻿using Buildyv2.Models;
+using Buildyv2.Models;
 
 namespace Buildyv2.DTOs
 {
@@ -32,6 +32,8 @@ namespace Buildyv2.DTOs
         #region External
 
         public CityDS CityDS { get; set; }
+
+        public OwnerDS OwnerDS { get; set; }
 
         public List<Report> ListReports { get; set; } = new();
 

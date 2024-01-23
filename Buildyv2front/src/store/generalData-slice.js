@@ -10,6 +10,7 @@ const generalDataSlice = createSlice({
     workerList: [],
     tenantList: [],
     countryList: [],
+    ownerList: [],
     provinceList: [],
     cityList: [],
     userList: [],
@@ -37,6 +38,9 @@ const generalDataSlice = createSlice({
     },
     setCountryList: (state, action) => {
       state.countryList = action.payload;
+    },
+    setOwnerList: (state, action) => {
+      state.ownerList = action.payload;
     },
     setProvinceList: (state, action) => {
       state.provinceList = action.payload;

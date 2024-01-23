@@ -37,6 +37,7 @@ public class Estate : IId
     #region External
 
     public CityDS CityDS { get; set; }
+        public OwnerDS OwnerDS { get; set; }
 
     public List<Report> ListReports { get; set; } = new();
 
@@ -79,6 +80,7 @@ public class Estate : IId
         #region External
 
         public CityDS CityDS { get; set; }
+        public OwnerDS OwnerDS { get; set; }
 
         public List<Report> ListReports { get; set; } = new();
 
@@ -110,6 +112,8 @@ public class Estate : IId
     public string LatLong { get; set; }
     [Required(ErrorMessage = "El campo {0} es requerido")]
     public int CityDSId { get; set; }
+    [Required(ErrorMessage = "El campo {0} es requerido")]
+    public int OwnerDSId { get; set; }
     [Required(ErrorMessage = "El campo {0} es requerido")]
     public string GoogleMapsURL { get; set; }
     public bool EstateIsRented { get; set; }

@@ -162,6 +162,21 @@ const ProvinceTable = (props) => {
 
   const openModal = (province = null) => {
     setCurrentProvince(province);
+    if (province && province.name && province.nominatimProvinceCode) {
+      inputReset1(province.name);
+      inputReset2(province.nominatimProvinceCode);
+
+      // Busca el departamento (province) correspondiente y lo establece como seleccionado
+      const country = countryList.find((p) => p.id === province.countryDSId);
+      if (country) {
+        setDdlSelectedCountry(country);
+      } else {
+        inputResetCountry(); // Resetea el selector de departamentos si no se encuentra uno correspondiente
+      }
+    } else {
+      inputReset1();
+      inputReset2();
+    }
     setIsModalVisible(true);
   };
 
@@ -188,7 +203,7 @@ const ProvinceTable = (props) => {
     }
   };
 
-  const inputResetProvince = () => {
+  const inputResetCountry = () => {
     setDdlSelectedCountry(null);
     setInputHasErrorCountry(false);
   };
@@ -220,17 +235,33 @@ const ProvinceTable = (props) => {
     };
 
     try {
-      const response = await uploadData(dataToUpload, urlProvince);
+      let response;
+      if (currentProvince) {
+        // Actualizar el rol de usuario
+        response = await uploadData(
+          dataToUpload,
+          urlProvince, // Endpoint para actualizar roles
+          true,
+          currentProvince.id
+        );
+      } else {
+        // Crear un nuevo rol de usuario
+        response = await uploadData(
+          dataToUpload,
+          urlProvince // Endpoint para crear roles
+        );
+      }
       if (response) {
         dispatch(fetchProvinceList());
         inputReset1();
         inputReset2();
-        inputResetProvince();
-        closeModal();
+
+        setTimeout(() => {
+          closeModal();
+        }, 1000);
       }
     } catch (error) {
       console.error("Error al enviar los datos:", error);
-      // No cerrar el modal aquí, ya que se mostrará el error en él
     }
   };
 

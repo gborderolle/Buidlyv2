@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Buildyv2.DTOs;
 using Buildyv2.Models;
 using Buildyv2.Repository.Interfaces;
@@ -55,6 +55,10 @@ namespace Buildyv2.Controllers.V1
                     },
                     new IncludePropertyConfiguration<Estate>
                     {
+                        IncludeExpression = b => b.OwnerDS
+                    },
+                    new IncludePropertyConfiguration<Estate>
+                    {
                         IncludeExpression = b => b.ListReports
                     },
                     new IncludePropertyConfiguration<Estate>
@@ -103,6 +107,10 @@ namespace Buildyv2.Controllers.V1
                  new IncludePropertyConfiguration<Estate>
                     {
                         IncludeExpression = b => b.CityDS
+                    },
+                    new IncludePropertyConfiguration<Estate>
+                    {
+                        IncludeExpression = b => b.OwnerDS
                     },
                     new IncludePropertyConfiguration<Estate>
                     {
@@ -261,6 +269,10 @@ namespace Buildyv2.Controllers.V1
                     },
                     new IncludePropertyConfiguration<Estate>
                     {
+                        IncludeExpression = b => b.OwnerDS
+                    },
+                    new IncludePropertyConfiguration<Estate>
+                    {
                         IncludeExpression = b => b.ListReports
                     },
                     new IncludePropertyConfiguration<Estate>
@@ -291,6 +303,7 @@ namespace Buildyv2.Controllers.V1
                 estate.LatLong = estateCreateDto.LatLong;
                 estate.GoogleMapsURL = estateCreateDto.GoogleMapsURL;
                 estate.CityDS = await _dbContext.CityDS.FindAsync(estateCreateDto.CityDSId);
+                estate.OwnerDS = await _dbContext.OwnerDS.FindAsync(estateCreateDto.OwnerDSId);
                 estate.Comments = estateCreateDto.Comments;
                 estate.Update = DateTime.Now;
 
@@ -357,9 +370,20 @@ namespace Buildyv2.Controllers.V1
                     ModelState.AddModelError("NameAlreadyExists", $"La ciudad ID={estateCreateDto.CityDSId} no existe en el sistema.");
                     return BadRequest(ModelState);
                 }
+                var owner = await _dbContext.OwnerDS.FindAsync(estateCreateDto.OwnerDSId);
+                if (owner == null)
+                {
+                    _logger.LogError($"La ciudad ID={estateCreateDto.OwnerDSId} no existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"El dueño ID={estateCreateDto.OwnerDSId} no existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    ModelState.AddModelError("NameAlreadyExists", $"El dueño ID={estateCreateDto.OwnerDSId} no existe en el sistema.");
+                    return BadRequest(ModelState);
+                }
 
                 Estate modelo = _mapper.Map<Estate>(estateCreateDto);
                 modelo.CityDS = city; // Asigna el objeto CountryDS resuelto
+                modelo.OwnerDS = owner; // Asigna el objeto CountryDS resuelto
                 modelo.Creation = DateTime.Now;
                 modelo.Update = DateTime.Now;
 

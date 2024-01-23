@@ -18,6 +18,7 @@ import {
   faTrowelBricks,
   faImages,
   faDollarSign,
+  faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
@@ -309,6 +310,17 @@ const EstateMenu = () => {
             <FontAwesomeIcon
               icon={faDollarSign}
               color={estate.presentRentId > 0 ? "#697588" : "lightgray"}
+            />
+          </button>
+          <button
+            onClick={() => navigateToRent(estate)}
+            style={{ border: "none", background: "none" }}
+            className={isBumped ? "bump" : ""}
+            title={estate.ownerDS?.name || "N/A"}
+          >
+            <FontAwesomeIcon
+              icon={faInfoCircle}
+              color={estate.ownerDS?.color || "lightgray"}
             />
           </button>
         </td>

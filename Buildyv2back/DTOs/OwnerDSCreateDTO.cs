@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Buildyv2.Validations;
-using Buildyv2.Models;
 
 namespace Buildyv2.DTOs
 {
-    public class EstateCreateDTO
+    public class OwnerDSCreateDTO
     {
         #region Internal
 
@@ -19,22 +18,18 @@ namespace Buildyv2.DTOs
         public string Name { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        public string Address { get; set; }
-        public string LatLong { get; set; }
-        [Required(ErrorMessage = "El campo {0} es requerido")]
-        public int CityDSId { get; set; }
-        [Required(ErrorMessage = "El campo {0} es requerido")]
-        public int OwnerDSId { get; set; }
-        [Required(ErrorMessage = "El campo {0} es requerido")]
-        public string GoogleMapsURL { get; set; }
-        public bool EstateIsRented { get; set; }
-        public string Comments { get; set; }
-        public int PresentRentId { get; set; }
+        public string Color { get; set; }
+
+        public DateTime Creation { get; set; } = DateTime.Now;
+
+        public DateTime Update { get; set; } = DateTime.Now;
+        public string NominatimCityCode { get; set; }
 
         #endregion
 
         #region External
 
         #endregion
+
     }
 }

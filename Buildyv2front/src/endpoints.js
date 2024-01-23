@@ -11,6 +11,7 @@ export const urlTenant = `${apiURL}/tenants`;
 export const urlCity = `${apiURL}/cities`;
 export const urlProvince = `${apiURL}/provinces`;
 export const urlCountry = `${apiURL}/countries`;
+export const urlOwner = `${apiURL}/owners`;
 export const urlUserRole = `${apiURL}/accounts`;
 export const urlAccountRegister = `${apiURL}/accounts/register`;
 export const urlAccountUpdateUser = `${apiURL}/accounts/UpdateUser`;

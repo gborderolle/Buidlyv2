@@ -30,10 +30,10 @@ import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCountryList } from "../../../store/generalData-actions";
-import { urlCountry } from "../../../endpoints";
+import { fetchOwnerList } from "../../../store/generalData-actions";
+import { urlOwner } from "../../../endpoints";
 
-const CountryTable = (props) => {
+const OwnerTable = (props) => {
   //#region Consts ***********************************
 
   const [isValidForm, setIsValidForm] = useState(true);
@@ -46,7 +46,7 @@ const CountryTable = (props) => {
   } = useAPI();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentCountry, setCurrentCountry] = useState(null);
+  const [currentOwner, setCurrentOwner] = useState(null);
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [idToDelete, setIdToDelete] = useState(null);
@@ -55,7 +55,7 @@ const CountryTable = (props) => {
   const dispatch = useDispatch();
 
   // Redux
-  const countryList = useSelector((state) => state.generalData.countryList);
+  const ownerList = useSelector((state) => state.generalData.ownerList);
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -67,16 +67,16 @@ const CountryTable = (props) => {
   const [pageCount, setPageCount] = useState(0);
 
   useEffect(() => {
-    dispatch(fetchCountryList());
-    dispatch(fetchCountryList());
+    dispatch(fetchOwnerList());
+    dispatch(fetchOwnerList());
   }, [dispatch]);
 
   useEffect(() => {
-    setPageCount(Math.ceil(countryList.length / itemsPerPage));
-  }, [countryList, itemsPerPage]);
+    setPageCount(Math.ceil(ownerList.length / itemsPerPage));
+  }, [ownerList, itemsPerPage]);
 
   const {
-    value: countryName,
+    value: ownerName,
     isValid: inputIsValid1,
     hasError: inputHasError1,
     valueChangeHandler: inputChangeHandler1,
@@ -85,7 +85,7 @@ const CountryTable = (props) => {
   } = useInput((value) => value.trim() !== "");
 
   const {
-    value: nominatimCode,
+    value: color,
     isValid: inputIsValid2,
     hasError: inputHasError2,
     valueChangeHandler: inputChangeHandler2,
@@ -98,7 +98,7 @@ const CountryTable = (props) => {
   //#region Hooks ***********************************
 
   const sortedList = useMemo(() => {
-    let sortableList = [...countryList];
+    let sortableList = [...ownerList];
     if (sortConfig.key !== null) {
       sortableList.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -111,7 +111,7 @@ const CountryTable = (props) => {
       });
     }
     return sortableList;
-  }, [countryList, sortConfig]);
+  }, [ownerList, sortConfig]);
 
   //#endregion Hooks ***********************************
 
@@ -125,11 +125,11 @@ const CountryTable = (props) => {
     setSortConfig({ key, direction });
   };
 
-  const openModal = (country = null) => {
-    setCurrentCountry(country);
-    if (country && country.name && country.nominatimCountryCode) {
-      inputReset1(country.name);
-      inputReset2(country.nominatimCountryCode);
+  const openModal = (owner = null) => {
+    setCurrentOwner(owner);
+    if (owner && owner.name && owner.color) {
+      inputReset1(owner.name);
+      inputReset2(owner.color);
     } else {
       inputReset1();
       inputReset2();
@@ -139,7 +139,7 @@ const CountryTable = (props) => {
 
   const closeModal = () => {
     setIsModalVisible(false);
-    setCurrentCountry(null);
+    setCurrentOwner(null);
   };
 
   const closeDeleteModal = () => {
@@ -154,8 +154,8 @@ const CountryTable = (props) => {
 
   const confirmDelete = async () => {
     if (idToDelete) {
-      await removeData(urlCountry, idToDelete);
-      dispatch(fetchCountryList());
+      await removeData(urlOwner, idToDelete);
+      dispatch(fetchOwnerList());
       closeDeleteModal();
     }
   };
@@ -174,32 +174,32 @@ const CountryTable = (props) => {
     }
 
     const dataToUpload = {
-      Name: countryName,
-      NominatimCountryCode: nominatimCode,
+      Name: ownerName,
+      Color: color,
     };
 
     try {
       let response;
-      if (currentCountry) {
+      if (currentOwner) {
         // Actualizar el rol de usuario
         response = await uploadData(
           dataToUpload,
-          urlCountry, // Endpoint para actualizar roles
+          urlOwner, // Endpoint para actualizar roles
           true,
-          currentCountry.id
+          currentOwner.id
         );
       } else {
         // Crear un nuevo rol de usuario
         response = await uploadData(
           dataToUpload,
-          urlCountry // Endpoint para crear roles
+          urlOwner // Endpoint para crear roles
         );
       }
       if (response) {
-        dispatch(fetchCountryList());
+        dispatch(fetchOwnerList());
         inputReset1();
         inputReset2();
-
+        
         setTimeout(() => {
           closeModal();
         }, 1000);
@@ -217,7 +217,7 @@ const CountryTable = (props) => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentCountries = countryList.slice(indexOfFirstItem, indexOfLastItem);
+  const currentOwners = ownerList.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div>
@@ -231,32 +231,30 @@ const CountryTable = (props) => {
             <CTableHeaderCell onClick={() => requestSort("name")}>
               Nombre
             </CTableHeaderCell>
-            <CTableHeaderCell
-              onClick={() => requestSort("nominatimCountryCode")}
-            >
-              Código nominatim
+            <CTableHeaderCell onClick={() => requestSort("color")}>
+              Color
             </CTableHeaderCell>
             <CTableHeaderCell>Acciones</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {sortedList.map((country, index) => (
-            <CTableRow key={country.id}>
+          {sortedList.map((owner, index) => (
+            <CTableRow key={owner.id}>
               <CTableDataCell>{index + 1}</CTableDataCell>
-              <CTableDataCell>{country.name}</CTableDataCell>
-              <CTableDataCell>{country.nominatimCountryCode}</CTableDataCell>
+              <CTableDataCell>{owner.name}</CTableDataCell>
+              <CTableDataCell>{owner.color}</CTableDataCell>
               <CTableDataCell>
                 <CButton
                   color="dark"
                   size="sm"
-                  onClick={() => openModal(country)}
+                  onClick={() => openModal(owner)}
                 >
                   Editar
                 </CButton>
                 <CButton
                   color="danger"
                   size="sm"
-                  onClick={() => openDeleteModal(country.id)}
+                  onClick={() => openDeleteModal(owner.id)}
                   style={{ marginLeft: 10 }}
                 >
                   Eliminar
@@ -292,7 +290,7 @@ const CountryTable = (props) => {
       <CModal visible={isModalVisible} onClose={closeModal}>
         <CModalHeader>
           <CModalTitle>
-            {currentCountry ? "Editar país" : "Agregar país"}
+            {currentOwner ? "Editar dueño" : "Agregar dueño"}
           </CModalTitle>
         </CModalHeader>
         <CForm onSubmit={formSubmitHandler}>
@@ -308,7 +306,7 @@ const CountryTable = (props) => {
                     className="cardItem"
                     onChange={inputChangeHandler1}
                     onBlur={inputBlurHandler1}
-                    value={countryName}
+                    value={ownerName}
                   />
                   {inputHasError1 && (
                     <CAlert color="danger" className="w-100">
@@ -319,14 +317,14 @@ const CountryTable = (props) => {
                 <br />
                 <CInputGroup>
                   <CInputGroupText className="cardItem custom-input-group-text">
-                    {props.nominatimCode}
+                    {props.color}
                   </CInputGroupText>
                   <CFormInput
                     type="text"
                     className="cardItem"
                     onChange={inputChangeHandler2}
                     onBlur={inputBlurHandler2}
-                    value={nominatimCode}
+                    value={color}
                   />
                   {inputHasError2 && (
                     <CAlert color="danger" className="w-100">
@@ -365,7 +363,7 @@ const CountryTable = (props) => {
           </CModalBody>
           <CModalFooter>
             <CButton type="submit" color="dark" size="sm">
-              {currentCountry ? "Actualizar" : "Guardar"}
+              {currentOwner ? "Actualizar" : "Guardar"}
             </CButton>
             <CButton color="secondary" size="sm" onClick={closeModal}>
               Cancelar
@@ -394,4 +392,4 @@ const CountryTable = (props) => {
   );
 };
 
-export default CountryTable;
+export default OwnerTable;

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Buildyv2.Validations;
 
@@ -38,6 +38,8 @@ namespace Buildyv2.Models
         #region External
 
         public CityDS CityDS { get; set; }
+
+        public OwnerDS OwnerDS { get; set; }
 
         public List<Report> ListReports { get; set; } = new();
 

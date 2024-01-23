@@ -161,6 +161,22 @@ const CityTable = (props) => {
 
   const openModal = (city = null) => {
     setCurrentCity(city);
+    if (city && city.name && city.nominatimCityCode) {
+      inputReset1(city.name);
+      inputReset2(city.nominatimCityCode);
+
+      // Busca el departamento (province) correspondiente y lo establece como seleccionado
+      const province = provinceList.find((p) => p.id === city.provinceDSId);
+      if (province) {
+        setDdlSelectedProvince(province);
+      } else {
+        inputResetProvince(); // Resetea el selector de departamentos si no se encuentra uno correspondiente
+      }
+    } else {
+      inputReset1();
+      inputReset2();
+      inputResetProvince();
+    }
     setIsModalVisible(true);
   };
 
@@ -219,17 +235,33 @@ const CityTable = (props) => {
     };
 
     try {
-      const response = await uploadData(dataToUpload, urlCity);
+      let response;
+      if (currentCity) {
+        // Actualizar el rol de usuario
+        response = await uploadData(
+          dataToUpload,
+          urlCity, // Endpoint para actualizar roles
+          true,
+          currentCity.id
+        );
+      } else {
+        // Crear un nuevo rol de usuario
+        response = await uploadData(
+          dataToUpload,
+          urlCity // Endpoint para crear roles
+        );
+      }
       if (response) {
         dispatch(fetchCityList());
         inputReset1();
         inputReset2();
-        inputResetProvince();
-        closeModal();
+
+        setTimeout(() => {
+          closeModal();
+        }, 1000);
       }
     } catch (error) {
       console.error("Error al enviar los datos:", error);
-      // No cerrar el modal aquí, ya que se mostrará el error en él
     }
   };
 

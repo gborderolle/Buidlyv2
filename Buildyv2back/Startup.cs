@@ -129,6 +129,7 @@ namespace Buildyv2
             services.AddScoped<ICountryDSRepository, CountryDSRepository>();
             services.AddScoped<IProvinceDSRepository, ProvinceDSRepository>();
             services.AddScoped<ICityDSRepository, CityDSRepository>();
+            services.AddScoped<IOwnerDSRepository, OwnerDSRepository>();
 
             services.AddScoped<ICountryResolver, CountryResolver>();
             services.AddScoped<CountryResolverService>();

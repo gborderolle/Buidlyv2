@@ -188,7 +188,10 @@ const UserRoleTable = (props) => {
       if (response) {
         dispatch(fetchUserRoleList());
         inputReset1();
-        closeModal();
+
+        setTimeout(() => {
+          closeModal();
+        }, 1000);
       }
     } catch (error) {
       console.error("Error al enviar los datos:", error);

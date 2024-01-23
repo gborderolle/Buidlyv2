@@ -21,6 +21,7 @@ import ProvinceTable from "./ProvinceTable";
 import CountryTable from "./CountryTable";
 import UserRoleTable from "./UserRoleTable";
 import UserTable from "./UserTable";
+import OwnerTable from "./OwnerTable";
 
 const DataMenu = () => {
   //#region Const ***********************************
@@ -74,6 +75,13 @@ const DataMenu = () => {
   const userRoleData = async (roleName) => {
     return {
       roleName,
+    };
+  };
+
+  const userOwner = async (name, color) => {
+    return {
+      name,
+      color,
     };
   };
 
@@ -180,6 +188,27 @@ const DataMenu = () => {
                     title="Menú roles de usuario"
                     inputName="Nombre"
                     createDataToUpload={userRoleData}
+                  />
+                </CCardBody>
+              </CCard>
+            </CAccordionBody>
+          </CAccordionItem>
+        </CAccordion>
+        <br />
+        <CAccordion>
+          <CAccordionItem itemKey={1}>
+            <CAccordionHeader className="custom-accordion-header">
+              Menú dueños
+            </CAccordionHeader>
+            <CAccordionBody>
+              <CCard>
+                <CCardHeader>Tabla de datos</CCardHeader>
+                <CCardBody>
+                  <OwnerTable
+                    title="Menú dueños"
+                    inputName="Nombre"
+                    color="Color"
+                    createDataToUpload={userOwner}
                   />
                 </CCardBody>
               </CCard>

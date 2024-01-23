@@ -25,6 +25,7 @@ namespace Buildyv2.Context
         public DbSet<CityDS> CityDS { get; set; }
         public DbSet<ProvinceDS> ProvinceDS { get; set; }
         public DbSet<CountryDS> CountryDS { get; set; }
+        public DbSet<OwnerDS> OwnerDS { get; set; }
 
         #endregion
 
@@ -163,6 +164,13 @@ namespace Buildyv2.Context
             modelBuilder.Entity<CityDS>().HasData(new List<CityDS>
             {
                 city1,city2
+            });
+
+            var owner1 = new OwnerDS() { Id = 1, Name = "Mirta", Color = "green" };
+            var owner2 = new OwnerDS() { Id = 2, Name = "Gladys", Color = "yellow" };
+            modelBuilder.Entity<OwnerDS>().HasData(new List<OwnerDS>
+            {
+                owner1,owner2
             });
         }
 

@@ -46,6 +46,7 @@ const EstateABM = () => {
   } = useAPI();
 
   const [inputHasErrorCity, setInputHasErrorCity] = useState(false);
+  const [inputHasErrorOwner, setInputHasErrorOwner] = useState(false);
 
   const [latLong, setLatLong] = useState({ lat: null, lon: null });
   const [addressError, setAddressError] = useState("");
@@ -68,10 +69,17 @@ const EstateABM = () => {
   const cityList = useSelector((state) => state.generalData.cityList);
   const provinceList = useSelector((state) => state.generalData.provinceList);
   const countryList = useSelector((state) => state.generalData.countryList);
+  const ownerList = useSelector((state) => state.generalData.ownerList);
 
   const defaultCityId = estate?.cityDS?.id || null;
   const defaultCity = cityList.find((city) => city.id === defaultCityId);
   const [ddlSelectedCity, setDdlSelectedCity] = useState(defaultCity || null);
+
+  const defaultOwnerId = estate?.ownerDS?.id || null;
+  const defaultOwner = ownerList.find((owner) => owner.id === defaultOwnerId);
+  const [ddlSelectedOwner, setDdlSelectedOwner] = useState(
+    defaultOwner || null
+  );
 
   const {
     value: estateName,
@@ -147,11 +155,18 @@ const EstateABM = () => {
       return;
     }
 
+    const inputIsValidOwner = ddlSelectedOwner !== null;
+    if (!inputIsValidOwner) {
+      setInputHasErrorOwner(true);
+      return;
+    }
+
     setIsValidForm(
       inputIsValidName &&
         inputIsValidAddress &&
         inputIsValidComments &&
-        inputIsValidCity
+        inputIsValidCity &&
+        inputIsValidOwner
     );
 
     if (!isValidForm) {
@@ -170,6 +185,7 @@ const EstateABM = () => {
           Address: estateAddress,
           Comments: estateComments,
           CityDSId: ddlSelectedCity.id,
+          OwnerDSId: ddlSelectedOwner.id,
           LatLong: `${latLonResult.lat},${latLonResult.lon}`,
           GoogleMapsURL: `https://www.google.com/maps/search/${latLonResult.lat},${latLonResult.lon}`,
         };
@@ -200,6 +216,10 @@ const EstateABM = () => {
 
   const handleSelectDdlCity = (item) => {
     setDdlSelectedCity(item);
+  };
+
+  const handleSelectDdlOwner = (item) => {
+    setDdlSelectedOwner(item);
   };
 
   //#endregion Events ***********************************
@@ -367,7 +387,7 @@ const EstateABM = () => {
                 <CInputGroupText className="cardItem custom-input-group-text">
                   Ciudad
                 </CInputGroupText>
-                {/*  */}
+
                 <CDropdown>
                   <CDropdownToggle id="ddCity" color="secondary">
                     {ddlSelectedCity ? ddlSelectedCity.name : "Seleccionar"}
@@ -387,8 +407,36 @@ const EstateABM = () => {
                       ))}
                   </CDropdownMenu>
                 </CDropdown>
-
-                {/*  */}
+                {inputHasErrorCity && (
+                  <CAlert color="danger" className="w-100">
+                    Entrada inválida
+                  </CAlert>
+                )}
+              </CInputGroup>
+              <br />
+              <CInputGroup>
+                <CInputGroupText className="cardItem custom-input-group-text">
+                  Dueño
+                </CInputGroupText>
+                <CDropdown>
+                  <CDropdownToggle id="ddOwner" color="secondary">
+                    {ddlSelectedOwner ? ddlSelectedOwner.name : "Seleccionar"}
+                  </CDropdownToggle>
+                  <CDropdownMenu>
+                    {ownerList &&
+                      ownerList.length > 0 &&
+                      ownerList.map((owner) => (
+                        <CDropdownItem
+                          key={owner.id}
+                          onClick={() => handleSelectDdlOwner(owner)}
+                          style={{ cursor: "pointer" }}
+                          value={owner.id}
+                        >
+                          {owner.id}: {owner.name}
+                        </CDropdownItem>
+                      ))}
+                  </CDropdownMenu>
+                </CDropdown>
                 {inputHasErrorCity && (
                   <CAlert color="danger" className="w-100">
                     Entrada inválida

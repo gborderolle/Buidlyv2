@@ -11,6 +11,7 @@ import {
   urlCity,
   urlProvince,
   urlCountry,
+  urlOwner,
   urlAccount,
 } from "../endpoints";
 
@@ -142,6 +143,19 @@ export const fetchCountryList = () => {
       const data = await fetchApi(urlCountry + "/GetCountry");
       if (data.result) {
         dispatch(generalDataActions.setCountryList(data.result));
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+};
+
+export const fetchOwnerList = () => {
+  return async (dispatch) => {
+    try {
+      const data = await fetchApi(urlOwner+ "/GetOwner");
+      if (data.result) {
+        dispatch(generalDataActions.setOwnerList(data.result));
       }
     } catch (error) {
       console.error("Fetch error:", error);

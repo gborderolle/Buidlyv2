@@ -276,7 +276,10 @@ const UserTable = (props) => {
         inputReset1();
         inputReset2();
         inputResetUserRole();
-        closeModal();
+
+        setTimeout(() => {
+          closeModal();
+        }, 1000);
       }
     } catch (error) {
       console.error("Error al enviar los datos:", error);
