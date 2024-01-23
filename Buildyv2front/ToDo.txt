@@ -1,2 +1,0 @@
-JobsController:
-No le llega workList y LabourCost $ llega mal

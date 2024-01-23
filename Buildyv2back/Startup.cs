@@ -235,10 +235,10 @@ namespace Buildyv2
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Buildy 2.0");
             });
 
-            app.UseHttpsRedirection();
+            app.UseHttpsRedirection(); // orden n1
             app.UseStaticFiles();
-            app.UseRouting();
-            app.UseCors(); // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/27047732#notes
+            app.UseCors(); // orden n2, Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/27047732#notes
+            app.UseRouting();  // orden n3
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
