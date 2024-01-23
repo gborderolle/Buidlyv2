@@ -18,10 +18,6 @@ import {
   CModalFooter,
   CInputGroup,
   CInputGroupText,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
   CCard,
   CCardBody,
   CCardFooter,
@@ -33,7 +29,11 @@ import useAPI from "../../../hooks/use-API";
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUserRoleList } from "../../../store/generalData-actions";
-import { urlUserRole } from "../../../endpoints";
+import {
+  urlUserRole,
+  urlUserRoleCreate,
+  urlUserRoleUpdate,
+} from "../../../endpoints";
 
 const UserRoleTable = (props) => {
   //#region Consts ***********************************
@@ -48,13 +48,10 @@ const UserRoleTable = (props) => {
   } = useAPI();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentCity, setCurrentCity] = useState(null);
+  const [currentUserRole, setCurrentUserRole] = useState(null);
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [idToDelete, setIdToDelete] = useState(null);
-
-  const [ddlSelectedUserRole, setDdlSelectedUserRole] = useState(null);
-  const [inputHasErrorUserRole, setInputHasErrorUserRole] = useState(false);
 
   // redux
   const dispatch = useDispatch();
@@ -79,14 +76,19 @@ const UserRoleTable = (props) => {
 
   //#region Functions ***********************************
 
-  const openModal = (city = null) => {
-    setCurrentCity(city);
+  const openModal = (userRole = null) => {
+    setCurrentUserRole(userRole);
+    if (userRole && userRole.name) {
+      inputReset1(userRole.name);
+    } else {
+      inputReset1();
+    }
     setIsModalVisible(true);
   };
 
   const closeModal = () => {
     setIsModalVisible(false);
-    setCurrentCity(null);
+    setCurrentUserRole(null);
   };
 
   const closeDeleteModal = () => {
@@ -107,19 +109,6 @@ const UserRoleTable = (props) => {
     }
   };
 
-  const inputResetUserRole = () => {
-    setDdlSelectedUserRole(null);
-    setInputHasErrorUserRole(false);
-  };
-
-  const handleDelete = async (objectId) => {
-    const response = await removeData(urlUserRole, objectId);
-    if (response) {
-      dispatch(fetchUserRoleList());
-    }
-    closeDeleteModal();
-  };
-
   //#endregion Functions ***********************************
 
   //#region Events ***********************************
@@ -127,41 +116,40 @@ const UserRoleTable = (props) => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
-    // Verificar si se seleccionó una provincia
-    const inputIsValidProvince = ddlSelectedUserRole !== null;
-    if (!inputIsValidProvince) {
-      setInputHasErrorUserRole(true);
-      return;
-    }
-
-    setIsValidForm(inputIsValid1 && inputIsValid2);
-
-    if (!isValidForm) {
+    if (!inputIsValid1) {
+      setInputHasError1(true);
       return;
     }
 
     const dataToUpload = {
       Name: userName,
-      UserRoleId: ddlSelectedUserRole.id,
     };
 
     try {
-      const response = await uploadData(dataToUpload, urlUserRole);
+      let response;
+      if (currentUserRole) {
+        // Actualizar el rol de usuario
+        response = await uploadData(
+          dataToUpload,
+          urlUserRoleUpdate, // Endpoint para actualizar roles
+          true,
+          currentUserRole.id
+        );
+      } else {
+        // Crear un nuevo rol de usuario
+        response = await uploadData(
+          dataToUpload,
+          urlUserRoleCreate // Endpoint para crear roles
+        );
+      }
       if (response) {
         dispatch(fetchUserRoleList());
         inputReset1();
-        inputReset2();
-        inputResetUserRole();
         closeModal();
       }
     } catch (error) {
       console.error("Error al enviar los datos:", error);
-      // No cerrar el modal aquí, ya que se mostrará el error en él
     }
-  };
-
-  const handleSelectDdlUserRole = (item) => {
-    setDdlSelectedUserRole(item);
   };
 
   //#endregion Events ***********************************
@@ -180,10 +168,10 @@ const UserRoleTable = (props) => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {userRoleList.map((userRole) => {
+          {userRoleList.map((userRole, index) => {
             return (
               <CTableRow key={userRole.id}>
-                <CTableDataCell>{userRole.id}</CTableDataCell>
+                <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{userRole.name}</CTableDataCell>
                 <CTableDataCell>
                   <CButton
@@ -211,7 +199,9 @@ const UserRoleTable = (props) => {
       <CModal visible={isModalVisible} onClose={closeModal}>
         <CModalHeader>
           <CModalTitle>
-            {currentCity ? "Editar rol de usuario" : "Agregar rol de usuario"}
+            {currentUserRole
+              ? "Editar rol de usuario"
+              : "Agregar rol de usuario"}
           </CModalTitle>
         </CModalHeader>
         <CForm onSubmit={formSubmitHandler}>
@@ -266,7 +256,7 @@ const UserRoleTable = (props) => {
           </CModalBody>
           <CModalFooter>
             <CButton type="submit" color="dark" size="sm">
-              {currentCity ? "Actualizar" : "Guardar"}
+              {currentUserRole ? "Actualizar" : "Guardar"}
             </CButton>
             <CButton color="secondary" size="sm" onClick={closeModal}>
               Cancelar

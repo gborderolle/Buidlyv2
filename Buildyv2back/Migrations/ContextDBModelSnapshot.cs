@@ -22,6 +22,171 @@ namespace Buildyv2.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Buildyv2.Models.BuildyRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("Update")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "bef4cbd4-1f2b-472f-a1e2-e1a901f6808c",
+                            Creation = new DateTime(2024, 1, 23, 1, 13, 19, 797, DateTimeKind.Local).AddTicks(7376),
+                            Name = "Admin",
+                            NormalizedName = "ADMIN",
+                            Update = new DateTime(2024, 1, 23, 1, 13, 19, 797, DateTimeKind.Local).AddTicks(7377)
+                        },
+                        new
+                        {
+                            Id = "bef4cbd4-1f2b-472f-a3f2-e1a901f6811c",
+                            Creation = new DateTime(2024, 1, 23, 1, 13, 19, 797, DateTimeKind.Local).AddTicks(7381),
+                            Name = "User",
+                            NormalizedName = "USER",
+                            Update = new DateTime(2024, 1, 23, 1, 13, 19, 797, DateTimeKind.Local).AddTicks(7381)
+                        });
+                });
+
+            modelBuilder.Entity("Buildyv2.Models.BuildyUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Update")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "74b944d8-28d7-4b29-b989-3e132a21a8cd",
+                            Creation = new DateTime(2024, 1, 23, 1, 13, 19, 797, DateTimeKind.Local).AddTicks(7387),
+                            Email = "admin@buildy2.uy",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            Name = "Sr.Admin",
+                            NormalizedEmail = "admin@buildy2.uy",
+                            NormalizedUserName = "admin@buildy2.uy",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAKsrDMqa/i3+UF6MuHlAmSzGwa3qUfsuYT+ybHH+4ydg3A9XNTPSI2Wpg107xqDow==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "0843b52d-ae2c-4b2a-ab80-b6fcd45fc21d",
+                            TwoFactorEnabled = false,
+                            Update = new DateTime(2024, 1, 23, 1, 13, 19, 797, DateTimeKind.Local).AddTicks(7388),
+                            UserName = "Sr.Admin"
+                        },
+                        new
+                        {
+                            Id = "e0765c93-676c-4199-b7ee-d7877c471821",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "fdbd13a1-e7c6-455e-8477-d3c640ef440f",
+                            Creation = new DateTime(2024, 1, 23, 1, 13, 19, 886, DateTimeKind.Local).AddTicks(7724),
+                            Email = "normal@buildy2.uy",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            Name = "Sr.Normal",
+                            NormalizedEmail = "normal@buildy2.uy",
+                            NormalizedUserName = "normal@buildy2.uy",
+                            PasswordHash = "AQAAAAIAAYagAAAAELTOdn/aWW+FeVovuEEdZ+pivbw6mffyMhStJctnWJ84QBDV2FaCJY1+q2zdVZb/Lg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "30ab01f3-dbc5-427b-9908-167dae5ae976",
+                            TwoFactorEnabled = false,
+                            Update = new DateTime(2024, 1, 23, 1, 13, 19, 886, DateTimeKind.Local).AddTicks(7746),
+                            UserName = "Sr.Normal"
+                        });
+                });
+
             modelBuilder.Entity("Buildyv2.Models.CityDS", b =>
                 {
                     b.Property<int>("Id")
@@ -57,20 +222,20 @@ namespace Buildyv2.Migrations
                         new
                         {
                             Id = 1,
-                            Creation = new DateTime(2024, 1, 22, 10, 52, 9, 741, DateTimeKind.Local).AddTicks(6037),
+                            Creation = new DateTime(2024, 1, 23, 1, 13, 19, 969, DateTimeKind.Local).AddTicks(6822),
                             Name = "Melo",
                             NominatimCityCode = "ME",
                             ProvinceDSId = 1,
-                            Update = new DateTime(2024, 1, 22, 10, 52, 9, 741, DateTimeKind.Local).AddTicks(6039)
+                            Update = new DateTime(2024, 1, 23, 1, 13, 19, 969, DateTimeKind.Local).AddTicks(6823)
                         },
                         new
                         {
                             Id = 2,
-                            Creation = new DateTime(2024, 1, 22, 10, 52, 9, 741, DateTimeKind.Local).AddTicks(6043),
+                            Creation = new DateTime(2024, 1, 23, 1, 13, 19, 969, DateTimeKind.Local).AddTicks(6824),
                             Name = "Montevideo",
                             NominatimCityCode = "MO",
                             ProvinceDSId = 2,
-                            Update = new DateTime(2024, 1, 22, 10, 52, 9, 741, DateTimeKind.Local).AddTicks(6044)
+                            Update = new DateTime(2024, 1, 23, 1, 13, 19, 969, DateTimeKind.Local).AddTicks(6825)
                         });
                 });
 
@@ -104,10 +269,10 @@ namespace Buildyv2.Migrations
                         new
                         {
                             Id = 1,
-                            Creation = new DateTime(2024, 1, 22, 10, 52, 9, 741, DateTimeKind.Local).AddTicks(5498),
+                            Creation = new DateTime(2024, 1, 23, 1, 13, 19, 969, DateTimeKind.Local).AddTicks(6694),
                             Name = "Uruguay",
                             NominatimCountryCode = "UY",
-                            Update = new DateTime(2024, 1, 22, 10, 52, 9, 741, DateTimeKind.Local).AddTicks(5549)
+                            Update = new DateTime(2024, 1, 23, 1, 13, 19, 969, DateTimeKind.Local).AddTicks(6725)
                         });
                 });
 
@@ -270,19 +435,19 @@ namespace Buildyv2.Migrations
                         {
                             Id = 1,
                             CountryDSId = 1,
-                            Creation = new DateTime(2024, 1, 22, 10, 52, 9, 741, DateTimeKind.Local).AddTicks(5919),
+                            Creation = new DateTime(2024, 1, 23, 1, 13, 19, 969, DateTimeKind.Local).AddTicks(6784),
                             Name = "Cerro Largo",
                             NominatimProvinceCode = "CL",
-                            Update = new DateTime(2024, 1, 22, 10, 52, 9, 741, DateTimeKind.Local).AddTicks(5921)
+                            Update = new DateTime(2024, 1, 23, 1, 13, 19, 969, DateTimeKind.Local).AddTicks(6785)
                         },
                         new
                         {
                             Id = 2,
                             CountryDSId = 1,
-                            Creation = new DateTime(2024, 1, 22, 10, 52, 9, 741, DateTimeKind.Local).AddTicks(5927),
+                            Creation = new DateTime(2024, 1, 23, 1, 13, 19, 969, DateTimeKind.Local).AddTicks(6787),
                             Name = "Montevideo",
                             NominatimProvinceCode = "MO",
-                            Update = new DateTime(2024, 1, 22, 10, 52, 9, 741, DateTimeKind.Local).AddTicks(5928)
+                            Update = new DateTime(2024, 1, 23, 1, 13, 19, 969, DateTimeKind.Local).AddTicks(6787)
                         });
                 });
 
@@ -453,41 +618,6 @@ namespace Buildyv2.Migrations
                     b.ToTable("Worker");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "bef4cbd4-1f2b-472f-a1e2-e1a901f6808c",
-                            Name = "Admin",
-                            NormalizedName = "Admin"
-                        });
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -511,105 +641,6 @@ namespace Buildyv2.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "3a3a4850-90af-4a0d-9e8f-5b5ae84bfdaf",
-                            Email = "admin@buildy2.uy",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "admin@buildy2.uy",
-                            NormalizedUserName = "admin@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAbF7FI+I9lr+G1rXKeGg1xM+P6qeKEg3RjQ9KNy6JaIHF5UcI48ZZb3Ko3o7tPi/g==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "27fa9363-00d3-47e3-b8c6-0e575569af0a",
-                            TwoFactorEnabled = false,
-                            UserName = "Sr.Admin"
-                        },
-                        new
-                        {
-                            Id = "e0765c93-676c-4199-b7ee-d7877c471821",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "245f5aa0-7338-49f6-978a-208192d93fbe",
-                            Email = "normal@buildy2.uy",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "normal@buildy2.uy",
-                            NormalizedUserName = "normal@buildy2.uy",
-                            PasswordHash = "AQAAAAIAAYagAAAAEH3K41pBhe//fxZXEkpGkiGOg035ydA4GaStXtVrV1PDGE0G8/7EfMiAi7qwrk7DkA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "80835e12-33d0-4cdc-996a-188e360fbcde",
-                            TwoFactorEnabled = false,
-                            UserName = "Sr.Normal"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -642,6 +673,13 @@ namespace Buildyv2.Migrations
                             Id = 1,
                             ClaimType = "role",
                             ClaimValue = "admin",
+                            UserId = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClaimType = "role",
+                            ClaimValue = "user",
                             UserId = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176"
                         });
                 });
@@ -681,6 +719,18 @@ namespace Buildyv2.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176",
+                            RoleId = "bef4cbd4-1f2b-472f-a1e2-e1a901f6808c"
+                        },
+                        new
+                        {
+                            UserId = "e0765c93-676c-4199-b7ee-d7877c471821",
+                            RoleId = "bef4cbd4-1f2b-472f-a3f2-e1a901f6811c"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -807,7 +857,7 @@ namespace Buildyv2.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Buildyv2.Models.BuildyRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -816,7 +866,7 @@ namespace Buildyv2.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Buildyv2.Models.BuildyUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -825,7 +875,7 @@ namespace Buildyv2.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Buildyv2.Models.BuildyUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -834,13 +884,13 @@ namespace Buildyv2.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Buildyv2.Models.BuildyRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Buildyv2.Models.BuildyUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -849,7 +899,7 @@ namespace Buildyv2.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Buildyv2.Models.BuildyUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

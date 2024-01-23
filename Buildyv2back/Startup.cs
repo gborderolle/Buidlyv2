@@ -2,6 +2,7 @@ using Buildyv2.ApiBehavior;
 using Buildyv2.Context;
 using Buildyv2.Filters;
 using Buildyv2.Middlewares;
+using Buildyv2.Models;
 using Buildyv2.Repository;
 using Buildyv2.Repository.Interfaces;
 using Buildyv2.Services;
@@ -164,7 +165,7 @@ namespace Buildyv2
             });
 
             // Identity Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/27047608#notes
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<BuildyUser, BuildyRole>()
                 .AddEntityFrameworkStores<ContextDB>()
                 .AddDefaultTokenProviders();
 

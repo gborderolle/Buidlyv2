@@ -1,11 +1,11 @@
-﻿using Buildyv2.Models;
+using Buildyv2.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Buildyv2.Context
 {
-    public class ContextDB : IdentityDbContext
+    public class ContextDB : IdentityDbContext<BuildyUser, BuildyRole, string>
     {
         public ContextDB(DbContextOptions<ContextDB> options) : base(options)
         {
@@ -13,6 +13,8 @@ namespace Buildyv2.Context
 
         #region DB Tables
 
+        public DbSet<BuildyUser> BuildyUser { get; set; }
+        public DbSet<BuildyRole> BuildyRole { get; set; }
         public DbSet<Estate> Estate { get; set; }
         public DbSet<Job> Job { get; set; }
         public DbSet<Photo> Photo { get; set; }
@@ -52,44 +54,61 @@ namespace Buildyv2.Context
             // ---------------- Usuarios ---------------------------------------------
             var rolAdminId = "bef4cbd4-1f2b-472f-a1e2-e1a901f6808c";
             var userAdminId = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176";
-            var userNormalId = "e0765c93-676c-4199-b7ee-d7877c471821";
 
-            var rolAdmin = new IdentityRole()
+            var userUserId = "e0765c93-676c-4199-b7ee-d7877c471821";
+            var rolUserId = "bef4cbd4-1f2b-472f-a3f2-e1a901f6811c";
+
+            var rolAdmin = new BuildyRole
             {
                 Id = rolAdminId,
                 Name = "Admin",
-                NormalizedName = "Admin"
+                NormalizedName = "ADMIN",
+                Creation = DateTime.Now,
+                Update = DateTime.Now
             };
 
-            var passwordHasher = new PasswordHasher<IdentityUser>();
+            var rolUser = new BuildyRole
+            {
+                Id = rolUserId,
+                Name = "User",
+                NormalizedName = "USER",
+                Creation = DateTime.Now,
+                Update = DateTime.Now
+            };
+
+            var passwordHasher = new PasswordHasher<BuildyUser>();
 
             var username1 = "admin@buildy2.uy";
-            var userAdmin = new IdentityUser()
+            var userAdmin = new BuildyUser()
             {
                 Id = userAdminId,
                 UserName = "Sr.Admin",
+                Name = "Sr.Admin",
                 NormalizedUserName = username1,
                 Email = username1,
                 NormalizedEmail = username1,
-                PasswordHash = passwordHasher.HashPassword(null, "Aa1234.")
+                PasswordHash = passwordHasher.HashPassword(null, "Aa1234."),
+                //RoleId = rolAdmin.Id
             };
 
             var username2 = "normal@buildy2.uy";
-            var userNormal = new IdentityUser()
+            var userUser = new BuildyUser()
             {
-                Id = userNormalId,
+                Id = userUserId,
                 UserName = "Sr.Normal",
+                Name = "Sr.Normal",
                 NormalizedUserName = username2,
                 Email = username2,
                 NormalizedEmail = username2,
-                PasswordHash = passwordHasher.HashPassword(null, "Aa1234.")
+                PasswordHash = passwordHasher.HashPassword(null, "Aa1234."),
+                //RoleId = rolUser.Id
             };
 
-            modelBuilder.Entity<IdentityUser>()
-                .HasData(userAdmin, userNormal);
+            modelBuilder.Entity<BuildyUser>()
+                .HasData(userAdmin, userUser);
 
-            modelBuilder.Entity<IdentityRole>()
-                .HasData(rolAdmin);
+            modelBuilder.Entity<BuildyRole>()
+                .HasData(rolAdmin, rolUser);
 
             modelBuilder.Entity<IdentityUserClaim<string>>()
                 .HasData(new IdentityUserClaim<string>()
@@ -99,6 +118,29 @@ namespace Buildyv2.Context
                     UserId = userAdminId,
                     ClaimValue = "admin"
                 });
+
+            modelBuilder.Entity<IdentityUserClaim<string>>()
+    .HasData(new IdentityUserClaim<string>()
+    {
+        Id = 2,
+        ClaimType = "role",
+        UserId = userAdminId,
+        ClaimValue = "user"
+    });
+
+            // Asignar roles a usuarios
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
+                {
+                    RoleId = rolAdminId,
+                    UserId = userAdminId
+                },
+                new IdentityUserRole<string>
+                {
+                    RoleId = rolUserId,
+                    UserId = userUserId
+                }
+            );
         }
 
         private void SeedEntities(ModelBuilder modelBuilder)

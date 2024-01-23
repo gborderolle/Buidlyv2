@@ -126,14 +126,6 @@ const CityTable = (props) => {
     setInputHasErrorProvince(false);
   };
 
-  const handleDelete = async (objectId) => {
-    const response = await removeData(urlCity, objectId);
-    if (response) {
-      dispatch(fetchCityList());
-    }
-    closeDeleteModal();
-  };
-
   //#endregion Functions ***********************************
 
   //#region Events ***********************************
@@ -197,7 +189,7 @@ const CityTable = (props) => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {cityList.map((city) => {
+          {cityList.map((city, index) => {
             const province = provinceList.find(
               (province) => province.id === city.provinceDSId
             );
@@ -205,7 +197,7 @@ const CityTable = (props) => {
 
             return (
               <CTableRow key={city.id}>
-                <CTableDataCell>{city.id}</CTableDataCell>
+                <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{city.name}</CTableDataCell>
                 <CTableDataCell>{city.nominatimCityCode}</CTableDataCell>
                 <CTableDataCell>{provinceName}</CTableDataCell>

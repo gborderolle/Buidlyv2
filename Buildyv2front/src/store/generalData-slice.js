@@ -14,6 +14,7 @@ const generalDataSlice = createSlice({
     cityList: [],
     userList: [],
     userRoleList: [],
+    userRole: null, // nuevo estado para almacenar el rol de un usuario
   },
   reducers: {
     setEstateList: (state, action) => {
@@ -48,6 +49,9 @@ const generalDataSlice = createSlice({
     },
     setUserRoleList: (state, action) => {
       state.userRoleList = action.payload;
+    },
+    setUserRole: (state, action) => {
+      state.userRole = action.payload;
     },
   },
 });

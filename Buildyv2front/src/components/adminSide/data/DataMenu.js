@@ -63,9 +63,10 @@ const DataMenu = () => {
     };
   };
 
-  const userData = async (userName, roleId) => {
+  const userData = async (userName, email, roleId) => {
     return {
       userName,
+      email,
       roleId,
     };
   };
@@ -156,7 +157,9 @@ const DataMenu = () => {
                   <UserTable
                     title="Menú usuarios"
                     inputName="Nombre"
-                    createDataToUpload={userRoleData}
+                    email="Email"
+                    password="Password"
+                    createDataToUpload={userData}
                   />
                 </CCardBody>
               </CCard>

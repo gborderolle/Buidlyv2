@@ -126,14 +126,6 @@ const ProvinceTable = (props) => {
     setInputHasErrorCountry(false);
   };
 
-  const handleDelete = async (objectId) => {
-    const response = await removeData(urlProvince, objectId);
-    if (response) {
-      dispatch(fetchProvinceList());
-    }
-    closeDeleteModal();
-  };
-
   //#endregion Functions ***********************************
 
   //#region Events ***********************************
@@ -197,7 +189,7 @@ const ProvinceTable = (props) => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {provinceList.map((province) => {
+          {provinceList.map((province, index) => {
             const country = countryList.find(
               (countryItem) => countryItem.id === province.countryDSId
             );
@@ -205,7 +197,7 @@ const ProvinceTable = (props) => {
 
             return (
               <CTableRow key={province.id}>
-                <CTableDataCell>{province.id}</CTableDataCell>
+                <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{province.name}</CTableDataCell>
                 <CTableDataCell>
                   {province.nominatimProvinceCode}

@@ -11,6 +11,7 @@ import {
   urlCity,
   urlProvince,
   urlCountry,
+  urlAccount,
 } from "../endpoints";
 
 const fetchApi = async (url) => {
@@ -151,7 +152,7 @@ export const fetchCountryList = () => {
 export const fetchUserList = () => {
   return async (dispatch) => {
     try {
-      const data = await fetchApi(urlCountry + "/GetUser");
+      const data = await fetchApi(urlAccount + "/GetUsers");
       if (data.result) {
         dispatch(generalDataActions.setUserList(data.result));
       }
@@ -164,10 +165,21 @@ export const fetchUserList = () => {
 export const fetchUserRoleList = () => {
   return async (dispatch) => {
     try {
-      const data = await fetchApi(urlCountry + "/GetRole");
+      const data = await fetchApi(urlAccount + "/GetRoles");
       if (data.result) {
         dispatch(generalDataActions.setUserRoleList(data.result));
       }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+};
+
+export const fetchUserRole = (id) => {
+  return async () => {
+    try {
+      const data = await fetchApi(`${urlAccount}/GetUserRole/${id}`);
+      return data.result;
     } catch (error) {
       console.error("Fetch error:", error);
     }

@@ -110,14 +110,6 @@ const CountryTable = (props) => {
     }
   };
 
-  const handleDelete = async (objectId) => {
-    const response = await removeData(urlCountry, objectId);
-    if (response) {
-      dispatch(fetchCountryList());
-    }
-    closeDeleteModal();
-  };
-
   //#endregion Functions ***********************************
 
   //#region Events ***********************************
@@ -167,9 +159,9 @@ const CountryTable = (props) => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {countryList.map((country) => (
+          {countryList.map((country, index) => (
             <CTableRow key={country.id}>
-              <CTableDataCell>{country.id}</CTableDataCell>
+              <CTableDataCell>{index + 1}</CTableDataCell>
               <CTableDataCell>{country.name}</CTableDataCell>
               <CTableDataCell>{country.nominatimCountryCode}</CTableDataCell>
               <CTableDataCell>

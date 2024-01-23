@@ -34,9 +34,14 @@ import useAPI from "../../../hooks/use-API";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchUserList,
+  fetchUserRole,
   fetchUserRoleList,
 } from "../../../store/generalData-actions";
-import { urlUser } from "../../../endpoints";
+import {
+  urlAccount,
+  urlAccountRegister,
+  urlAccountUpdateUser,
+} from "../../../endpoints";
 
 const UserTable = (props) => {
   //#region Consts ***********************************
@@ -51,13 +56,15 @@ const UserTable = (props) => {
   } = useAPI();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentCity, setCurrentCity] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [idToDelete, setIdToDelete] = useState(null);
 
   const [ddlSelectedUserRole, setDdlSelectedUserRole] = useState(null);
   const [inputHasErrorUserRole, setInputHasErrorUserRole] = useState(false);
+
+  const [userRoles, setUserRoles] = useState({});
 
   // redux
   const dispatch = useDispatch();
@@ -80,18 +87,62 @@ const UserTable = (props) => {
     reset: inputReset1,
   } = useInput((value) => value.trim() !== "");
 
+  const {
+    value: email,
+    isValid: inputIsValid2,
+    hasError: inputHasError2,
+    valueChangeHandler: inputChangeHandler2,
+    inputBlurHandler: inputBlurHandler2,
+    reset: inputReset2,
+  } = useInput((value) => value.trim() !== "");
+
+  const {
+    value: password,
+    isValid: inputIsValid3,
+    hasError: inputHasError3,
+    valueChangeHandler: inputChangeHandler3,
+    inputBlurHandler: inputBlurHandler3,
+    reset: inputReset3,
+  } = useInput((value) => value.trim() !== "");
+
   //#endregion Consts ***********************************
+
+  //#region Hooks ***********************************
+
+  useEffect(() => {
+    userList.forEach((user) => {
+      dispatch(fetchUserRole(user.id)).then((role) => {
+        setUserRoles((prevRoles) => ({ ...prevRoles, [user.id]: role }));
+      });
+    });
+  }, [userList, dispatch]);
+
+  //#endregion Hooks ***********************************
 
   //#region Functions ***********************************
 
-  const openModal = (city = null) => {
-    setCurrentCity(city);
+  const openModal = (user = null) => {
+    setCurrentUser(user);
+    if (user) {
+      // Establece los valores iniciales directamente
+      inputReset1(user.name);
+      inputReset2(user.email);
+      const userRoleName = userRoles[user.id][0]; // Obtén el nombre del rol del usuario
+      const role = userRoleList.find((r) => r.name === userRoleName);
+      setDdlSelectedUserRole(role || null); // Establece el rol en el DDL o null si no se encuentra
+    } else {
+      // Resetea los campos si es un nuevo usuario
+      inputReset1();
+      inputReset2();
+      inputReset3();
+      setDdlSelectedUserRole(null);
+    }
     setIsModalVisible(true);
   };
 
   const closeModal = () => {
     setIsModalVisible(false);
-    setCurrentCity(null);
+    setCurrentUser(null);
   };
 
   const closeDeleteModal = () => {
@@ -106,7 +157,7 @@ const UserTable = (props) => {
 
   const confirmDelete = async () => {
     if (idToDelete) {
-      await removeData(urlUser, idToDelete);
+      await removeData(urlAccount, idToDelete);
       dispatch(fetchUserList());
       closeDeleteModal();
     }
@@ -117,14 +168,6 @@ const UserTable = (props) => {
     setInputHasErrorUserRole(false);
   };
 
-  const handleDelete = async (objectId) => {
-    const response = await removeData(urlUser, objectId);
-    if (response) {
-      dispatch(fetchUserList());
-    }
-    closeDeleteModal();
-  };
-
   //#endregion Functions ***********************************
 
   //#region Events ***********************************
@@ -132,14 +175,13 @@ const UserTable = (props) => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
-    // Verificar si se seleccionó una provincia
-    const inputIsValidProvince = ddlSelectedUserRole !== null;
-    if (!inputIsValidProvince) {
+    const inputIsValidUserRole = ddlSelectedUserRole !== null;
+    if (!inputIsValidUserRole) {
       setInputHasErrorUserRole(true);
       return;
     }
 
-    setIsValidForm(inputIsValid1 && inputIsValid2);
+    setIsValidForm(inputIsValid1 && inputIsValid2 && inputIsValid3);
 
     if (!isValidForm) {
       return;
@@ -147,11 +189,24 @@ const UserTable = (props) => {
 
     const dataToUpload = {
       Name: userName,
+      Email: email,
+      Password: password,
       UserRoleId: ddlSelectedUserRole.id,
+      UserRoleName: ddlSelectedUserRole.name,
     };
 
     try {
-      const response = await uploadData(dataToUpload, urlUser);
+      let response;
+      if (currentUser) {
+        response = await uploadData(
+          dataToUpload,
+          urlAccountUpdateUser,
+          true,
+          currentUser.id
+        );
+      } else {
+        response = await uploadData(dataToUpload, urlAccountRegister);
+      }
       if (response) {
         dispatch(fetchUserList());
         inputReset1();
@@ -161,7 +216,6 @@ const UserTable = (props) => {
       }
     } catch (error) {
       console.error("Error al enviar los datos:", error);
-      // No cerrar el modal aquí, ya que se mostrará el error en él
     }
   };
 
@@ -181,22 +235,25 @@ const UserTable = (props) => {
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Nombre</CTableHeaderCell>
+            <CTableHeaderCell>Email</CTableHeaderCell>
             <CTableHeaderCell>Rol</CTableHeaderCell>
             <CTableHeaderCell>Acciones</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {userList.map((user) => {
-            const userRole = userRoleList.find(
-              (userRole) => userRole.id === user.userRoleId
-            );
-            const roleName = userRole ? userRole.name : "No definido";
-
+          {userList.map((user, index) => {
             return (
               <CTableRow key={user.id}>
-                <CTableDataCell>{user.id}</CTableDataCell>
+                <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{user.name}</CTableDataCell>
-                <CTableDataCell>{roleName}</CTableDataCell>
+                <CTableDataCell>{user.email}</CTableDataCell>
+                <CTableDataCell>
+                  {userRoles[user.id] ? (
+                    userRoles[user.id]
+                  ) : (
+                    <CSpinner size="sm" />
+                  )}
+                </CTableDataCell>
                 <CTableDataCell>
                   <CButton
                     color="dark"
@@ -223,7 +280,7 @@ const UserTable = (props) => {
       <CModal visible={isModalVisible} onClose={closeModal}>
         <CModalHeader>
           <CModalTitle>
-            {currentCity ? "Editar usuario" : "Agregar usuario"}
+            {currentUser ? "Editar usuario" : "Agregar usuario"}
           </CModalTitle>
         </CModalHeader>
         <CForm onSubmit={formSubmitHandler}>
@@ -250,6 +307,42 @@ const UserTable = (props) => {
                 <br />
                 <CInputGroup>
                   <CInputGroupText className="cardItem custom-input-group-text">
+                    {props.email}
+                  </CInputGroupText>
+                  <CFormInput
+                    type="email"
+                    className="cardItem"
+                    onChange={inputChangeHandler2}
+                    onBlur={inputBlurHandler2}
+                    value={email}
+                  />
+                  {inputHasError2 && (
+                    <CAlert color="danger" className="w-100">
+                      Entrada inválida
+                    </CAlert>
+                  )}
+                </CInputGroup>
+                <br />
+                <CInputGroup>
+                  <CInputGroupText className="cardItem custom-input-group-text">
+                    {props.password}
+                  </CInputGroupText>
+                  <CFormInput
+                    type="password"
+                    className="cardItem"
+                    onChange={inputChangeHandler3}
+                    onBlur={inputBlurHandler3}
+                    value={password}
+                  />
+                  {inputHasError3 && (
+                    <CAlert color="danger" className="w-100">
+                      Entrada inválida
+                    </CAlert>
+                  )}
+                </CInputGroup>
+                <br />
+                <CInputGroup>
+                  <CInputGroupText className="cardItem custom-input-group-text">
                     Rol de usuario
                   </CInputGroupText>
                   <CDropdown>
@@ -268,7 +361,7 @@ const UserTable = (props) => {
                             style={{ cursor: "pointer" }}
                             value={userRole.id}
                           >
-                            {userRole.id}: {userRole.name}
+                            {userRole.name}
                           </CDropdownItem>
                         ))}
                     </CDropdownMenu>
@@ -310,7 +403,7 @@ const UserTable = (props) => {
           </CModalBody>
           <CModalFooter>
             <CButton type="submit" color="dark" size="sm">
-              {currentCity ? "Actualizar" : "Guardar"}
+              {currentUser ? "Actualizar" : "Guardar"}
             </CButton>
             <CButton color="secondary" size="sm" onClick={closeModal}>
               Cancelar
