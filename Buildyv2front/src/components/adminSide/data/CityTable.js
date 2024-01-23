@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   CSpinner,
   CRow,
@@ -26,6 +26,8 @@ import {
   CCardBody,
   CCardFooter,
   CAlert,
+  CPagination,
+  CPaginationItem,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
@@ -66,10 +68,23 @@ const CityTable = (props) => {
   const cityList = useSelector((state) => state.generalData.cityList);
   const provinceList = useSelector((state) => state.generalData.provinceList);
 
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
+
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+
   useEffect(() => {
     dispatch(fetchCityList());
     dispatch(fetchProvinceList());
   }, [dispatch]);
+
+  useEffect(() => {
+    setPageCount(Math.ceil(cityList.length / itemsPerPage));
+  }, [cityList, itemsPerPage]);
 
   const {
     value: cityName,
@@ -91,7 +106,58 @@ const CityTable = (props) => {
 
   //#endregion Consts ***********************************
 
+  //#region Hooks ***********************************
+
+  const combinedCityList = useMemo(() => {
+    return cityList.map((city) => {
+      const province = provinceList.find((p) => p.id === city.provinceDSId);
+      return {
+        ...city,
+        provinceName: province ? province.name : "No definido",
+      };
+    });
+  }, [cityList, provinceList]);
+
+  const sortedList = useMemo(() => {
+    let sortableList = [...combinedCityList];
+    if (sortConfig.key !== null) {
+      sortableList.sort((a, b) => {
+        if (sortConfig.key === "provinceName") {
+          const provinceA = a.provinceName.toLowerCase();
+          const provinceB = b.provinceName.toLowerCase();
+          if (provinceA < provinceB) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (provinceA > provinceB) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        } else {
+          // Ordenamiento estándar para otras propiedades
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        }
+      });
+    }
+    return sortableList;
+  }, [combinedCityList, sortConfig]);
+
+  //#endregion Hooks ***********************************
+
   //#region Functions ***********************************
+
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
 
   const openModal = (city = null) => {
     setCurrentCity(city);
@@ -171,25 +237,39 @@ const CityTable = (props) => {
     setDdlSelectedProvince(item);
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   //#endregion Events ***********************************
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCities = cityList.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div>
       <CButton color="dark" size="sm" onClick={() => openModal()}>
         Agregar
       </CButton>
-      <CTable>
+      <CTable striped>
         <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell>Nombre</CTableHeaderCell>
-            <CTableHeaderCell>Código nominatim</CTableHeaderCell>
-            <CTableHeaderCell>Departamento</CTableHeaderCell>
+            <CTableHeaderCell onClick={() => requestSort("name")}>
+              Nombre
+            </CTableHeaderCell>
+            <CTableHeaderCell onClick={() => requestSort("nominatimCityCode")}>
+              Código nominatim
+            </CTableHeaderCell>
+            <CTableHeaderCell onClick={() => requestSort("provinceName")}>
+              Departamento
+            </CTableHeaderCell>
             <CTableHeaderCell>Acciones</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {cityList.map((city, index) => {
+          {sortedList.map((city, index) => {
             const province = provinceList.find(
               (province) => province.id === city.provinceDSId
             );
@@ -223,6 +303,28 @@ const CityTable = (props) => {
           })}
         </CTableBody>
       </CTable>
+
+      <CPagination align="center">
+        {currentPage > 1 && (
+          <CPaginationItem onClick={() => handlePageChange(currentPage - 1)}>
+            Anterior
+          </CPaginationItem>
+        )}
+        {[...Array(pageCount)].map((_, i) => (
+          <CPaginationItem
+            key={i + 1}
+            active={i + 1 === currentPage}
+            onClick={() => handlePageChange(i + 1)}
+          >
+            {i + 1}
+          </CPaginationItem>
+        ))}
+        {currentPage < pageCount && (
+          <CPaginationItem onClick={() => handlePageChange(currentPage + 1)}>
+            Siguiente
+          </CPaginationItem>
+        )}
+      </CPagination>
 
       <CModal visible={isModalVisible} onClose={closeModal}>
         <CModalHeader>

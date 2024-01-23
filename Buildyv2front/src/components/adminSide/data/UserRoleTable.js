@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   CSpinner,
   CRow,
@@ -22,6 +22,8 @@ import {
   CCardBody,
   CCardFooter,
   CAlert,
+  CPagination,
+  CPaginationItem,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
@@ -59,9 +61,22 @@ const UserRoleTable = (props) => {
   // Redux
   const userRoleList = useSelector((state) => state.generalData.userRoleList);
 
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
+
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+
   useEffect(() => {
     dispatch(fetchUserRoleList());
   }, [dispatch]);
+
+  useEffect(() => {
+    setPageCount(Math.ceil(userRoleList.length / itemsPerPage));
+  }, [userRoleList, itemsPerPage]);
 
   const {
     value: userName,
@@ -74,7 +89,35 @@ const UserRoleTable = (props) => {
 
   //#endregion Consts ***********************************
 
+  //#region Hooks ***********************************
+
+  const sortedList = useMemo(() => {
+    let sortableList = [...userRoleList];
+    if (sortConfig.key !== null) {
+      sortableList.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableList;
+  }, [userRoleList, sortConfig]);
+
+  //#endregion Hooks ***********************************
+
   //#region Functions ***********************************
+
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
 
   const openModal = (userRole = null) => {
     setCurrentUserRole(userRole);
@@ -152,23 +195,36 @@ const UserRoleTable = (props) => {
     }
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   //#endregion Events ***********************************
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentUserRoles = userRoleList.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   return (
     <div>
       <CButton color="dark" size="sm" onClick={() => openModal()}>
         Agregar
       </CButton>
-      <CTable>
+      <CTable striped>
         <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell>Nombre</CTableHeaderCell>
+            <CTableHeaderCell onClick={() => requestSort("name")}>
+              Nombre
+            </CTableHeaderCell>
             <CTableHeaderCell>Acciones</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {userRoleList.map((userRole, index) => {
+          {sortedList.map((userRole, index) => {
             return (
               <CTableRow key={userRole.id}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
@@ -195,6 +251,28 @@ const UserRoleTable = (props) => {
           })}
         </CTableBody>
       </CTable>
+
+      <CPagination align="center">
+        {currentPage > 1 && (
+          <CPaginationItem onClick={() => handlePageChange(currentPage - 1)}>
+            Anterior
+          </CPaginationItem>
+        )}
+        {[...Array(pageCount)].map((_, i) => (
+          <CPaginationItem
+            key={i + 1}
+            active={i + 1 === currentPage}
+            onClick={() => handlePageChange(i + 1)}
+          >
+            {i + 1}
+          </CPaginationItem>
+        ))}
+        {currentPage < pageCount && (
+          <CPaginationItem onClick={() => handlePageChange(currentPage + 1)}>
+            Siguiente
+          </CPaginationItem>
+        )}
+      </CPagination>
 
       <CModal visible={isModalVisible} onClose={closeModal}>
         <CModalHeader>

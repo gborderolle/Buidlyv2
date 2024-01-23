@@ -283,8 +283,15 @@ namespace Buildyv2.Controllers.V1
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("Login correcto.");
+                    var user = await _userManager.FindByEmailAsync(userCredential.Email);
+                    var roles = await _userManager.GetRolesAsync(user); // Obtener roles del usuario
+
                     _response.StatusCode = HttpStatusCode.OK;
-                    _response.Result = await TokenSetup(userCredential);
+                    _response.Result = new
+                    {
+                        Token = await TokenSetup(userCredential),
+                        UserRoles = roles // Añade los roles del usuario aquí
+                    };
                     await SendLoginNotification(userCredential);
                 }
                 else
@@ -292,7 +299,7 @@ namespace Buildyv2.Controllers.V1
                     _logger.LogError($"Login incorrecto.");
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest("Login incorrecto"); // respuesta genérica para no revelar información
+                    return BadRequest("Login incorrecto");  // respuesta genérica para no revelar información
                 }
             }
             catch (Exception ex)
@@ -304,6 +311,7 @@ namespace Buildyv2.Controllers.V1
             }
             return Ok(_response);
         }
+
 
         [HttpPost("CreateUserRole")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]

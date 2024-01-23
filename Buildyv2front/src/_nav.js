@@ -8,46 +8,46 @@ import {
   cilFeaturedPlaylist,
   cilStorage,
 } from "@coreui/icons";
-import { CNavGroup, CNavItem } from "@coreui/react";
+import { CNavItem } from "@coreui/react";
 
 const _nav = [
   {
-    roles: [2], // roles que pueden ver este elemento
+    roles: ["Admin", "User"],
     component: CNavItem,
     name: "Propiedades",
     to: "/estates",
     icon: <CIcon icon={cilFeaturedPlaylist} customClassName="nav-icon" />,
   },
   {
-    roles: [1], // roles que pueden ver este elemento
+    roles: ["Admin", "User"],
     component: CNavItem,
     name: "Reportes",
     to: "/reports",
     icon: <CIcon icon={cilImage} customClassName="nav-icon" />,
   },
   {
-    roles: [1], // roles que pueden ver este elemento
+    roles: ["Admin", "User"],
     component: CNavItem,
     name: "Obras",
     to: "/jobs",
     icon: <CIcon icon={cilPaint} customClassName="nav-icon" />,
   },
   {
-    roles: [1], // roles que pueden ver este elemento
+    roles: ["Admin", "User"],
     component: CNavItem,
     name: "Inquilinos",
     to: "/tenants",
     icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
   },
   {
-    roles: [1], // roles que pueden ver este elemento
+    roles: ["Admin", "User"],
     component: CNavItem,
     name: "Trabajadores",
     to: "/workers",
     icon: <CIcon icon={cilBriefcase} customClassName="nav-icon" />,
   },
   {
-    roles: [1], // roles que pueden ver este elemento
+    roles: ["Admin"],
     component: CNavItem,
     name: "Datos base",
     to: "/data",

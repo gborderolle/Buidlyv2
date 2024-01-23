@@ -20,7 +20,7 @@ export const loginHandler =
         }
       );
       // Aquí, asumimos que la API devuelve un objeto con un token y posiblemente más datos
-      const { token } = response.data.result;
+      const { token, userRoles } = response.data.result;
 
       // Lógica para manejar la respuesta de la API
       if (token) {
@@ -34,7 +34,8 @@ export const loginHandler =
                 authActions.login({
                   userEmail: email,
                   isMobile: isMobileDevice(),
-                  authToken: token, // Agrega el token aquí
+                  authToken: token.token,
+                  userRole: userRoles[0],
                 })
               );
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   CSpinner,
   CRow,
@@ -26,6 +26,8 @@ import {
   CCardBody,
   CCardFooter,
   CAlert,
+  CPagination,
+  CPaginationItem,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
@@ -65,6 +67,7 @@ const UserTable = (props) => {
   const [inputHasErrorUserRole, setInputHasErrorUserRole] = useState(false);
 
   const [userRoles, setUserRoles] = useState({});
+  const [combinedUserList, setCombinedUserList] = useState([]);
 
   // redux
   const dispatch = useDispatch();
@@ -73,10 +76,33 @@ const UserTable = (props) => {
   const userList = useSelector((state) => state.generalData.userList);
   const userRoleList = useSelector((state) => state.generalData.userRoleList);
 
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
+
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+
   useEffect(() => {
     dispatch(fetchUserList());
     dispatch(fetchUserRoleList());
   }, [dispatch]);
+
+  useEffect(() => {
+    setPageCount(Math.ceil(userList.length / itemsPerPage));
+  }, [userList, itemsPerPage]);
+
+  useEffect(() => {
+    const updatedList = userList.map((user) => {
+      return {
+        ...user,
+        role: userRoles[user.id] ? userRoles[user.id][0] : "Loading...",
+      };
+    });
+    setCombinedUserList(updatedList);
+  }, [userList, userRoles]);
 
   const {
     value: userName,
@@ -117,9 +143,47 @@ const UserTable = (props) => {
     });
   }, [userList, dispatch]);
 
+  const sortedList = useMemo(() => {
+    let sortableList = [...combinedUserList];
+    if (sortConfig.key !== null) {
+      sortableList.sort((a, b) => {
+        // Comparación especial para el rol
+        if (sortConfig.key === "role") {
+          const roleA = a.role ? a.role.toLowerCase() : "";
+          const roleB = b.role ? b.role.toLowerCase() : "";
+          if (roleA < roleB) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (roleA > roleB) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        } else {
+          // Ordenamiento estándar para otras propiedades
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        }
+      });
+    }
+    return sortableList;
+  }, [combinedUserList, sortConfig]);
+
   //#endregion Hooks ***********************************
 
   //#region Functions ***********************************
+
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
 
   const openModal = (user = null) => {
     setCurrentUser(user);
@@ -223,25 +287,39 @@ const UserTable = (props) => {
     setDdlSelectedUserRole(item);
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   //#endregion Events ***********************************
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentUsers = userList.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div>
       <CButton color="dark" size="sm" onClick={() => openModal()}>
         Agregar
       </CButton>
-      <CTable>
+      <CTable striped>
         <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell>Nombre</CTableHeaderCell>
-            <CTableHeaderCell>Email</CTableHeaderCell>
-            <CTableHeaderCell>Rol</CTableHeaderCell>
+            <CTableHeaderCell onClick={() => requestSort("name")}>
+              Nombre
+            </CTableHeaderCell>
+            <CTableHeaderCell onClick={() => requestSort("email")}>
+              Email
+            </CTableHeaderCell>
+            <CTableHeaderCell onClick={() => requestSort("role")}>
+              Rol
+            </CTableHeaderCell>
             <CTableHeaderCell>Acciones</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {userList.map((user, index) => {
+          {sortedList.map((user, index) => {
             return (
               <CTableRow key={user.id}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
@@ -276,6 +354,28 @@ const UserTable = (props) => {
           })}
         </CTableBody>
       </CTable>
+
+      <CPagination align="center">
+        {currentPage > 1 && (
+          <CPaginationItem onClick={() => handlePageChange(currentPage - 1)}>
+            Anterior
+          </CPaginationItem>
+        )}
+        {[...Array(pageCount)].map((_, i) => (
+          <CPaginationItem
+            key={i + 1}
+            active={i + 1 === currentPage}
+            onClick={() => handlePageChange(i + 1)}
+          >
+            {i + 1}
+          </CPaginationItem>
+        ))}
+        {currentPage < pageCount && (
+          <CPaginationItem onClick={() => handlePageChange(currentPage + 1)}>
+            Siguiente
+          </CPaginationItem>
+        )}
+      </CPagination>
 
       <CModal visible={isModalVisible} onClose={closeModal}>
         <CModalHeader>

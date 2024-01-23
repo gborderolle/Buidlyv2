@@ -29,48 +29,51 @@ const AppSidebar = () => {
   // redux get
   const dispatch = useDispatch();
 
-  const unfoldable = useSelector((state) => state.oldState.sidebarUnfoldable);
-  const sidebarShow = useSelector((state) => state.oldState.sidebarShow);
-  const userRoleNumber = useSelector(
-    (state) => +state.loggedUser?.userRoleNumber || 0
-  );
+  // const unfoldable = useSelector((state) => state.oldState.sidebarUnfoldable);
+  // const sidebarShow = useSelector((state) => state.oldState.sidebarShow);
+  const userRole = useSelector((state) => state.auth.userRole);
 
   //#endregion Consts
 
   //#region Hooks
 
-  useEffect(() => {
-    const handleVisibilityChange = (visible) => {
-      if (sidebarShow !== visible) {
-        dispatch({ type: "set", sidebarShow: visible });
-      }
-    };
+  const filterByRoleId = (roleId) => {
+    return navigation.filter((item) => {
+      return Array.isArray(item.roles) && item.roles.includes(roleId);
+    });
+  };
 
-    handleVisibilityChange(sidebarShow);
+  // useEffect(() => {
+  //   const handleVisibilityChange = (visible) => {
+  //     if (sidebarShow !== visible) {
+  //       dispatch({ type: "set", sidebarShow: visible });
+  //     }
+  //   };
+  //   handleVisibilityChange(sidebarShow);
 
-    return () => {
-      // cualquier limpieza si es necesario
-    };
-  }, [sidebarShow]);
+  //   return () => {};
+  // }, [sidebarShow]);
 
   //#endregion Hooks
 
   //#region Methods
 
-  const handleVisibilityChange = (visible) => {
-    if (sidebarShow !== visible) {
-      // dispatch({ type: "set", sidebarShow: visible });
-    }
-  };
+  // const handleVisibilityChange = (visible) => {
+  //   if (sidebarShow !== visible) {
+  //     // dispatch({ type: "set", sidebarShow: visible });
+  //   }
+  // };
 
   //#endregion Methods
+
+  const filteredNavigation = filterByRoleId(userRole);
 
   return (
     <CSidebar
       position="fixed"
-      unfoldable={unfoldable}
-      visible={sidebarShow}
-      onVisibleChange={handleVisibilityChange}
+      // unfoldable={unfoldable}
+      // visible={sidebarShow}
+      // onVisibleChange={handleVisibilityChange}
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
         <CImage
@@ -84,13 +87,15 @@ const AppSidebar = () => {
       </CSidebarBrand>
       <CSidebarNav>
         <SimpleBar>
-          <AppSidebarNav items={navigation} />
+          {/* <AppSidebarNav items={navigation} /> */}
+          <AppSidebarNav items={filteredNavigation} />
         </SimpleBar>
       </CSidebarNav>
       <CSidebarToggler
         className="d-none d-lg-flex"
         onClick={() =>
-          dispatch({ type: "set", sidebarUnfoldable: !unfoldable })
+          // dispatch({ type: "set", sidebarUnfoldable: !unfoldable })
+          dispatch({ type: "set" })
         }
       />
     </CSidebar>

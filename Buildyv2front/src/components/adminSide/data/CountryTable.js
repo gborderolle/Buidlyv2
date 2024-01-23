@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   CSpinner,
   CRow,
@@ -22,6 +22,8 @@ import {
   CCardBody,
   CCardFooter,
   CAlert,
+  CPagination,
+  CPaginationItem,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
@@ -55,10 +57,23 @@ const CountryTable = (props) => {
   // Redux
   const countryList = useSelector((state) => state.generalData.countryList);
 
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
+
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+
   useEffect(() => {
     dispatch(fetchCountryList());
     dispatch(fetchCountryList());
   }, [dispatch]);
+
+  useEffect(() => {
+    setPageCount(Math.ceil(countryList.length / itemsPerPage));
+  }, [countryList, itemsPerPage]);
 
   const {
     value: countryName,
@@ -80,7 +95,35 @@ const CountryTable = (props) => {
 
   //#endregion Consts ***********************************
 
+  //#region Hooks ***********************************
+
+  const sortedList = useMemo(() => {
+    let sortableList = [...countryList];
+    if (sortConfig.key !== null) {
+      sortableList.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableList;
+  }, [countryList, sortConfig]);
+
+  //#endregion Hooks ***********************************
+
   //#region Functions ***********************************
+
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
 
   const openModal = (country = null) => {
     setCurrentCountry(country);
@@ -142,24 +185,38 @@ const CountryTable = (props) => {
     }
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   //#endregion Events ***********************************
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCountries = countryList.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div>
       <CButton color="dark" size="sm" onClick={() => openModal()}>
         Agregar
       </CButton>
-      <CTable>
+      <CTable striped>
         <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell>Nombre</CTableHeaderCell>
-            <CTableHeaderCell>Código nominatim</CTableHeaderCell>
+            <CTableHeaderCell onClick={() => requestSort("name")}>
+              Nombre
+            </CTableHeaderCell>
+            <CTableHeaderCell
+              onClick={() => requestSort("nominatimCountryCode")}
+            >
+              Código nominatim
+            </CTableHeaderCell>
             <CTableHeaderCell>Acciones</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {countryList.map((country, index) => (
+          {sortedList.map((country, index) => (
             <CTableRow key={country.id}>
               <CTableDataCell>{index + 1}</CTableDataCell>
               <CTableDataCell>{country.name}</CTableDataCell>
@@ -185,6 +242,28 @@ const CountryTable = (props) => {
           ))}
         </CTableBody>
       </CTable>
+
+      <CPagination align="center">
+        {currentPage > 1 && (
+          <CPaginationItem onClick={() => handlePageChange(currentPage - 1)}>
+            Anterior
+          </CPaginationItem>
+        )}
+        {[...Array(pageCount)].map((_, i) => (
+          <CPaginationItem
+            key={i + 1}
+            active={i + 1 === currentPage}
+            onClick={() => handlePageChange(i + 1)}
+          >
+            {i + 1}
+          </CPaginationItem>
+        ))}
+        {currentPage < pageCount && (
+          <CPaginationItem onClick={() => handlePageChange(currentPage + 1)}>
+            Siguiente
+          </CPaginationItem>
+        )}
+      </CPagination>
 
       <CModal visible={isModalVisible} onClose={closeModal}>
         <CModalHeader>

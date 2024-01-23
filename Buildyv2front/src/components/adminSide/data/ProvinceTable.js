@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   CSpinner,
   CRow,
@@ -26,6 +26,8 @@ import {
   CCardBody,
   CCardFooter,
   CAlert,
+  CPagination,
+  CPaginationItem,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
@@ -66,10 +68,23 @@ const ProvinceTable = (props) => {
   const provinceList = useSelector((state) => state.generalData.provinceList);
   const countryList = useSelector((state) => state.generalData.countryList);
 
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
+
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+
   useEffect(() => {
     dispatch(fetchProvinceList());
     dispatch(fetchCountryList());
   }, [dispatch]);
+
+  useEffect(() => {
+    setPageCount(Math.ceil(provinceList.length / itemsPerPage));
+  }, [provinceList, itemsPerPage]);
 
   const {
     value: provinceName,
@@ -91,7 +106,59 @@ const ProvinceTable = (props) => {
 
   //#endregion Consts ***********************************
 
+  //#region Hooks ***********************************
+
+  const combinedProvinceList = useMemo(() => {
+    return provinceList.map((province) => {
+      const country = countryList.find((c) => c.id === province.countryDSId);
+      return {
+        ...province,
+        countryName: country ? country.name : "No definido",
+      };
+    });
+  }, [provinceList, countryList]);
+
+  // Función de ordenamiento adaptada
+  const sortedList = useMemo(() => {
+    let sortableList = [...combinedProvinceList];
+    if (sortConfig.key !== null) {
+      sortableList.sort((a, b) => {
+        if (sortConfig.key === "countryName") {
+          const countryA = a.countryName.toLowerCase();
+          const countryB = b.countryName.toLowerCase();
+          if (countryA < countryB) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (countryA > countryB) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        } else {
+          // Ordenamiento estándar para otras propiedades
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        }
+      });
+    }
+    return sortableList;
+  }, [combinedProvinceList, sortConfig]);
+
+  //#endregion Hooks ***********************************
+
   //#region Functions ***********************************
+
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
 
   const openModal = (province = null) => {
     setCurrentProvince(province);
@@ -171,25 +238,44 @@ const ProvinceTable = (props) => {
     setDdlSelectedCountry(item);
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   //#endregion Events ***********************************
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProvinces = provinceList.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   return (
     <div>
       <CButton color="dark" size="sm" onClick={() => openModal()}>
         Agregar
       </CButton>
-      <CTable>
+      <CTable striped>
         <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell>Nombre</CTableHeaderCell>
-            <CTableHeaderCell>Código nominatim</CTableHeaderCell>
-            <CTableHeaderCell>País</CTableHeaderCell>
+            <CTableHeaderCell onClick={() => requestSort("name")}>
+              Nombre
+            </CTableHeaderCell>
+            <CTableHeaderCell
+              onClick={() => requestSort("nominatimProvinceCode")}
+            >
+              Código nominatim
+            </CTableHeaderCell>
+            <CTableHeaderCell onClick={() => requestSort("countryName")}>
+              País
+            </CTableHeaderCell>
             <CTableHeaderCell>Acciones</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {provinceList.map((province, index) => {
+          {sortedList.map((province, index) => {
             const country = countryList.find(
               (countryItem) => countryItem.id === province.countryDSId
             );
@@ -225,6 +311,28 @@ const ProvinceTable = (props) => {
           })}
         </CTableBody>
       </CTable>
+
+      <CPagination align="center">
+        {currentPage > 1 && (
+          <CPaginationItem onClick={() => handlePageChange(currentPage - 1)}>
+            Anterior
+          </CPaginationItem>
+        )}
+        {[...Array(pageCount)].map((_, i) => (
+          <CPaginationItem
+            key={i + 1}
+            active={i + 1 === currentPage}
+            onClick={() => handlePageChange(i + 1)}
+          >
+            {i + 1}
+          </CPaginationItem>
+        ))}
+        {currentPage < pageCount && (
+          <CPaginationItem onClick={() => handlePageChange(currentPage + 1)}>
+            Siguiente
+          </CPaginationItem>
+        )}
+      </CPagination>
 
       <CModal visible={isModalVisible} onClose={closeModal}>
         <CModalHeader>

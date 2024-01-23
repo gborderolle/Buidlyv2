@@ -37,7 +37,6 @@ const EstateMenu = () => {
   const [selectedEstate, setSelectedEstate] = useState(null);
 
   const dispatch = useDispatch();
-  const authToken = useSelector((state) => state.auth.authToken);
 
   const [estateList, setEstateList] = useState([]);
   const reduxEstateList =

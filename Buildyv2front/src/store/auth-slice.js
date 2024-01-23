@@ -9,6 +9,7 @@ const getInitialState = () => {
   } else {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("userRole");
     localStorage.removeItem("userFullname");
     localStorage.removeItem("userId");
     localStorage.removeItem("isMobile");
@@ -18,6 +19,7 @@ const getInitialState = () => {
   return {
     isLoggedIn,
     userEmail: localStorage.getItem("userEmail") || "",
+    userRole: localStorage.getItem("userRole") || "",
     userFullname: localStorage.getItem("userFullname") || "",
     userId: localStorage.getItem("userId") || "",
     isMobile: Boolean(localStorage.getItem("isMobile")) || false,
@@ -33,6 +35,7 @@ const authSlice = createSlice({
       const expiry = new Date().getTime() + 1 * 60 * 60 * 1000; // 1 hora
       state.isLoggedIn = true;
       state.userEmail = action.payload.userEmail;
+      state.userRole = action.payload.userRole;
       state.userFullname = action.payload.userFullname;
       state.userId = action.payload.userId;
       state.isMobile = action.payload.isMobile;
@@ -45,6 +48,7 @@ const authSlice = createSlice({
 
       localStorage.setItem("isLoggedIn", JSON.stringify(data));
       localStorage.setItem("userEmail", state.userEmail);
+      localStorage.setItem("userRole", state.userRole);
       localStorage.setItem("userFullname", state.userFullname);
       localStorage.setItem("userId", state.userId);
       localStorage.setItem("isMobile", state.isMobile);
@@ -54,9 +58,10 @@ const authSlice = createSlice({
     logout(state) {
       state.isLoggedIn = false;
       state.userEmail = "";
+      state.userRole = "";
       state.userFullname = "";
       state.userId = "";
-      state.authToken = ""; // Limpia el token
+      state.authToken = "";
 
       const data = {
         value: false,
@@ -65,10 +70,11 @@ const authSlice = createSlice({
 
       localStorage.setItem("isLoggedIn", JSON.stringify(data));
       localStorage.removeItem("userEmail");
+      localStorage.removeItem("userRole");
       localStorage.removeItem("userFullname");
       localStorage.removeItem("userId");
       localStorage.removeItem("isMobile");
-      localStorage.removeItem("authToken"); // Remueve el token del localStorage
+      localStorage.removeItem("authToken");
     },
 
     setIsMobile(state, action) {
@@ -87,16 +93,18 @@ const authSlice = createSlice({
       }
 
       state.userEmail = localStorage.getItem("userEmail") || "";
+      state.userRole = localStorage.getItem("userRole") || "";
       state.userFullname = localStorage.getItem("userFullname") || "";
       state.userId = localStorage.getItem("userId") || "";
       state.isMobile =
         localStorage.getItem("isMobile") == "true" ? true : false;
-      state.authToken = localStorage.getItem("authToken") || ""; // Recupera el token del localStorage
+      state.authToken = localStorage.getItem("authToken") || "";
     },
 
     resetAuthState(state) {
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("userEmail");
+      localStorage.removeItem("userRole");
       localStorage.removeItem("userFullname");
       localStorage.removeItem("userId");
       localStorage.removeItem("isMobile");
@@ -104,6 +112,7 @@ const authSlice = createSlice({
 
       state.isLoggedIn = false;
       state.userEmail = null;
+      state.userRole = null;
       state.userFullname = null;
       state.userId = null;
       state.isMobile = null;
