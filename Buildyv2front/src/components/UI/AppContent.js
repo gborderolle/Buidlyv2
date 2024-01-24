@@ -11,14 +11,13 @@ const AppContent = () => {
   //#region Consts ***********************************
 
   // Redux get
-  const userRoleNumber = useSelector((state) => state.auth.userRoleNumber);
+  const userRole = useSelector((state) => state.auth.userRole);
 
   const routeMap = {
-    1: "dashboard",
-    // 2: "form",
-    2: "formSlate1",
+    Admin: "estates",
+    User: "estates",
   };
-  const defaultRoute = routeMap[userRoleNumber] || "login";
+  const defaultRoute = routeMap[userRole] || "login";
 
   //#endregion Consts ***********************************
 

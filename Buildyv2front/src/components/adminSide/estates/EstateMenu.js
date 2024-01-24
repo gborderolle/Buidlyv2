@@ -15,10 +15,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
   faEye,
-  faTrowelBricks,
-  faImages,
-  faDollarSign,
+  faPaintRoller,
+  faNewspaper,
+  faMoneyBillWave,
   faInfoCircle,
+  faTriangleExclamation,
+  faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
@@ -235,7 +237,18 @@ const EstateMenu = () => {
           style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
           onClick={() => handleSelectEstate(estate)}
         >
-          {estate.name}
+          {estate.listRents &&
+          estate.listRents.length > 0 &&
+          estate.listRents[estate.listRents.length - 1].listTenants &&
+          estate.listRents[estate.listRents.length - 1].listTenants.length >
+            0 ? (
+            estate.name
+          ) : (
+            <>
+              <FontAwesomeIcon icon={faTriangleExclamation} color="gold" />{" "}
+              {estate.name}
+            </>
+          )}
         </td>
         <td
           style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
@@ -262,7 +275,7 @@ const EstateMenu = () => {
             ? formatToDollars(
                 estate.listRents?.[estate.listRents.length - 1].monthlyValue
               )
-            : "$0"}
+            : "-"}
         </td>
         <td
           style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
@@ -288,7 +301,7 @@ const EstateMenu = () => {
             }
           >
             <FontAwesomeIcon
-              icon={faDollarSign}
+              icon={faMoneyBillWave}
               color={estate.presentRentId > 0 ? "#697588" : "lightgray"}
             />
           </button>
@@ -299,7 +312,7 @@ const EstateMenu = () => {
             title="Ver obras"
           >
             <FontAwesomeIcon
-              icon={faTrowelBricks}
+              icon={faPaintRoller}
               color={
                 estate.listJobs && estate.listJobs.length > 0
                   ? "#697588"
@@ -314,12 +327,31 @@ const EstateMenu = () => {
             title="Ver reportes"
           >
             <FontAwesomeIcon
-              icon={faImages}
+              icon={faNewspaper}
               color={
                 estate.listReports && estate.listReports.length > 0
                   ? "#697588"
                   : "lightgray"
               }
+            />
+          </button>
+          <button
+            style={{
+              border: "none",
+              background: "none",
+            }}
+            onClick={() => {
+              if (estate.googleMapsURL) {
+                window.open(estate.googleMapsURL, "_blank");
+              } else {
+                alert("No hay Google Maps disponible.");
+              }
+            }}
+            title="Ver en Google Maps"
+          >
+            <FontAwesomeIcon
+              icon={faMapMarkerAlt}
+              color={estate.googleMapsURL ? "#697588" : "lightgray"}
             />
           </button>
           <button

@@ -29,8 +29,8 @@ const AppSidebar = () => {
   // redux get
   const dispatch = useDispatch();
 
-  // const unfoldable = useSelector((state) => state.oldState.sidebarUnfoldable);
-  // const sidebarShow = useSelector((state) => state.oldState.sidebarShow);
+  const unfoldable = useSelector((state) => state.oldState.sidebarUnfoldable);
+  const sidebarShow = useSelector((state) => state.oldState.sidebarShow);
   const userRole = useSelector((state) => state.auth.userRole);
 
   //#endregion Consts
@@ -43,26 +43,26 @@ const AppSidebar = () => {
     });
   };
 
-  // useEffect(() => {
-  //   const handleVisibilityChange = (visible) => {
-  //     if (sidebarShow !== visible) {
-  //       dispatch({ type: "set", sidebarShow: visible });
-  //     }
-  //   };
-  //   handleVisibilityChange(sidebarShow);
+  useEffect(() => {
+    const handleVisibilityChange = (visible) => {
+      if (sidebarShow !== visible) {
+        dispatch({ type: "set", sidebarShow: visible });
+      }
+    };
+    handleVisibilityChange(sidebarShow);
 
-  //   return () => {};
-  // }, [sidebarShow]);
+    return () => {};
+  }, [sidebarShow]);
 
   //#endregion Hooks
 
   //#region Methods
 
-  // const handleVisibilityChange = (visible) => {
-  //   if (sidebarShow !== visible) {
-  //     // dispatch({ type: "set", sidebarShow: visible });
-  //   }
-  // };
+  const handleVisibilityChange = (visible) => {
+    if (sidebarShow !== visible) {
+      // dispatch({ type: "set", sidebarShow: visible });
+    }
+  };
 
   //#endregion Methods
 
@@ -71,9 +71,9 @@ const AppSidebar = () => {
   return (
     <CSidebar
       position="fixed"
-      // unfoldable={unfoldable}
-      // visible={sidebarShow}
-      // onVisibleChange={handleVisibilityChange}
+      unfoldable={unfoldable}
+      visible={sidebarShow}
+      onVisibleChange={handleVisibilityChange}
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
         <CImage
@@ -93,9 +93,9 @@ const AppSidebar = () => {
       </CSidebarNav>
       <CSidebarToggler
         className="d-none d-lg-flex"
-        onClick={() =>
-          // dispatch({ type: "set", sidebarUnfoldable: !unfoldable })
-          dispatch({ type: "set" })
+        onClick={
+          () => dispatch({ type: "set", sidebarUnfoldable: !unfoldable })
+          // dispatch({ type: "set" })
         }
       />
     </CSidebar>

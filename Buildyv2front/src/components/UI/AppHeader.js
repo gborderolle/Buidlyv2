@@ -5,7 +5,6 @@ import { get, ref } from "firebase/database";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { liveSettingsActions } from "../../store/liveSettings-slice";
 
 import {
   CContainer,
@@ -24,7 +23,7 @@ import { cilMenu } from "@coreui/icons";
 import { AppBreadcrumb } from "../index";
 import { AppHeaderDropdown } from "../header/index";
 
-import logoSmall from "src/assets/images/datalexion-logo.png";
+import logoSmall from "src/assets/images/buildyTxt.png";
 import logoBig from "src/assets/images/datalexion-logo-big.png";
 import classes from "./AppHeader.css";
 
@@ -36,12 +35,7 @@ const AppHeader = () => {
 
   // Redux get
   const sidebarShow = useSelector((state) => state.oldState.sidebarShow);
-  const userRoleNumber = useSelector(
-    (state) => state.loggedUser?.userRoleNumber || 0
-  );
-  const userProvinceId = useSelector(
-    (state) => state.loggedUser?.provinceId || 0
-  );
+  const userRole = useSelector((state) => state.loggedUser?.userRole || 0);
 
   // LocalStorage get
   const isMobile = JSON.parse(localStorage.getItem("isMobile"));
@@ -77,18 +71,23 @@ const AppHeader = () => {
     <CHeader position="sticky" className="mb-1" style={headerStyle}>
       <CContainer fluid>
         {isMobile ? (
-          <CHeaderToggler
-            className="ps-1"
-            onClick={() => dispatch({ type: "set", sidebarShow: !sidebarShow })}
-            style={iconStyle}
-          >
+          <>
+            <CHeaderToggler
+              className="ps-1"
+              onClick={() =>
+                dispatch({ type: "set", sidebarShow: !sidebarShow })
+              }
+              style={iconStyle}
+            >
+              <CIcon icon={cilMenu} size="lg" />
+            </CHeaderToggler>
             <CImage
               fluid
               src={logoSmall}
               className={classes.CImage}
               width={70}
             />
-          </CHeaderToggler>
+          </>
         ) : (
           <CHeaderToggler
             className="ps-1"
@@ -100,27 +99,20 @@ const AppHeader = () => {
         )}
 
         <CHeaderNav className="d-none d-md-flex me-auto">
-          {userRoleNumber == 2 && (
-            <CNavItem>
-              <CNavLink to="/form" component={NavLink}>
-                Formulario
-              </CNavLink>
-            </CNavItem>
-          )}
-          {userRoleNumber == 1 && (
-            <CNavItem>
-              <CNavLink to="/dashboard" component={NavLink}>
-                Dashboard
-              </CNavLink>
-            </CNavItem>
-          )}
+          {/* {userRole == "Admin" && ( */}
+          <CNavItem>
+            <CNavLink to="/estates" component={NavLink}>
+              Propiedades
+            </CNavLink>
+          </CNavItem>
+          {/* )} */}
         </CHeaderNav>
 
         <CHeaderNav className="ms-3">
           <AppHeaderDropdown />
         </CHeaderNav>
       </CContainer>
-      {!isMobile && <CHeaderDivider />}
+      {/* {!isMobile && <CHeaderDivider />} */}
     </CHeader>
   );
 };

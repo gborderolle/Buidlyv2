@@ -12,7 +12,12 @@ import {
 } from "@coreui/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faEye, faCamera } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faEye,
+  faCamera,
+  faMapMarkerAlt,
+} from "@fortawesome/free-solid-svg-icons";
 
 import useBumpEffect from "../../../utils/useBumpEffect";
 
@@ -283,6 +288,25 @@ const JobMenu = () => {
                     ? "#697588"
                     : "lightgray"
                 }
+              />
+            </button>
+            <button
+              style={{
+                border: "none",
+                background: "none",
+              }}
+              onClick={() => {
+                if (job.estate?.googleMapsURL) {
+                  window.open(job.estate?.googleMapsURL, "_blank");
+                } else {
+                  alert("No hay Google Maps disponible.");
+                }
+              }}
+              title="Ver en Google Maps"
+            >
+              <FontAwesomeIcon
+                icon={faMapMarkerAlt}
+                color={job.estate?.googleMapsURL ? "#697588" : "lightgray"}
               />
             </button>
           </td>

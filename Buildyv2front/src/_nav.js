@@ -5,8 +5,8 @@ import {
   cilBriefcase,
   cilPaint,
   cilPeople,
-  cilFeaturedPlaylist,
   cilStorage,
+  cilHome,
 } from "@coreui/icons";
 import { CNavItem } from "@coreui/react";
 
@@ -16,7 +16,7 @@ const _nav = [
     component: CNavItem,
     name: "Propiedades",
     to: "/estates",
-    icon: <CIcon icon={cilFeaturedPlaylist} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
   },
   {
     roles: ["Admin", "User"],

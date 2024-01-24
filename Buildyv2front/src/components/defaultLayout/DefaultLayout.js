@@ -31,7 +31,7 @@ const DefaultLayout = () => {
   const navigate = useNavigate();
 
   // Redux get
-  const userRoleNumber = useSelector((state) => state.auth.userRoleNumber);
+  const userRole = useSelector((state) => state.auth.userRole);
 
   // LocalStorage get
   const isMobile = JSON.parse(localStorage.getItem("isMobile"));
@@ -106,9 +106,9 @@ const DefaultLayout = () => {
         <div className="body flex-grow-1 px-3">
           <AppContent />
         </div>
-        {userRoleNumber == 1 && !isMobile && (
+        {/* {userRole == "Admin" && !isMobile && (
           <AppFooter className={classes.AppFooter} />
-        )}
+        )} */}
       </div>
     </div>
   );

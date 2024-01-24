@@ -26,7 +26,7 @@ import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchJobList } from "../../../store/generalData-actions";
+import { fetchJobList, fetchEstateList } from "../../../store/generalData-actions";
 import { urlJob } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
 
@@ -53,7 +53,6 @@ const JobABM = () => {
 
   // DDLs
   const [inputHasErrorEstate, setInputHasErrorEstate] = useState(false);
-  const [inputHasErrorWorker, setInputHasErrorWorker] = useState(false);
 
   const monthString = job?.month;
   const monthDate = monthString ? new Date(monthString) : new Date();
@@ -162,6 +161,7 @@ const JobABM = () => {
       if (confirmDelete) {
         await removeData(urlJob, job.id);
         dispatch(fetchJobList());
+        dispatch(fetchEstateList());
         navigate("/jobs");
       }
     }
@@ -194,18 +194,12 @@ const JobABM = () => {
       setInputHasErrorEstate(true);
       return;
     }
-    const inputIsValidWorker = ddlSelectedWorker !== null;
-    if (!inputIsValidWorker) {
-      setInputHasErrorWorker(true);
-      return;
-    }
 
     setIsValidForm(
       inputIsValidName &&
         inputIsValidComments &&
         inputIsValidCost &&
-        inputIsValidEstate &&
-        inputIsValidWorker
+        inputIsValidEstate
     );
 
     if (isValidForm) {
@@ -228,6 +222,7 @@ const JobABM = () => {
 
         await uploadData(formData, urlJob, editMode, job?.id);
         dispatch(fetchJobList());
+        dispatch(fetchEstateList());
 
         //if (isSuccess) {
         setTimeout(() => {
@@ -374,13 +369,6 @@ const JobABM = () => {
                       ))}
                   </CDropdownMenu>
                 </CDropdown>
-
-                {/*  */}
-                {inputHasErrorWorker && (
-                  <CAlert color="danger" className="w-100">
-                    Entrada inválida
-                  </CAlert>
-                )}
               </CInputGroup>
               <br />
               <CInputGroup>

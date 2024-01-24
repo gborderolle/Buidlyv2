@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import routes from "../../routes";
 import { CBreadcrumb, CBreadcrumbItem } from "@coreui/react";
@@ -13,20 +13,7 @@ import classes from "./AppBreadcrumb.module.css";
 const AppBreadcrumb = (props) => {
   //#region Consts ***********************************
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   // Redux get
-  const circuitDDLIsVisible = useSelector(
-    (state) => state.ui.circuitDDLIsVisible.status
-  );
-  const provinceDDLIsVisible = useSelector(
-    (state) => state.ui.provinceDDLIsVisible.status
-  );
-
-  const userProvinceId = useSelector(
-    (state) => state.loggedUser?.provinceId || 0
-  );
   const isMobile = useSelector((state) => state.auth.isMobile);
 
   const currentLocation = useLocation().pathname;
@@ -86,13 +73,7 @@ const AppBreadcrumb = (props) => {
           })}
         </CBreadcrumb>
       )}
-      {circuitDDLIsVisible && (
-        <div style={{ margin: "auto" }}>{props.children}</div>
-      )}
-      {provinceDDLIsVisible && (
-        <div style={{ margin: "auto" }}>{props.children}</div>
-      )}
-
+      <div style={{ margin: "auto" }}>{props.children}</div>
       {!isMobile && <Clock />}
     </div>
   );

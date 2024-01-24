@@ -26,7 +26,10 @@ import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchReportList } from "../../../store/generalData-actions";
+import {
+  fetchReportList,
+  fetchEstateList,
+} from "../../../store/generalData-actions";
 import { urlReport } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
 
@@ -134,6 +137,7 @@ const ReportABM = () => {
       if (confirmDelete) {
         await removeData(urlReport, report.id);
         dispatch(fetchReportList());
+        dispatch(fetchEstateList());
         navigate("/reports");
       }
     }
@@ -192,6 +196,7 @@ const ReportABM = () => {
 
         await uploadData(formData, urlReport, editMode, report?.id);
         dispatch(fetchReportList());
+        dispatch(fetchEstateList());
 
         //if (isSuccess) {
         setTimeout(() => {

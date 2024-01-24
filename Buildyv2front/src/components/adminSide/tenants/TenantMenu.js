@@ -312,12 +312,12 @@ const TenantMenu = () => {
 
   const getRentByTenantId = (tenantId) => {
     // Asume que cada tenant tiene un rentId único
-    return rentList.find((rent) => rent.tenantId === tenantId);
+    return rentList.find((rent) => rent.listTenants.some(tenant => tenant.id === tenantId));
   };
 
   const getEstateByRentId = (rentId) => {
     // Asume que cada rent tiene un estateId único
-    return estateList.find((estate) => estate.rentId === rentId);
+    return estateList.find((estate) => estate.presentRentId === rentId);
   };
 
   //#endregion Functions ***********************************

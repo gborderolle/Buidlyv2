@@ -17,3 +17,5 @@ export const urlAccountRegister = `${apiURL}/accounts/register`;
 export const urlAccountUpdateUser = `${apiURL}/accounts/UpdateUser`;
 export const urlUserRoleCreate = `${apiURL}/accounts/CreateUserRole`;
 export const urlUserRoleUpdate = `${apiURL}/accounts/UpdateUserRole`;
+export const urlAccountBiometricChallenge = `${apiURL}/accounts/auth/challenge`;
+export const urlAccountBiometricValidate = `${apiURL}/accounts/auth/validateBiometricAuth`;
