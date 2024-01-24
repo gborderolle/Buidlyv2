@@ -115,7 +115,7 @@ const WorkerMenu = () => {
     dispatch(fetchWorkerList());
 
     setTimeout(() => {
-      navigate("/abm-worker");
+      navigate("/worker-abm");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
   };
 
@@ -240,7 +240,7 @@ const WorkerMenu = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   function navigateToProperty(worker) {
-    navigate("/abm-worker", { state: { worker, editMode: true } });
+    navigate("/worker-abm", { state: { worker, editMode: true } });
   }
 
   const sendWhatsApp = (phone) => {

@@ -128,7 +128,7 @@ const JobMenu = () => {
     dispatch(fetchJobList());
 
     setTimeout(() => {
-      navigate("/abm-job");
+      navigate("/job-abm");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
   };
 
@@ -328,7 +328,7 @@ const JobMenu = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   function navigateToJob(job) {
-    navigate("/abm-job", { state: { job, editMode: true } });
+    navigate("/job-abm", { state: { job, editMode: true } });
   }
 
   function navigateToAlbum(job) {

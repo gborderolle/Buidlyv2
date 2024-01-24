@@ -46,21 +46,21 @@ const DataMenu = React.lazy(() =>
 const routes = [
   { path: "/", exact: true, name: "Home" },
   { path: "/estates", name: "Propiedades", element: EstateMenu },
-  { path: "/abm-estate", name: "Agregar propiedades", element: EstateABM },
+  { path: "/estate-abm", name: "Agregar propiedades", element: EstateABM },
 
   { path: "/reports", name: "Reportes", element: ReportMenu },
-  { path: "/abm-report", name: "Agregar reportes", element: ReportABM },
+  { path: "/report-abm", name: "Agregar reportes", element: ReportABM },
   { path: "/view-report", name: "Ver álbum", element: ReportView },
 
   { path: "/jobs", name: "Obras", element: JobMenu },
-  { path: "/abm-job", name: "Agregar obras", element: JobABM },
+  { path: "/job-abm", name: "Agregar obras", element: JobABM },
   { path: "/view-job", name: "Ver álbum", element: JobView },
 
   { path: "/tenants", name: "Inquilinos", element: TenantMenu },
-  { path: "/abm-tenant", name: "Agregar inquilinos", element: TenantABM },
+  { path: "/tenant-abm", name: "Agregar inquilinos", element: TenantABM },
 
   { path: "/workers", name: "Trabajadores", element: WorkerMenu },
-  { path: "/abm-worker", name: "Agregar trabajadores", element: WorkerABM },
+  { path: "/worker-abm", name: "Agregar trabajadores", element: WorkerABM },
 
   { path: "/abm-rent", name: "Agregar alquiler", element: RentABM },
 

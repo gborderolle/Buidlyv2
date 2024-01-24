@@ -143,7 +143,7 @@ const EstateMenu = () => {
     dispatch(fetchEstateList());
 
     setTimeout(() => {
-      navigate("/abm-estate");
+      navigate("/estate-abm");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
   };
 
@@ -382,7 +382,7 @@ const EstateMenu = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   function navigateToEstate(estate) {
-    navigate("/abm-estate", { state: { estate, editMode: true } });
+    navigate("/estate-abm", { state: { estate, editMode: true } });
   }
 
   function navigateToJobs(estate) {

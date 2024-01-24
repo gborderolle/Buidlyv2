@@ -131,7 +131,7 @@ const TenantMenu = () => {
     dispatch(fetchTenantList());
 
     setTimeout(() => {
-      navigate("/abm-tenant");
+      navigate("/tenant-abm");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
   };
 
@@ -283,7 +283,7 @@ const TenantMenu = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   function navigateToTenant(tenant) {
-    navigate("/abm-tenant", { state: { tenant, editMode: true } });
+    navigate("/tenant-abm", { state: { tenant, editMode: true } });
   }
 
   const sendWhatsApp = (phone) => {
@@ -312,7 +312,9 @@ const TenantMenu = () => {
 
   const getRentByTenantId = (tenantId) => {
     // Asume que cada tenant tiene un rentId único
-    return rentList.find((rent) => rent.listTenants.some(tenant => tenant.id === tenantId));
+    return rentList.find((rent) =>
+      rent.listTenants.some((tenant) => tenant.id === tenantId)
+    );
   };
 
   const getEstateByRentId = (rentId) => {

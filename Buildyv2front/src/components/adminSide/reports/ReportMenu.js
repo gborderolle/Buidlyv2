@@ -129,7 +129,7 @@ const ReportMenu = () => {
     dispatch(fetchReportList());
 
     setTimeout(() => {
-      navigate("/abm-report");
+      navigate("/report-abm");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
   };
 
@@ -309,7 +309,7 @@ const ReportMenu = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   function navigateToReport(report) {
-    navigate("/abm-report", { state: { report, editMode: true } });
+    navigate("/report-abm", { state: { report, editMode: true } });
   }
 
   function navigateToAlbum(report) {
