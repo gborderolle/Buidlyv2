@@ -25,7 +25,6 @@ namespace Buildyv2.DTOs
         public int CityDSId { get; set; }
         [Required(ErrorMessage = "El campo {0} es requerido")]
         public int OwnerDSId { get; set; }
-        [Required(ErrorMessage = "El campo {0} es requerido")]
         public string GoogleMapsURL { get; set; }
         public bool EstateIsRented { get; set; }
         public string Comments { get; set; }

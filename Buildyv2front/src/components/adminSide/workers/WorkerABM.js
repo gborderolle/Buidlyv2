@@ -177,11 +177,11 @@ const WorkerABM = () => {
       await uploadData(dataToUpload, urlWorker, editMode, worker?.id);
       dispatch(fetchWorkerList());
 
-      if (isSuccess) {
-        setTimeout(() => {
-          navigate("/workers");
-        }, 1000);
-      }
+      //if (isSuccess) {
+      setTimeout(() => {
+        navigate("/workers");
+      }, 1000);
+      //}
     } catch (error) {
       console.error("Error al enviar los datos:", error);
     }

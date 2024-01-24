@@ -229,11 +229,11 @@ const JobABM = () => {
         await uploadData(formData, urlJob, editMode, job?.id);
         dispatch(fetchJobList());
 
-        if (isSuccess) {
-          setTimeout(() => {
-            navigate("/jobs");
-          }, 1000);
-        }
+        //if (isSuccess) {
+        setTimeout(() => {
+          navigate("/jobs");
+        }, 1000);
+        //}
       } catch (error) {
         console.error("Error al enviar los datos:", error);
       }

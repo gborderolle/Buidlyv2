@@ -148,7 +148,6 @@ const EstateABM = () => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
 
-    // Verificar si se seleccionó una provincia
     const inputIsValidCity = ddlSelectedCity !== null;
     if (!inputIsValidCity) {
       setInputHasErrorCity(true);
@@ -173,46 +172,50 @@ const EstateABM = () => {
       return;
     }
 
-    setAddressError(""); // Limpiar errores previos
+    setAddressError("");
 
     const latLonResult = await verifyAddress();
-    if (latLonResult) {
-      console.log("latLonResult después de verifyAddress:", latLonResult);
-
-      if (latLonResult && latLonResult.lat) {
-        const dataToUpload = {
-          Name: estateName,
-          Address: estateAddress,
-          Comments: estateComments,
-          CityDSId: ddlSelectedCity.id,
-          OwnerDSId: ddlSelectedOwner.id,
-          LatLong: `${latLonResult.lat},${latLonResult.lon}`,
-          GoogleMapsURL: `https://www.google.com/maps/search/${latLonResult.lat},${latLonResult.lon}`,
-        };
-        console.log("dataToUpload:", dataToUpload);
-
-        try {
-          await uploadData(dataToUpload, urlEstate, editMode, estate?.id);
-          dispatch(fetchEstateList());
-
-          if (isSuccess) {
-            setTimeout(() => {
-              navigate("/estates");
-            }, 1000);
-          }
-        } catch (error) {
-          console.error("Error al enviar los datos:", error);
-          if (error === "Dirección no encontrada.") {
-            setAddressError(true);
-          }
-        }
-      } else {
-        console.error("Error al enviar los datos");
-        setAddressError(true);
+    if (latLonResult && !latLonResult.found) {
+      const confirmContinue = window.confirm(
+        "La dirección no se encontró. ¿Desea agregar la propiedad de todos modos?"
+      );
+      if (!confirmContinue) {
+        return; // El usuario decide no continuar
       }
-    } else {
-      // Manejo de error si no se obtienen las coordenadas
-      console.error("No se pudo obtener las coordenadas");
+    }
+
+    const dataToUpload = {
+      Name: estateName,
+      Address: estateAddress,
+      Comments: estateComments,
+      CityDSId: ddlSelectedCity.id,
+      OwnerDSId: ddlSelectedOwner.id,
+      LatLong:
+        latLonResult && latLonResult.found
+          ? `${latLonResult.lat},${latLonResult.lon}`
+          : "",
+      GoogleMapsURL:
+        latLonResult && latLonResult.found
+          ? `https://www.google.com/maps/search/${latLonResult.lat},${latLonResult.lon}`
+          : "",
+    };
+
+    // Si la dirección no se encuentra y el usuario decide continuar, setear GoogleMapsURL como vacío
+    if (latLonResult && !latLonResult.found) {
+      dataToUpload.GoogleMapsURL = "";
+    }
+
+    try {
+      await uploadData(dataToUpload, urlEstate, editMode, estate?.id);
+      dispatch(fetchEstateList());
+
+      //if (isSuccess) {
+      setTimeout(() => {
+        navigate("/estates");
+      }, 1000);
+      //}
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
     }
   };
 
@@ -257,7 +260,6 @@ const EstateABM = () => {
       }
 
       try {
-        //const query = `${estateAddress}, ${citycode}, ${countrycode}`;
         const query = `${estateAddress}`;
         const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&citycode=${encodeURIComponent(
           citycode
@@ -270,27 +272,21 @@ const EstateABM = () => {
         }
         const data = await response.json();
 
-        // Filtrar por la ciudad seleccionada
         const matchingAddresses = data.filter(
           (item) => item.address.city === ddlSelectedCity.name
         );
 
         if (matchingAddresses.length === 0) {
-          setAddressError(
-            "Dirección no encontrada para la ciudad seleccionada."
-          );
+          resolve({ found: false }); // Indica que no se encontró la dirección
           return;
         }
 
-        // Asumir que se toma el primer resultado coincidente
         const { lat, lon } = matchingAddresses[0];
         setLatLong({ lat, lon });
-        resolve({ lat, lon });
-        console.log("Coordenadas obtenidas:", lat, lon);
+        resolve({ lat, lon, found: true }); // Indica que se encontró la dirección
       } catch (error) {
         console.error("Error al verificar la dirección:", error);
         setAddressError("Error al verificar la dirección");
-        // reject("Error al verificar la dirección");
       }
     });
   };
