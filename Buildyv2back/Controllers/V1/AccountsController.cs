@@ -177,7 +177,7 @@ namespace Buildyv2.Controllers.V1
             {
                 var user = new BuildyUser
                 {
-                    UserName = model.Email,
+                    UserName = model.Username,
                     Email = model.Email,
                     Name = model.Name,
                 };
@@ -201,7 +201,7 @@ namespace Buildyv2.Controllers.V1
 
                     var userCredential = new UserCredential
                     {
-                        Email = user.Email,
+                        Username = user.UserName,
                         Password = model.Password
                     };
                     _response.Result = await TokenSetup(userCredential);
@@ -239,8 +239,8 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 // Actualiza los campos del usuario
+                user.UserName = model.Username; // Si el email es también el nombre de usuario
                 user.Email = model.Email;
-                user.UserName = model.Email; // Si el email es también el nombre de usuario
                 user.Name = model.Name;
 
                 var updateResult = await _userManager.UpdateAsync(user);
@@ -279,11 +279,11 @@ namespace Buildyv2.Controllers.V1
             try
             {
                 // lockoutOnFailure: bloquea al usuario si tiene muchos intentos de logueo
-                var result = await _signInManager.PasswordSignInAsync(userCredential.Email, userCredential.Password, isPersistent: false, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(userCredential.Username, userCredential.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("Login correcto.");
-                    var user = await _userManager.FindByEmailAsync(userCredential.Email);
+                    var user = await _userManager.FindByNameAsync(userCredential.Username);
                     var roles = await _userManager.GetRolesAsync(user); // Obtener roles del usuario
 
                     _response.StatusCode = HttpStatusCode.OK;
@@ -405,14 +405,14 @@ namespace Buildyv2.Controllers.V1
 
         private async Task<AuthenticationResponse> TokenSetup(UserCredential userCredential)
         {
-            var user = await _userManager.FindByEmailAsync(userCredential.Email);
+            var user = await _userManager.FindByNameAsync(userCredential.Username);
             if (user == null)
             {
                 return null;
             }
             var claims = new List<Claim>()
             {
-                new Claim("email", userCredential.Email)
+                new Claim("email", userCredential.Username)
                 //new Claim("username", userCredential.Username)
             };
 
@@ -505,8 +505,9 @@ namespace Buildyv2.Controllers.V1
 
         public class RegisterModel
         {
-            public string Email { get; set; }
+            public string Username { get; set; }
             public string Name { get; set; }
+            public string Email { get; set; }
             public string Password { get; set; }
             public string UserRoleId { get; set; }
             public string UserRoleName { get; set; }
@@ -514,8 +515,9 @@ namespace Buildyv2.Controllers.V1
 
         public class UpdateUserModel
         {
-            public string Email { get; set; }
+            public string Username { get; set; }
             public string Name { get; set; }
+            public string Email { get; set; }
             public string UserRoleId { get; set; }
             public string UserRoleName { get; set; }
         }

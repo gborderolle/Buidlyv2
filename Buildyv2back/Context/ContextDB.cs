@@ -79,34 +79,62 @@ namespace Buildyv2.Context
 
             var passwordHasher = new PasswordHasher<BuildyUser>();
 
-            var username1 = "admin@buildy2.uy";
+            var username1 = "useradmin";
+            var email1 = "admin@buildy.lat";
             var userAdmin = new BuildyUser()
             {
                 Id = userAdminId,
-                UserName = "Sr.Admin",
-                Name = "Sr.Admin",
-                NormalizedUserName = username1,
-                Email = username1,
-                NormalizedEmail = username1,
-                PasswordHash = passwordHasher.HashPassword(null, "Aa1234."),
-                //RoleId = rolAdmin.Id
+                UserName = username1,
+                NormalizedUserName = username1.ToUpper(),
+                Email = email1,
+                NormalizedEmail = email1.ToUpper(),
+                PasswordHash = passwordHasher.HashPassword(null, "useradmin1234"),
+                Name = "Usuario administrador"
             };
 
-            var username2 = "normal@buildy2.uy";
+            var username2 = "usernormal";
+            var email2 = "normal@buildy.lat";
             var userUser = new BuildyUser()
             {
                 Id = userUserId,
-                UserName = "Sr.Normal",
-                Name = "Sr.Normal",
-                NormalizedUserName = username2,
-                Email = username2,
-                NormalizedEmail = username2,
-                PasswordHash = passwordHasher.HashPassword(null, "Aa1234."),
-                //RoleId = rolUser.Id
+                UserName = username2,
+                NormalizedUserName = username2.ToUpper(),
+                Email = email2,
+                NormalizedEmail = email2.ToUpper(),
+                PasswordHash = passwordHasher.HashPassword(null, "usernormal1234"),
+                Name = "Usuario normal"
+            };
+
+            var username3 = "mirtadls";
+            var email3 = "mirta@buildy.lat";
+            var id3 = "58fbedfc-e682-479b-ba46-19ef4c137d2a";
+            var userMirta = new BuildyUser()
+            {
+                Id = id3,
+                UserName = username3,
+                NormalizedUserName = username3.ToUpper(),
+                Email = email3,
+                NormalizedEmail = email3.ToUpper(),
+                PasswordHash = passwordHasher.HashPassword(null, "mirtadls1234"),
+                Name = "Mirta de los Santos"
+            };
+
+            var username4 = "irgla";
+            var email4 = "gladys@buildy.lat";
+            var id4 = "11c767dc-e8ce-448e-8fdb-ee590a44a3ff";
+            var userGladys = new BuildyUser()
+            {
+                Id = id4,
+                UserName = username4,
+                NormalizedUserName = username4.ToUpper(),
+                Email = email4,
+                NormalizedEmail = email4.ToUpper(),
+                PasswordHash = passwordHasher.HashPassword(null, "irgla1234"),
+                Name = "Gladys de los Santos"
             };
 
             modelBuilder.Entity<BuildyUser>()
-                .HasData(userAdmin, userUser);
+                .HasData(userAdmin, userUser, userMirta, userGladys);
 
             modelBuilder.Entity<BuildyRole>()
                 .HasData(rolAdmin, rolUser);
@@ -125,7 +153,7 @@ namespace Buildyv2.Context
     {
         Id = 2,
         ClaimType = "role",
-        UserId = userAdminId,
+        UserId = userUserId,
         ClaimValue = "user"
     });
 
@@ -140,6 +168,16 @@ namespace Buildyv2.Context
                 {
                     RoleId = rolUserId,
                     UserId = userUserId
+                },
+                new IdentityUserRole<string>
+                {
+                    RoleId = rolUserId,
+                    UserId = userMirta.Id
+                },
+                new IdentityUserRole<string>
+                {
+                    RoleId = rolUserId,
+                    UserId = userGladys.Id
                 }
             );
         }

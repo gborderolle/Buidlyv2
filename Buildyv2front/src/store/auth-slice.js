@@ -9,6 +9,7 @@ const getInitialState = () => {
   } else {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("username");
     localStorage.removeItem("userRole");
     localStorage.removeItem("userFullname");
     localStorage.removeItem("userId");
@@ -19,6 +20,7 @@ const getInitialState = () => {
   return {
     isLoggedIn,
     userEmail: localStorage.getItem("userEmail") || "",
+    username: localStorage.getItem("username") || "",
     userRole: localStorage.getItem("userRole") || "",
     userFullname: localStorage.getItem("userFullname") || "",
     userId: localStorage.getItem("userId") || "",
@@ -35,6 +37,7 @@ const authSlice = createSlice({
       const expiry = new Date().getTime() + 1 * 60 * 60 * 1000; // 1 hora
       state.isLoggedIn = true;
       state.userEmail = action.payload.userEmail;
+      state.username = action.payload.username;
       state.userRole = action.payload.userRole;
       state.userFullname = action.payload.userFullname;
       state.userId = action.payload.userId;
@@ -58,6 +61,7 @@ const authSlice = createSlice({
     logout(state) {
       state.isLoggedIn = false;
       state.userEmail = "";
+      state.username = "";
       state.userRole = "";
       state.userFullname = "";
       state.userId = "";
@@ -70,6 +74,7 @@ const authSlice = createSlice({
 
       localStorage.setItem("isLoggedIn", JSON.stringify(data));
       localStorage.removeItem("userEmail");
+      localStorage.removeItem("username");
       localStorage.removeItem("userRole");
       localStorage.removeItem("userFullname");
       localStorage.removeItem("userId");
@@ -93,6 +98,7 @@ const authSlice = createSlice({
       }
 
       state.userEmail = localStorage.getItem("userEmail") || "";
+      state.username = localStorage.getItem("username") || "";
       state.userRole = localStorage.getItem("userRole") || "";
       state.userFullname = localStorage.getItem("userFullname") || "";
       state.userId = localStorage.getItem("userId") || "";
@@ -104,6 +110,7 @@ const authSlice = createSlice({
     resetAuthState(state) {
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("userEmail");
+      localStorage.removeItem("username");
       localStorage.removeItem("userRole");
       localStorage.removeItem("userFullname");
       localStorage.removeItem("userId");
@@ -112,6 +119,7 @@ const authSlice = createSlice({
 
       state.isLoggedIn = false;
       state.userEmail = null;
+      state.username = null;
       state.userRole = null;
       state.userFullname = null;
       state.userId = null;

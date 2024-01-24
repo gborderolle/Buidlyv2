@@ -166,9 +166,17 @@ namespace Buildyv2
             });
 
             // Identity Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/27047608#notes
-            services.AddIdentity<BuildyUser, BuildyRole>()
-                .AddEntityFrameworkStores<ContextDB>()
-                .AddDefaultTokenProviders();
+            services.AddIdentity<BuildyUser, BuildyRole>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredLength = 6;
+            })
+            .AddEntityFrameworkStores<ContextDB>()
+            .AddDefaultTokenProviders();
 
             // Autorización basada en Claims
             // Agregar los roles del sistema

@@ -36,6 +36,16 @@ import classes from "./Login.module.css";
 
 //#region Functions
 
+const usernameReducer = (state, action) => {
+  if (action.type === "USER_INPUT") {
+    return { value: action.val };
+  }
+  if (action.type === "INPUT_BLUR") {
+    return { value: state.value };
+  }
+  return { value: "", isValid: false };
+};
+
 const emailReducer = (state, action) => {
   if (action.type == "USER_INPUT") {
     return { value: action.val };
@@ -88,6 +98,11 @@ const Login = () => {
 
   // Redux call actions
   const dispatch = useDispatch();
+
+  const [usernameState, dispatchUsername] = useReducer(usernameReducer, {
+    value: "",
+    isValid: false,
+  });
 
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: "",
@@ -145,12 +160,20 @@ const Login = () => {
     }
   };
 
+  const usernameChangeHandler = (event) => {
+    dispatchUsername({ type: "USER_INPUT", val: event.target.value });
+  };
+
   const emailChangeHandler = (event) => {
     dispatchEmail({ type: "USER_INPUT", val: event.target.value });
   };
 
   const passwordChangeHandler = (event) => {
     dispatchPassword({ type: "USER_INPUT", val: event.target.value });
+  };
+
+  const validateUsernameHandler = () => {
+    dispatchUsername({ type: "INPUT_BLUR" });
   };
 
   const validateEmailHandler = () => {
@@ -166,7 +189,8 @@ const Login = () => {
     setIsLoggingIn(true); // Activar el spinner
     dispatch(
       loginHandler(
-        emailState.value,
+        // emailState.value,
+        usernameState.value, // Usar username en lugar de email
         passwordState.value,
         navigate,
         setErrorMessage
@@ -189,7 +213,7 @@ const Login = () => {
                   <CForm onSubmit={submitHandler}>
                     <h1>Dashboard</h1>
                     <p className="text-medium-emphasis">Login</p>
-                    <CInputGroup className="mb-3">
+                    {/* <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
@@ -198,6 +222,18 @@ const Login = () => {
                         onBlur={validateEmailHandler}
                         onChange={emailChangeHandler}
                         value={emailState.value}
+                      />
+                    </CInputGroup> */}
+
+                    <CInputGroup className="mb-3">
+                      <CInputGroupText>
+                        <CIcon icon={cilUser} />
+                      </CInputGroupText>
+                      <CFormInput
+                        placeholder="Nombre de usuario" // Cambiar placeholder
+                        onBlur={validateUsernameHandler}
+                        onChange={usernameChangeHandler}
+                        value={usernameState.value}
                       />
                     </CInputGroup>
                     <CInputGroup className="mb-4">

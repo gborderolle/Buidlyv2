@@ -41,7 +41,7 @@ namespace Buildyv2.Utilities
             string body = $"<div><strong>API Web Service</strong></div>";
             body += $"<div>Notificación de acceso a la plataforma.</div>";
             body += "<br/>";
-            body += $"<div><strong>Login user: </strong>{userCredential.Email}</div>";
+            body += $"<div><strong>Login user: </strong>{userCredential.Username}</div>";
             body += $"<div><strong>User IP: </strong>{clientIP}</div>";
             body += $"<div><strong>User City: </strong>{clientIPCity}</div>";
             body += $"<div><strong>Dispositivo: </strong>{device}</div>";

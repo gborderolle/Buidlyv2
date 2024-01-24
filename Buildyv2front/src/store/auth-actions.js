@@ -5,11 +5,11 @@ import showToastMessage from "../components/messages/ShowSuccess";
 import { urlAccount } from "../endpoints"; // Asegúrate de ajustar la ruta relativa según sea necesario
 
 export const loginHandler =
-  (email, password, navigate, setErrorMessage) => async (dispatch) => {
+  (username, password, navigate, setErrorMessage) => async (dispatch) => {
     try {
       const response = await axios.post(
         `${urlAccount}/login`,
-        { email, password },
+        { username, password },
         { headers: { "x-version": "1" } }
       );
 
@@ -25,7 +25,7 @@ export const loginHandler =
             setTimeout(() => {
               dispatch(
                 authActions.login({
-                  userEmail: email,
+                  username,
                   isMobile: isMobileDevice(),
                   authToken: token.token,
                   userRole: userRoles[0],
