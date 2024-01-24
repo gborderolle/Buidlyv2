@@ -249,9 +249,11 @@ const RentABM = () => {
         dispatch(fetchRentList());
         dispatch(fetchEstateList());
 
-        setTimeout(() => {
-          navigate("/estates");
-        }, 1000);
+        if (isSuccess) {
+          setTimeout(() => {
+            navigate("/estates");
+          }, 1000);
+        }
       } catch (error) {
         console.error("Error al enviar los datos:", error);
       }

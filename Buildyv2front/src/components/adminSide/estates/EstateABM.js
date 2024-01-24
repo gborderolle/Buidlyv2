@@ -195,9 +195,11 @@ const EstateABM = () => {
           await uploadData(dataToUpload, urlEstate, editMode, estate?.id);
           dispatch(fetchEstateList());
 
-          setTimeout(() => {
-            navigate("/estates");
-          }, 1000);
+          if (isSuccess) {
+            setTimeout(() => {
+              navigate("/estates");
+            }, 1000);
+          }
         } catch (error) {
           console.error("Error al enviar los datos:", error);
           if (error === "Dirección no encontrada.") {

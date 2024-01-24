@@ -193,9 +193,11 @@ const ReportABM = () => {
         await uploadData(formData, urlReport, editMode, report?.id);
         dispatch(fetchReportList());
 
-        setTimeout(() => {
-          navigate("/reports");
-        }, 1000);
+        if (isSuccess) {
+          setTimeout(() => {
+            navigate("/reports");
+          }, 1000);
+        }
       } catch (error) {
         console.error("Error al enviar los datos:", error);
       }

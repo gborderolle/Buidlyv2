@@ -203,9 +203,11 @@ const TenantABM = () => {
       dispatch(fetchTenantList());
 
       // Navegar a otra ruta después de un breve retraso
-      setTimeout(() => {
-        navigate("/tenants");
-      }, 1000);
+      if (isSuccess) {
+        setTimeout(() => {
+          navigate("/tenants");
+        }, 1000);
+      }
     } catch (error) {
       console.error("Error al enviar los datos:", error);
       // Manejo adicional de errores si es necesario
