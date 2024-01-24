@@ -20,6 +20,9 @@ import {
   fetchCountryList,
   fetchProvinceList,
   fetchCityList,
+  fetchOwnerList,
+  fetchUserList,
+  fetchUserRoleList,
 } from "../../store/generalData-actions";
 
 const DefaultLayout = () => {
@@ -67,10 +70,6 @@ const DefaultLayout = () => {
       document.body.style.fontSize = "small";
     }
 
-    const fetchLoggedUserData = async () => {
-      // dispatch(fetchMyParty());
-    };
-
     const fetchGeneralData = async () => {
       batch(() => {
         dispatch(fetchEstateList());
@@ -82,9 +81,11 @@ const DefaultLayout = () => {
         dispatch(fetchCountryList());
         dispatch(fetchProvinceList());
         dispatch(fetchCityList());
+        dispatch(fetchOwnerList());
+        dispatch(fetchUserList());
+        dispatch(fetchUserRoleList());
       });
     };
-    fetchLoggedUserData();
     fetchGeneralData();
 
     // Limpiar estilos al desmontar el componente

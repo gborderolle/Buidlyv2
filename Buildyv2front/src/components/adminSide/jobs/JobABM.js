@@ -68,13 +68,13 @@ const JobABM = () => {
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
-  const userEmail = useSelector((state) => state.auth.userEmail);
+  const username = useSelector((state) => state.auth.username);
   useEffect(() => {
-    if (!userEmail) {
+    if (!username) {
       dispatch(authActions.logout());
       navigate("/login");
     }
-  }, [userEmail, navigate, dispatch]);
+  }, [username, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
 
   // Redux
@@ -219,7 +219,7 @@ const JobABM = () => {
         formData.append("Name", name);
         formData.append("Month", month.toISOString()); // Asegúrate de enviar la fecha en un formato adecuado
         formData.append("Comments", comments);
-        formData.append("LabourCost", parseFloat(cost).toFixed(2));
+        formData.append("LabourCost", cost);
         formData.append("EstateId", ddlSelectedEstate.id);
 
         if (ddlSelectedWorker) {
@@ -269,10 +269,10 @@ const JobABM = () => {
           <div
             key={index}
             style={{ flex: "0 0 auto" }}
-            onClick={() => openModal(photo.url)}
+            onClick={() => openModal(photo.url ? photo.url.url : "")}
           >
             <img
-              src={photo.url}
+              src={photo.url ? photo.url.url : "/placeholder-image-url"}
               alt={`Foto ${index}`}
               style={{ width: "100px", height: "100px", cursor: "pointer" }}
             />

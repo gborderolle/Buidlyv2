@@ -44,7 +44,17 @@ const EstateMenu = () => {
     useSelector((state) => state.generalData.estateList) || [];
 
   useEffect(() => {
-    setEstateList(reduxEstateList);
+    let sortedList = [...reduxEstateList];
+    sortedList.sort((a, b) => {
+      if (a.name.toLowerCase() < b.name.toLowerCase()) {
+        return -1;
+      }
+      if (a.name.toLowerCase() > b.name.toLowerCase()) {
+        return 1;
+      }
+      return 0;
+    });
+    setEstateList(sortedList);
   }, [reduxEstateList]);
 
   const itemsPerPage = 20;
@@ -52,19 +62,19 @@ const EstateMenu = () => {
   const [pageCount, setPageCount] = useState(0);
 
   const [sortConfig, setSortConfig] = useState({
-    key: null,
+    key: "address",
     direction: "ascending",
   });
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
-  const userEmail = useSelector((state) => state.auth.userEmail);
+  const username = useSelector((state) => state.auth.username);
   useEffect(() => {
-    if (!userEmail) {
+    if (!username) {
       dispatch(authActions.logout());
       navigate("/login");
     }
-  }, [userEmail, navigate, dispatch]);
+  }, [username, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
 
   const handleSelectEstate = (estate) => {
@@ -270,6 +280,19 @@ const EstateMenu = () => {
             <FontAwesomeIcon icon={faEye} color="#697588" />
           </button>
           <button
+            onClick={() => navigateToRent(estate)}
+            style={{ border: "none", background: "none" }}
+            className={isBumped ? "bump" : ""}
+            title={
+              estate.presentRentId > 0 ? "Ver alquiler" : "Agregar alquiler"
+            }
+          >
+            <FontAwesomeIcon
+              icon={faDollarSign}
+              color={estate.presentRentId > 0 ? "#697588" : "lightgray"}
+            />
+          </button>
+          <button
             onClick={() => navigateToJobs(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
@@ -300,20 +323,6 @@ const EstateMenu = () => {
             />
           </button>
           <button
-            onClick={() => navigateToRent(estate)}
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-            title={
-              estate.presentRentId > 0 ? "Ver alquiler" : "Agregar alquiler"
-            }
-          >
-            <FontAwesomeIcon
-              icon={faDollarSign}
-              color={estate.presentRentId > 0 ? "#697588" : "lightgray"}
-            />
-          </button>
-          <button
-            onClick={() => navigateToRent(estate)}
             style={{ border: "none", background: "none" }}
             className={isBumped ? "bump" : ""}
             title={estate.ownerDS?.name || "N/A"}

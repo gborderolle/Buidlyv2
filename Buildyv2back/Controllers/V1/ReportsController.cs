@@ -134,8 +134,9 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPut("{id:int}")]
+        [Consumes("multipart/form-data")] // Asegura que el método acepte multipart/form-data
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] ReportCreateDTO reportCreateDto)
+        public async Task<ActionResult<APIResponse>> Put(int id, [FromForm] ReportCreateDTO reportCreateDto)
         {
             try
             {
@@ -171,8 +172,19 @@ namespace Buildyv2.Controllers.V1
                     return NotFound(_response);
                 }
 
+                var estate = await _dbContext.Estate.FindAsync(reportCreateDto.EstateId);
+                if (estate == null)
+                {
+                    _logger.LogError($"La propiedad ID={reportCreateDto.EstateId} no existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"La propiedad ID={reportCreateDto.EstateId} no existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    ModelState.AddModelError("NameAlreadyExists", $"La propiedad ID={reportCreateDto.EstateId} no existe en el sistema.");
+                    return BadRequest(ModelState);
+                }
+
                 // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
-                report.Name = reportCreateDto.Name;
+                report.Name = Utils.ToCamelCase(reportCreateDto.Name);
                 report.Month = reportCreateDto.Month;
                 report.Comments = reportCreateDto.Comments;
                 report.Update = DateTime.Now;
@@ -182,8 +194,28 @@ namespace Buildyv2.Controllers.V1
 
                 var updatedReporter = await _reportRepository.Update(report);
 
+                if (reportCreateDto.ListPhotos != null && reportCreateDto.ListPhotos.Count > 0)
+                {
+                    string dynamicContainer = $"uploads/reports/estate{estate.Id}/{DateTime.Now:yyyy_MM}/report{report.Id}";
+                    foreach (var photoForm in reportCreateDto.ListPhotos)
+                    {
+                        Photo newPhoto = new();
+                        newPhoto.Report = report;
+
+                        using (var stream = new MemoryStream())
+                        {
+                            await photoForm.CopyToAsync(stream);
+                            var content = stream.ToArray();
+                            var extension = Path.GetExtension(photoForm.FileName);
+                            newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
+                        }
+
+                        await _photoRepository.Create(newPhoto);
+                    }
+                }
+
                 _logger.LogInformation($"Se actualizó correctamente el reporte Id:{id}.");
-                _response.Result = _mapper.Map<EstateDTO>(updatedReporter);
+                _response.Result = _mapper.Map<ReportDTO>(updatedReporter);
                 _response.StatusCode = HttpStatusCode.OK;
 
                 return Ok(_response);
@@ -244,6 +276,7 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(ModelState);
                 }
 
+                reportCreateDto.Name = Utils.ToCamelCase(reportCreateDto.Name);
                 Report modelo = _mapper.Map<Report>(reportCreateDto);
                 modelo.Estate = estate;
                 modelo.Creation = DateTime.Now;

@@ -28,7 +28,7 @@ namespace Buildyv2.DTOs
 
         // Uniques
 
-        public decimal LabourCost { get; set; }
+        public decimal? LabourCost { get; set; }
 
         //public List<Photo> ListPhotos { get; set; }
         [FileSizeValidation(maxSizeMB: 4)]

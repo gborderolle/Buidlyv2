@@ -56,13 +56,13 @@ const EstateABM = () => {
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
-  const userEmail = useSelector((state) => state.auth.userEmail);
+  const username = useSelector((state) => state.auth.username);
   useEffect(() => {
-    if (!userEmail) {
+    if (!username) {
       dispatch(authActions.logout());
       navigate("/login");
     }
-  }, [userEmail, navigate, dispatch]);
+  }, [username, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
 
   // Redux

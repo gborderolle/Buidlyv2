@@ -27,7 +27,7 @@ namespace Buildyv2.Models
 
         // Uniques
 
-        public decimal LabourCost { get; set; }
+        public decimal? LabourCost { get; set; }
 
         public List<Photo> ListPhotos { get; set; }
 

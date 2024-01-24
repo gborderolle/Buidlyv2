@@ -41,7 +41,6 @@ namespace Buildyv2.Controllers.V1
                         IncludeExpression = b => b.Rent
                     },
                 };
-
             return await Get<Tenant, TenantDTO>(paginationDTO: paginationDTO, includes: includes);
         }
 
@@ -133,7 +132,7 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
-                tenant.Name = tenantCreateDto.Name;
+                tenant.Name = Utils.ToCamelCase(tenantCreateDto.Name);
                 tenant.Phone1 = tenantCreateDto.Phone1;
                 tenant.Phone2 = tenantCreateDto.Phone2;
                 tenant.Email = tenantCreateDto.Email;
@@ -197,6 +196,7 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(ModelState);
                 }
 
+                tenantCreateDto.Name = Utils.ToCamelCase(tenantCreateDto.Name);
                 Tenant modelo = _mapper.Map<Tenant>(tenantCreateDto);
                 modelo.Creation = DateTime.Now;
                 modelo.Update = DateTime.Now;

@@ -46,7 +46,17 @@ const TenantMenu = () => {
     useSelector((state) => state.generalData.estateList) || [];
 
   useEffect(() => {
-    setTenantList(reduxTenantList);
+    let sortedList = [...reduxTenantList];
+    sortedList.sort((a, b) => {
+      if (a.name.toLowerCase() < b.name.toLowerCase()) {
+        return -1;
+      }
+      if (a.name.toLowerCase() > b.name.toLowerCase()) {
+        return 1;
+      }
+      return 0;
+    });
+    setTenantList(sortedList);
   }, [reduxTenantList]);
 
   useEffect(() => {
@@ -68,13 +78,13 @@ const TenantMenu = () => {
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
-  const userEmail = useSelector((state) => state.auth.userEmail);
+  const username = useSelector((state) => state.auth.username);
   useEffect(() => {
-    if (!userEmail) {
+    if (!username) {
       dispatch(authActions.logout());
       navigate("/login");
     }
-  }, [userEmail, navigate, dispatch]);
+  }, [username, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
 
   const handleSelectTenant = (tenant) => {

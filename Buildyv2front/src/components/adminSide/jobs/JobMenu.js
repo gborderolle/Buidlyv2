@@ -40,34 +40,24 @@ const JobMenu = () => {
   const [jobList, setJobList] = useState([]);
   const reduxJobList = useSelector((state) => state.generalData.jobList) || [];
 
-  useEffect(() => {
-    // Si listMode es true, usar solo los trabajos de la propiedad específica
-    if (listMode && estate && estate.listJobs) {
-      setJobList(estate.listJobs);
-    } else {
-      // Si listMode no es true, usar la lista completa de trabajos
-      setJobList(reduxJobList);
-    }
-  }, [reduxJobList, estate, listMode]);
-
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 
   const [sortConfig, setSortConfig] = useState({
-    key: null,
+    key: "address",
     direction: "ascending",
   });
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
-  const userEmail = useSelector((state) => state.auth.userEmail);
+  const username = useSelector((state) => state.auth.username);
   useEffect(() => {
-    if (!userEmail) {
+    if (!username) {
       dispatch(authActions.logout());
       navigate("/login");
     }
-  }, [userEmail, navigate, dispatch]);
+  }, [username, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
 
   const handleSelectJob = (job) => {
@@ -77,6 +67,26 @@ const JobMenu = () => {
   //#endregion Consts ***********************************
 
   //#region Hooks ***********************************
+
+  useEffect(() => {
+    const sortJobs = (jobs) => {
+      return jobs.sort((a, b) => {
+        const addressA = a.estate?.address?.toLowerCase() || "";
+        const addressB = b.estate?.address?.toLowerCase() || "";
+        return (
+          (addressA < addressB ? -1 : 1) *
+          (sortConfig.direction === "ascending" ? 1 : -1)
+        );
+      });
+    };
+
+    const sortedList =
+      listMode && estate && estate.listJobs
+        ? sortJobs([...estate.listJobs])
+        : sortJobs([...reduxJobList]);
+
+    setJobList(sortedList);
+  }, [reduxJobList, estate, listMode, sortConfig]);
 
   const filteredJobList = jobList.filter((job) => {
     const match1 = job.name

@@ -153,7 +153,7 @@ export const fetchCountryList = () => {
 export const fetchOwnerList = () => {
   return async (dispatch) => {
     try {
-      const data = await fetchApi(urlOwner+ "/GetOwner");
+      const data = await fetchApi(urlOwner + "/GetOwner");
       if (data.result) {
         dispatch(generalDataActions.setOwnerList(data.result));
       }

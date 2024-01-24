@@ -192,6 +192,8 @@ namespace Buildyv2.Controllers.V1
 
                 using (var transaction = await _dbContext.Database.BeginTransactionAsync())
                 {
+
+                    rentCreateDto.Warrant = Utils.ToCamelCase(rentCreateDto.Warrant);
                     Rent modelo = _mapper.Map<Rent>(rentCreateDto);
                     modelo.Estate = estate;
                     modelo.Creation = DateTime.Now;

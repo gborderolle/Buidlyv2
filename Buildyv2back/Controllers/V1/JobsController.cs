@@ -143,8 +143,9 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPut("{id:int}")]
+        [Consumes("multipart/form-data")] // Asegura que el método acepte multipart/form-data
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] JobCreateDTO jobCreateDto)
+        public async Task<ActionResult<APIResponse>> Put(int id, [FromForm] JobCreateDTO jobCreateDto)
         {
             try
             {
@@ -155,6 +156,17 @@ namespace Buildyv2.Controllers.V1
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
+                }
+
+                var estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
+                if (estate == null)
+                {
+                    _logger.LogError($"La propiedad ID={jobCreateDto.EstateId} no existe en el sistema");
+                    _response.ErrorMessages = new List<string> { $"La propiedad ID={jobCreateDto.EstateId} no existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    ModelState.AddModelError("NameAlreadyExists", $"La propiedad ID={jobCreateDto.EstateId} no existe en el sistema.");
+                    return BadRequest(ModelState);
                 }
 
                 var job = await _jobRepository.Get(v => v.Id == id, includes: new List<IncludePropertyConfiguration<Job>> {
@@ -171,7 +183,7 @@ namespace Buildyv2.Controllers.V1
                     return NotFound(_response);
                 }
 
-                job.Name = jobCreateDto.Name;
+                job.Name = Utils.ToCamelCase(str: jobCreateDto.Name);
                 job.Month = jobCreateDto.Month;
                 job.LabourCost = jobCreateDto.LabourCost;
                 job.Comments = jobCreateDto.Comments;
@@ -200,6 +212,26 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 var updatedJob = await _jobRepository.Update(job);
+
+                if (jobCreateDto.ListPhotos != null && jobCreateDto.ListPhotos.Count > 0)
+                {
+                    string dynamicContainer = $"uploads/jobs/estate{estate.Id}/{DateTime.Now:yyyy_MM}/job{job.Id}";
+                    foreach (var photoForm in jobCreateDto.ListPhotos)
+                    {
+                        Photo newPhoto = new();
+                        newPhoto.Job = job;
+
+                        using (var stream = new MemoryStream())
+                        {
+                            await photoForm.CopyToAsync(stream);
+                            var content = stream.ToArray();
+                            var extension = Path.GetExtension(photoForm.FileName);
+                            newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
+                        }
+
+                        await _photoRepository.Create(newPhoto);
+                    }
+                }
 
                 _logger.LogInformation($"Se actualizó correctamente La obra Id:{id}.");
                 _response.Result = _mapper.Map<JobDTO>(updatedJob);
@@ -266,6 +298,7 @@ namespace Buildyv2.Controllers.V1
 
                 using (var transaction = await _dbContext.Database.BeginTransactionAsync())
                 {
+                    jobCreateDto.Name = Utils.ToCamelCase(jobCreateDto.Name);
                     Job modelo = _mapper.Map<Job>(jobCreateDto);
                     modelo.Estate = estate;
                     modelo.Creation = DateTime.Now;

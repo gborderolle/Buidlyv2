@@ -70,19 +70,20 @@ const RentABM = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const [inputWarrant, setInputWarrant] = useState(rent?.warrant || "");
+  const [inputHasErrorWarrant, setInputHasErrorWarrant] = useState(false);
 
   // redux
   const dispatch = useDispatch();
 
   //#region RUTA PROTEGIDA
   const navigate = useNavigate();
-  const userEmail = useSelector((state) => state.auth.userEmail);
+  const username = useSelector((state) => state.auth.username);
   useEffect(() => {
-    if (!userEmail) {
+    if (!username) {
       dispatch(authActions.logout());
       navigate("/login");
     }
-  }, [userEmail, navigate, dispatch]);
+  }, [username, navigate, dispatch]);
   //#endregion RUTA PROTEGIDA
 
   // Redux
@@ -159,21 +160,33 @@ const RentABM = () => {
   //#region Hooks ***********************************
 
   useEffect(() => {
-    if (editMode && rent?.listPhotos) {
-      const existingPhotos = rent.listPhotos.map((url) => ({
-        url, // URL de la foto existente
-        isExisting: true, // Marca para identificar que es una foto ya existente
-      }));
-      setLoadedPhotos(existingPhotos);
-    }
-
-    if (editMode && rent?.listTenants) {
-      const initialTenants = rent.listTenants.map((tenant) => ({
-        id: tenant.id,
-        name: tenant.name,
-        phone1: tenant.phone1, // Asegúrate de incluir aquí todas las propiedades necesarias
-      }));
-      setSelectedTenants(initialTenants);
+    if (editMode) {
+      if (rent?.listPhotos) {
+        const existingPhotos = rent.listPhotos.map((url) => ({
+          url, // URL de la foto existente
+          isExisting: true, // Marca para identificar que es una foto ya existente
+        }));
+        setLoadedPhotos(existingPhotos);
+      }
+      if (rent?.listTenants) {
+        const initialTenants = rent.listTenants.map((tenant) => ({
+          id: tenant.id,
+          name: tenant.name,
+          phone1: tenant.phone1, // Asegúrate de incluir aquí todas las propiedades necesarias
+        }));
+        setSelectedTenants(initialTenants);
+      }
+      if (rent?.datetime_monthInit) {
+        const parsedDate = new Date(rent.datetime_monthInit);
+        if (!isNaN(parsedDate)) {
+          setMonth(parsedDate);
+        } else {
+          console.error(
+            "La fecha de inicio del alquiler es inválida:",
+            rent.datetime_monthInit
+          );
+        }
+      }
     }
   }, [editMode, rent]);
 
@@ -197,6 +210,13 @@ const RentABM = () => {
 
     if (!isValidForm) {
       return;
+    }
+
+    if (!inputWarrant.trim()) {
+      setInputHasErrorWarrant(true);
+      return;
+    } else {
+      setInputHasErrorWarrant(false);
     }
 
     if (isValidForm) {
@@ -273,10 +293,10 @@ const RentABM = () => {
           <div
             key={index}
             style={{ flex: "0 0 auto" }}
-            onClick={() => openModal(photo.url.url)}
+            onClick={() => openModal(photo.url ? photo.url.url : "")}
           >
             <img
-              src={photo.url.url}
+              src={photo.url ? photo.url.url : "/placeholder-image-url"}
               alt={`Foto ${index}`}
               style={{ width: "100px", height: "100px", cursor: "pointer" }}
             />
@@ -304,7 +324,10 @@ const RentABM = () => {
               >
                 <div>
                   <CCardTitle>
-                    {editMode ? "Modificar un alquiler" : "Agregar un alquiler"}
+                    {editMode
+                      ? `Modificar el alquiler de propiedad: `
+                      : `Agregar alquiler a propiedad: `}
+                    <span style={{ color: "blue" }}>{estate.name}</span>
                   </CCardTitle>
                 </div>
                 {editMode && rent && rent.id && (
@@ -332,13 +355,15 @@ const RentABM = () => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "left",
+                    fontSize: "12px",
                   }}
                 >
                   {tenantList.map((tenant) => (
                     <CFormCheck
                       key={tenant.id}
                       id={`tenant-${tenant.id}`}
-                      label={`${tenant.name} (${tenant.phone1})`}
+                      // label={`${tenant.name} (${tenant.phone1})`}
+                      label={`${tenant.name}`}
                       checked={selectedTenants.some((t) => t.id === tenant.id)}
                       onChange={(event) =>
                         handleSelectCheckboxTenant(event, tenant)
@@ -354,7 +379,6 @@ const RentABM = () => {
                   ))}
                 </div>
 
-                {/*  */}
                 {inputHasErrorTenant && (
                   <CAlert color="danger" className="w-100">
                     Por favor, selecciona al menos un inquilino.
@@ -370,7 +394,10 @@ const RentABM = () => {
                   type="text"
                   className="cardItem"
                   value={inputWarrant !== null ? inputWarrant : ""} // Usa una cadena vacía si inputWarrant es null
-                  onChange={(e) => setInputWarrant(e.target.value)}
+                  onChange={(e) => {
+                    setInputWarrant(e.target.value);
+                    if (inputHasErrorWarrant) setInputHasErrorWarrant(false);
+                  }}
                   style={{ flex: "1" }} // Asegura que el input tome el máximo espacio posible
                 />
                 <div
@@ -392,6 +419,11 @@ const RentABM = () => {
                   />
                 </div>
               </CInputGroup>
+              {inputHasErrorWarrant && (
+                <CAlert color="danger" className="w-100">
+                  Por favor, ingrese la garantía.
+                </CAlert>
+              )}
 
               <br />
               <CInputGroup>
@@ -551,7 +583,6 @@ const RentABM = () => {
                   </div>
                 )}
               </CRow>
-              <br />
               <CButton type="submit" color="dark">
                 Confirmar
               </CButton>
