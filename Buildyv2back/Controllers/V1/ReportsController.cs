@@ -189,6 +189,7 @@ namespace Buildyv2.Controllers.V1
 
                 // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
                 report.Name = Utils.ToCamelCase(reportCreateDto.Name);
+                report.Comments = Utils.ToCamelCase(reportCreateDto.Comments);
                 report.Month = reportCreateDto.Month;
                 report.Comments = reportCreateDto.Comments;
                 report.Update = DateTime.Now;
@@ -213,7 +214,6 @@ namespace Buildyv2.Controllers.V1
                             var extension = Path.GetExtension(photoForm.FileName);
                             newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
                         }
-
                         await _photoRepository.Create(newPhoto);
                     }
                 }
@@ -283,6 +283,7 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 reportCreateDto.Name = Utils.ToCamelCase(reportCreateDto.Name);
+                reportCreateDto.Comments = Utils.ToCamelCase(reportCreateDto.Comments);
                 Report report = _mapper.Map<Report>(reportCreateDto);
                 report.Estate = estate;
                 report.Creation = DateTime.Now;
@@ -307,7 +308,6 @@ namespace Buildyv2.Controllers.V1
                             var extension = Path.GetExtension(photoForm.FileName);
                             newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
                         }
-
                         await _photoRepository.Create(newPhoto);
                     }
                 }

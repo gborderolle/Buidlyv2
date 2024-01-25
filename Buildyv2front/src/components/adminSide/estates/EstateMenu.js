@@ -474,7 +474,7 @@ const EstateMenu = () => {
                       className="table-header"
                       onClick={() => requestSort("monthlyValue")}
                     >
-                      Renta $
+                      $Renta
                     </th>
                     <th
                       className="table-header"

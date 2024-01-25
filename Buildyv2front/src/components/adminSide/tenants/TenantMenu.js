@@ -403,7 +403,7 @@ const TenantMenu = () => {
                       className="table-header"
                       onClick={() => requestSort("address")}
                     >
-                      Casa (dirección)
+                      Casa (dir)
                     </th>
                     <th
                       className="table-header"

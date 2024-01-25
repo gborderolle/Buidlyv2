@@ -14,7 +14,7 @@ import CIcon from "@coreui/icons-react";
 
 import { AppSidebarNav } from "./AppSidebarNav";
 
-import logoBig from "src/assets/images/datalexion-logo-big.png";
+import logoBig from "src/assets/images/Buildyv2-h.png";
 import { sygnet } from "src/assets/brand/sygnet";
 
 import SimpleBar from "simplebar-react";

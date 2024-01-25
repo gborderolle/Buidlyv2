@@ -221,13 +221,7 @@ const ReportMenu = () => {
             style={report.id === selectedReport?.id ? { color: "blue" } : null}
             onClick={() => handleSelectReport(report)}
           >
-            {report.estate?.name}
-          </td>
-          <td
-            style={report.id === selectedReport?.id ? { color: "blue" } : null}
-            onClick={() => handleSelectReport(report)}
-          >
-            {report.estate?.address}
+            {report.estate?.name} ({report.estate?.address})
           </td>
           <td
             style={report.id === selectedReport?.id ? { color: "blue" } : null}
@@ -371,13 +365,7 @@ const ReportMenu = () => {
                       className="table-header"
                       onClick={() => requestSort("name")}
                     >
-                      Casa
-                    </th>
-                    <th
-                      className="table-header"
-                      onClick={() => requestSort("address")}
-                    >
-                      Dirección
+                      Casa (dir)
                     </th>
                     <th
                       className="table-header"
@@ -389,7 +377,7 @@ const ReportMenu = () => {
                       className="table-header"
                       onClick={() => requestSort("listPhotosURL")}
                     >
-                      # Fotos
+                      #Fotos
                     </th>
                     <th
                       className="table-header"

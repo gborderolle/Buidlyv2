@@ -81,6 +81,7 @@ namespace Buildyv2.Controllers.V1
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] CityDSCreateDTO workerCreateDTO)
         {
+            workerCreateDTO.Name = Utils.ToCamelCase(workerCreateDTO.Name);
             return await Put<CityDSCreateDTO, CityDSDTO, CityDS>(id, workerCreateDTO);
         }
 
@@ -130,6 +131,7 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(ModelState);
                 }
 
+                cityCreateDto.Name = Utils.ToCamelCase(cityCreateDto.Name);
                 CityDS modelo = _mapper.Map<CityDS>(cityCreateDto);
                 modelo.ProvinceDS = province; // Asigna el objeto CountryDS resuelto
                 modelo.Creation = DateTime.Now;

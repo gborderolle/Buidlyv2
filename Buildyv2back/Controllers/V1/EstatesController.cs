@@ -304,6 +304,7 @@ namespace Buildyv2.Controllers.V1
                 // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
                 estate.Name = Utils.ToCamelCase(estateCreateDto.Name);
                 estate.Address = Utils.ToCamelCase(estateCreateDto.Address);
+                estate.Comments = Utils.ToCamelCase(estateCreateDto.Comments);
                 estate.LatLong = estateCreateDto.LatLong;
                 estate.GoogleMapsURL = estateCreateDto.GoogleMapsURL;
                 estate.CityDS = await _dbContext.CityDS.FindAsync(estateCreateDto.CityDSId);
@@ -389,6 +390,7 @@ namespace Buildyv2.Controllers.V1
 
                 estateCreateDto.Name = Utils.ToCamelCase(estateCreateDto.Name);
                 estateCreateDto.Address = Utils.ToCamelCase(estateCreateDto.Address);
+                estateCreateDto.Comments = Utils.ToCamelCase(estateCreateDto.Comments);
                 Estate estate = _mapper.Map<Estate>(estateCreateDto);
                 estate.CityDS = city; // Asigna el objeto CountryDS resuelto
                 estate.OwnerDS = owner; // Asigna el objeto CountryDS resuelto

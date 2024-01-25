@@ -227,13 +227,7 @@ const JobMenu = () => {
             style={job.id === selectedJob?.id ? { color: "blue" } : null}
             onClick={() => handleSelectJob(job)}
           >
-            {job.estate?.name}
-          </td>
-          <td
-            style={job.id === selectedJob?.id ? { color: "blue" } : null}
-            onClick={() => handleSelectJob(job)}
-          >
-            {job.estate?.address}
+            {job.estate?.name} ({job.estate?.address})
           </td>
           <td
             style={job.id === selectedJob?.id ? { color: "blue" } : null}
@@ -398,13 +392,7 @@ const JobMenu = () => {
                       className="table-header"
                       onClick={() => requestSort("estateName")}
                     >
-                      Casa
-                    </th>
-                    <th
-                      className="table-header"
-                      onClick={() => requestSort("address")}
-                    >
-                      Dirección
+                      Casa (dir)
                     </th>
                     <th
                       className="table-header"
@@ -416,13 +404,13 @@ const JobMenu = () => {
                       className="table-header"
                       onClick={() => requestSort("labourCost")}
                     >
-                      Costo $
+                      $Costo
                     </th>
                     <th
                       className="table-header"
                       onClick={() => requestSort("listPhotosURL")}
                     >
-                      Fotos #
+                      #Fotos
                     </th>
                     <th
                       className="table-header"

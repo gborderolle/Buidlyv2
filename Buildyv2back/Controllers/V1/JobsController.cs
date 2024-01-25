@@ -187,6 +187,7 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 job.Name = Utils.ToCamelCase(str: jobCreateDto.Name);
+                job.Comments = Utils.ToCamelCase(str: jobCreateDto.Comments);
                 job.Month = jobCreateDto.Month;
                 job.LabourCost = jobCreateDto.LabourCost;
                 job.Comments = jobCreateDto.Comments;
@@ -231,7 +232,6 @@ namespace Buildyv2.Controllers.V1
                             var extension = Path.GetExtension(photoForm.FileName);
                             newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
                         }
-
                         await _photoRepository.Create(newPhoto);
                     }
                 }
@@ -304,6 +304,7 @@ namespace Buildyv2.Controllers.V1
                 using (var transaction = await _dbContext.Database.BeginTransactionAsync())
                 {
                     jobCreateDto.Name = Utils.ToCamelCase(jobCreateDto.Name);
+                    jobCreateDto.Comments = Utils.ToCamelCase(jobCreateDto.Comments);
                     Job job = _mapper.Map<Job>(jobCreateDto);
                     job.Estate = estate;
                     job.Creation = DateTime.Now;

@@ -138,6 +138,7 @@ namespace Buildyv2.Controllers.V1
 
                 // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
                 tenant.Name = Utils.ToCamelCase(tenantCreateDto.Name);
+                tenant.Comments = Utils.ToCamelCase(tenantCreateDto.Comments);
                 tenant.Phone1 = tenantCreateDto.Phone1;
                 tenant.Phone2 = tenantCreateDto.Phone2;
                 tenant.Email = tenantCreateDto.Email;
@@ -204,6 +205,7 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 tenantCreateDto.Name = Utils.ToCamelCase(tenantCreateDto.Name);
+                tenantCreateDto.Comments = Utils.ToCamelCase(tenantCreateDto.Comments);
                 Tenant tenant = _mapper.Map<Tenant>(tenantCreateDto);
                 tenant.Creation = DateTime.Now;
                 tenant.Update = DateTime.Now;

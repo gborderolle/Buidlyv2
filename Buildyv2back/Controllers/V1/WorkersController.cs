@@ -140,6 +140,7 @@ namespace Buildyv2.Controllers.V1
 
                 // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
                 worker.Name = Utils.ToCamelCase(workerCreateDto.Name);
+                worker.Comments = Utils.ToCamelCase(workerCreateDto.Comments);
                 worker.Phone = workerCreateDto.Phone;
                 worker.Email = workerCreateDto.Email;
                 worker.IdentityDocument = workerCreateDto.IdentityDocument;
@@ -205,6 +206,7 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 workerCreateDto.Name = Utils.ToCamelCase(workerCreateDto.Name);
+                workerCreateDto.Comments = Utils.ToCamelCase(workerCreateDto.Comments);
                 Worker worker = _mapper.Map<Worker>(workerCreateDto);
                 worker.Creation = DateTime.Now;
                 worker.Update = DateTime.Now;
