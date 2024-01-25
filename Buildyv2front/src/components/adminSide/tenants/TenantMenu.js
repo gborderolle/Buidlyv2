@@ -221,13 +221,13 @@ const TenantMenu = () => {
             style={tenant.id === selectedTenant?.id ? { color: "blue" } : null}
             onClick={() => handleSelectTenant(tenant)}
           >
-            {tenant.phone1}
+            {tenant.phone1 ? formatPhoneNumber(tenant.phone1) : ""}
           </td>
           <td
             style={tenant.id === selectedTenant?.id ? { color: "blue" } : null}
             onClick={() => handleSelectTenant(tenant)}
           >
-            {tenant.phone2}
+            {tenant.phone2 ? formatPhoneNumber(tenant.phone2) : ""}
           </td>
           <td
             style={tenant.id === selectedTenant?.id ? { color: "blue" } : null}
@@ -320,6 +320,17 @@ const TenantMenu = () => {
   const getEstateByRentId = (rentId) => {
     // Asume que cada rent tiene un estateId único
     return estateList.find((estate) => estate.presentRentId === rentId);
+  };
+
+  const formatPhoneNumber = (phoneNumber) => {
+    const cleaned = ("" + phoneNumber).replace(/\D/g, "");
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{3})$/);
+
+    if (match) {
+      return `${match[1]} ${match[2]} ${match[3]}`;
+    }
+
+    return null;
   };
 
   //#endregion Functions ***********************************

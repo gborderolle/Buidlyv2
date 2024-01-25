@@ -143,6 +143,10 @@ const ReportABM = () => {
     }
   };
 
+  const requiredFieldStyle = {
+    borderColor: "violet",
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -288,9 +292,12 @@ const ReportABM = () => {
                 <CInputGroupText className="cardItem custom-input-group-text">
                   Propiedad
                 </CInputGroupText>
-                {/*  */}
                 <CDropdown>
-                  <CDropdownToggle id="ddlEstate" color="secondary">
+                  <CDropdownToggle
+                    id="ddlEstate"
+                    color="secondary"
+                    style={requiredFieldStyle}
+                  >
                     {ddlSelectedEstate ? ddlSelectedEstate.name : "Seleccionar"}
                   </CDropdownToggle>
                   <CDropdownMenu>
@@ -319,7 +326,7 @@ const ReportABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Nombre del reporte
+                  Nombre
                 </CInputGroupText>
                 <CFormInput
                   type="text"
@@ -327,6 +334,7 @@ const ReportABM = () => {
                   onChange={inputChangeHandlerName}
                   onBlur={inputBlurHandlerName}
                   value={name}
+                  style={requiredFieldStyle}
                 />
                 {inputHasErrorName && (
                   <CAlert color="danger" className="w-100">
@@ -336,13 +344,14 @@ const ReportABM = () => {
               </CInputGroup>
               <br />
               <CInputGroup>
-                <CInputGroupText>Fecha del reporte</CInputGroupText>
+                <CInputGroupText>Fecha</CInputGroupText>
                 <DatePicker
                   selected={month}
                   onChange={(date) => setMonth(date)}
                   dateFormat="MM/yyyy"
                   showMonthYearPicker
                   className="form-control"
+                  style={requiredFieldStyle}
                 />
               </CInputGroup>
               <br />

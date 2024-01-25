@@ -170,6 +170,10 @@ const JobABM = () => {
     }
   };
 
+  const requiredFieldStyle = {
+    borderColor: "violet",
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -282,6 +286,10 @@ const JobABM = () => {
     );
   };
 
+  function navigateToWorker() {
+    navigate("/worker-abm", { state: { from: "JobABM" } });
+  }
+
   //#endregion Functions ***********************************
 
   return (
@@ -319,9 +327,12 @@ const JobABM = () => {
                 <CInputGroupText className="cardItem custom-input-group-text">
                   Propiedad
                 </CInputGroupText>
-                {/*  */}
                 <CDropdown>
-                  <CDropdownToggle id="ddlEstate" color="secondary">
+                  <CDropdownToggle
+                    id="ddlEstate"
+                    color="secondary"
+                    style={requiredFieldStyle}
+                  >
                     {ddlSelectedEstate ? ddlSelectedEstate.name : "Seleccionar"}
                   </CDropdownToggle>
                   <CDropdownMenu>
@@ -339,8 +350,6 @@ const JobABM = () => {
                       ))}
                   </CDropdownMenu>
                 </CDropdown>
-
-                {/*  */}
                 {inputHasErrorEstate && (
                   <CAlert color="danger" className="w-100">
                     Entrada inválida
@@ -349,34 +358,50 @@ const JobABM = () => {
               </CInputGroup>
               <br />
               <CInputGroup>
-                <CInputGroupText className="cardItem custom-input-group-text">
-                  Trabajador
-                </CInputGroupText>
-                {/*  */}
-                <CDropdown>
-                  <CDropdownToggle id="ddlWorker" color="secondary">
-                    {ddlSelectedWorker ? ddlSelectedWorker.name : "Seleccionar"}
-                  </CDropdownToggle>
-                  <CDropdownMenu>
-                    {workerList &&
-                      workerList.length > 0 &&
-                      workerList.map((worker) => (
-                        <CDropdownItem
-                          key={worker.id}
-                          onClick={() => handleSelectDdlWorker(worker)}
-                          style={{ cursor: "pointer" }}
-                          value={worker.id}
-                        >
-                          {worker.id}: {worker.name}
-                        </CDropdownItem>
-                      ))}
-                  </CDropdownMenu>
-                </CDropdown>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <CInputGroupText className="cardItem custom-input-group-text">
+                    Trabajador
+                  </CInputGroupText>
+                  <CDropdown>
+                    <CDropdownToggle id="ddlWorker" color="secondary">
+                      {ddlSelectedWorker
+                        ? ddlSelectedWorker.name
+                        : "Seleccionar"}
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      {workerList &&
+                        workerList.length > 0 &&
+                        workerList.map((worker) => (
+                          <CDropdownItem
+                            key={worker.id}
+                            onClick={() => handleSelectDdlWorker(worker)}
+                            style={{ cursor: "pointer" }}
+                            value={worker.id}
+                          >
+                            {worker.id}: {worker.name}
+                          </CDropdownItem>
+                        ))}
+                    </CDropdownMenu>
+                  </CDropdown>
+                  <CButton
+                    color="dark"
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => navigateToWorker()}
+                  >
+                    Nuevo
+                  </CButton>
+                </div>
               </CInputGroup>
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Nombre de la obra
+                  Nombre
                 </CInputGroupText>
                 <CFormInput
                   type="text"
@@ -384,6 +409,7 @@ const JobABM = () => {
                   onChange={inputChangeHandlerName}
                   onBlur={inputBlurHandlerName}
                   value={name}
+                  style={requiredFieldStyle}
                 />
                 {inputHasErrorName && (
                   <CAlert color="danger" className="w-100">
@@ -393,7 +419,7 @@ const JobABM = () => {
               </CInputGroup>
               <br />
               <CInputGroup>
-                <CInputGroupText>Fecha de la obra</CInputGroupText>
+                <CInputGroupText>Fecha</CInputGroupText>
                 <DatePicker
                   selected={month}
                   onChange={(date) => setMonth(date)}

@@ -155,6 +155,10 @@ const RentABM = () => {
     }
   };
 
+  const requiredFieldStyle = {
+    borderColor: "violet",
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -308,6 +312,10 @@ const RentABM = () => {
     );
   };
 
+  function navigateToTenant() {
+    navigate("/tenant-abm", { state: { from: "RentABM" } });
+  }
+
   //#endregion Functions ***********************************
 
   return (
@@ -329,7 +337,7 @@ const RentABM = () => {
                     {editMode
                       ? `Modificar el alquiler de propiedad: `
                       : `Agregar alquiler a propiedad: `}
-                    <span style={{ color: "blue" }}>{estate.name}</span>
+                    <span style={{ color: "blue" }}>{estate?.name}</span>
                   </CCardTitle>
                 </div>
                 {editMode && rent && rent.id && (
@@ -345,42 +353,61 @@ const RentABM = () => {
               </div>
               <br />
               <CInputGroup>
-                <CInputGroupText className="cardItem custom-input-group-text">
-                  Seleccionar inquilinos
-                </CInputGroupText>
                 <div
                   style={{
-                    border: "1px solid lightgray",
-                    padding: "10px",
-                    borderRadius: "5px",
-                    minWidth: "50%",
                     display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "left",
-                    fontSize: "12px",
+                    alignItems: "center",
+                    width: "100%",
                   }}
                 >
-                  {tenantList.map((tenant) => (
-                    <CFormCheck
-                      key={tenant.id}
-                      id={`tenant-${tenant.id}`}
-                      // label={`${tenant.name} (${tenant.phone1})`}
-                      label={`${tenant.name}`}
-                      checked={selectedTenants.some((t) => t.id === tenant.id)}
-                      onChange={(event) =>
-                        handleSelectCheckboxTenant(event, tenant)
-                      }
-                      style={{
-                        color: "#0d6efd",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        marginLeft: "0.5px",
-                        marginRight: "5px",
-                      }}
-                    />
-                  ))}
+                  <CInputGroupText className="cardItem custom-input-group-text">
+                    Inquilinos
+                  </CInputGroupText>
+                  <div
+                    style={{
+                      border: "1px solid lightgray",
+                      padding: "10px",
+                      borderRadius: "5px",
+                      minWidth: "50%",
+                      minHeight: "37px",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "left",
+                      fontSize: "12px",
+                      flexGrow: 1,
+                      borderColor: "violet",
+                    }}
+                  >
+                    {tenantList.map((tenant) => (
+                      <CFormCheck
+                        key={tenant.id}
+                        id={`tenant-${tenant.id}`}
+                        label={`${tenant.name}`}
+                        checked={selectedTenants.some(
+                          (t) => t.id === tenant.id
+                        )}
+                        onChange={(event) =>
+                          handleSelectCheckboxTenant(event, tenant)
+                        }
+                        style={{
+                          color: "#0d6efd",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          marginLeft: "0.5px",
+                          marginRight: "5px",
+                          minHeight: "0",
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <CButton
+                    color="dark"
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => navigateToTenant()}
+                  >
+                    Nuevo
+                  </CButton>
                 </div>
-
                 {inputHasErrorTenant && (
                   <CAlert color="danger" className="w-100">
                     Por favor, selecciona al menos un inquilino.
@@ -400,7 +427,7 @@ const RentABM = () => {
                     setInputWarrant(e.target.value);
                     if (inputHasErrorWarrant) setInputHasErrorWarrant(false);
                   }}
-                  style={{ flex: "1" }} // Asegura que el input tome el máximo espacio posible
+                  style={{ flex: "1", borderColor: "violet" }} // Asegura que el input tome el máximo espacio posible
                 />
                 <div
                   style={{
@@ -440,6 +467,7 @@ const RentABM = () => {
                   onBlur={inputBlurHandlerMonthlyValue}
                   value={monthlyValue}
                   required
+                  style={requiredFieldStyle}
                 />
                 {inputHasErrorMonthlyValue && (
                   <CAlert color="danger" className="w-100">

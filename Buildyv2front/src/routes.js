@@ -62,7 +62,7 @@ const routes = [
   { path: "/workers", name: "Trabajadores", element: WorkerMenu },
   { path: "/worker-abm", name: "Agregar trabajadores", element: WorkerABM },
 
-  { path: "/abm-rent", name: "Agregar alquiler", element: RentABM },
+  { path: "/rent-abm", name: "Agregar alquiler", element: RentABM },
 
   { path: "/data", name: "Datos base", element: DataMenu },
 ];

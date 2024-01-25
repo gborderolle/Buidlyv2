@@ -15,10 +15,6 @@ import {
   CCardTitle,
   CCardBody,
   CCardFooter,
-  CDropdown,
-  CDropdownItem,
-  CDropdownToggle,
-  CDropdownMenu,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
@@ -35,6 +31,7 @@ const WorkerABM = () => {
   const location = useLocation();
   const worker = location.state?.worker;
   const editMode = location.state?.editMode ? location.state?.editMode : false;
+  const fromJobABM = location.state?.from === "JobABM";
 
   const [isValidForm, setIsValidForm] = useState(true);
   const {
@@ -141,6 +138,10 @@ const WorkerABM = () => {
     }
   };
 
+  const requiredFieldStyle = {
+    borderColor: "violet",
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -179,7 +180,11 @@ const WorkerABM = () => {
 
       //if (isSuccess) {
       setTimeout(() => {
-        navigate("/workers");
+        if (fromJobABM) {
+          navigate("/job-abm"); // Asegúrate de que esta es la ruta correcta para RentABM
+        } else {
+          navigate("/workers"); // La ruta por defecto en caso de que no venga de RentABM
+        }
       }, 1000);
       //}
     } catch (error) {
@@ -244,6 +249,7 @@ const WorkerABM = () => {
                   onChange={inputChangeHandlerName}
                   onBlur={inputBlurHandlerName}
                   value={name}
+                  style={requiredFieldStyle}
                 />
                 {inputHasErrorName && (
                   <CAlert color="danger" className="w-100">
@@ -269,6 +275,7 @@ const WorkerABM = () => {
                   }}
                   onBlur={inputBlurHandlerPhone}
                   value={phone}
+                  style={requiredFieldStyle}
                 />
                 {inputHasErrorPhone && (
                   <CAlert color="danger" className="w-100">
@@ -279,7 +286,7 @@ const WorkerABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Email
+                  Email @
                 </CInputGroupText>
                 <CFormInput
                   type="text"

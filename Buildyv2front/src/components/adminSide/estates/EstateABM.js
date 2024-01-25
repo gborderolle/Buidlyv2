@@ -137,6 +137,10 @@ const EstateABM = () => {
     }
   };
 
+  const requiredFieldStyle = {
+    borderColor: "violet",
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -329,7 +333,7 @@ const EstateABM = () => {
 
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Nombre propiedad
+                  Nombre
                 </CInputGroupText>
                 <CFormInput
                   type="text"
@@ -337,6 +341,7 @@ const EstateABM = () => {
                   onChange={inputChangeHandlerName}
                   onBlur={inputBlurHandlerName}
                   value={estateName}
+                  style={requiredFieldStyle}
                 />
                 {inputHasErrorName && (
                   <CAlert color="danger" className="w-100">
@@ -347,7 +352,7 @@ const EstateABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Dirección
+                  Dirección [calle+nro]
                 </CInputGroupText>
                 <CFormInput
                   type="text"
@@ -355,6 +360,7 @@ const EstateABM = () => {
                   onChange={inputChangeHandlerAddress}
                   onBlur={inputBlurHandlerAddress}
                   value={estateAddress}
+                  style={requiredFieldStyle}
                 />
                 {addressError && (
                   <CAlert color="danger" className="w-100">
@@ -385,9 +391,12 @@ const EstateABM = () => {
                 <CInputGroupText className="cardItem custom-input-group-text">
                   Ciudad
                 </CInputGroupText>
-
                 <CDropdown>
-                  <CDropdownToggle id="ddCity" color="secondary">
+                  <CDropdownToggle
+                    id="ddCity"
+                    color="secondary"
+                    style={requiredFieldStyle}
+                  >
                     {ddlSelectedCity ? ddlSelectedCity.name : "Seleccionar"}
                   </CDropdownToggle>
                   <CDropdownMenu>
@@ -417,7 +426,11 @@ const EstateABM = () => {
                   Dueño
                 </CInputGroupText>
                 <CDropdown>
-                  <CDropdownToggle id="ddOwner" color="secondary">
+                  <CDropdownToggle
+                    id="ddOwner"
+                    color="secondary"
+                    style={requiredFieldStyle}
+                  >
                     {ddlSelectedOwner ? ddlSelectedOwner.name : "Seleccionar"}
                   </CDropdownToggle>
                   <CDropdownMenu>

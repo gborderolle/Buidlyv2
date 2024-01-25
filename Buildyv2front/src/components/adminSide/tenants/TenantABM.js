@@ -31,6 +31,7 @@ const TenantABM = () => {
   const location = useLocation();
   const tenant = location.state?.tenant;
   const editMode = location.state?.editMode ? location.state?.editMode : false;
+  const fromRentABM = location.state?.from === "RentABM";
 
   const [isValidForm, setIsValidForm] = useState(true);
   const {
@@ -151,6 +152,10 @@ const TenantABM = () => {
     }
   };
 
+  const requiredFieldStyle = {
+    borderColor: "violet",
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -205,7 +210,11 @@ const TenantABM = () => {
       // Navegar a otra ruta después de un breve retraso
       //if (isSuccess) {
       setTimeout(() => {
-        navigate("/tenants");
+        if (fromRentABM) {
+          navigate("/rent-abm"); // Asegúrate de que esta es la ruta correcta para RentABM
+        } else {
+          navigate("/tenants"); // La ruta por defecto en caso de que no venga de RentABM
+        }
       }, 1000);
       //}
     } catch (error) {
@@ -271,6 +280,7 @@ const TenantABM = () => {
                   onChange={inputChangeHandlerName}
                   onBlur={inputBlurHandlerName}
                   value={name}
+                  style={requiredFieldStyle}
                 />
                 {inputHasErrorName && (
                   <CAlert color="danger" className="w-100">
@@ -296,6 +306,7 @@ const TenantABM = () => {
                   }}
                   onBlur={inputBlurHandlerPhone1}
                   value={phone1}
+                  style={requiredFieldStyle}
                 />
                 {inputHasErrorPhone1 && (
                   <CAlert color="danger" className="w-100">
@@ -324,7 +335,7 @@ const TenantABM = () => {
               <br />
               <CInputGroup>
                 <CInputGroupText className="cardItem custom-input-group-text">
-                  Email
+                  Email @
                 </CInputGroupText>
                 <CFormInput
                   type="text"

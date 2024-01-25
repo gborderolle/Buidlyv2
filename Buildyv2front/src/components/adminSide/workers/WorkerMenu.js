@@ -185,7 +185,7 @@ const WorkerMenu = () => {
           style={worker.id === selectedWorker?.id ? { color: "blue" } : null}
           onClick={() => handleSelectWorker(worker)}
         >
-          {worker.phone}
+          {worker.phone ? formatPhoneNumber(worker.phone) : ""}
         </td>
         <td
           style={worker.id === selectedWorker?.id ? { color: "blue" } : null}
@@ -265,6 +265,17 @@ const WorkerMenu = () => {
 
     // Abrir el enlace de WhatsApp
     window.open(whatsappLink, "_blank");
+  };
+
+  const formatPhoneNumber = (phoneNumber) => {
+    const cleaned = ("" + phoneNumber).replace(/\D/g, "");
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{3})$/);
+
+    if (match) {
+      return `${match[1]} ${match[2]} ${match[3]}`;
+    }
+
+    return null;
   };
 
   //#endregion Functions ***********************************

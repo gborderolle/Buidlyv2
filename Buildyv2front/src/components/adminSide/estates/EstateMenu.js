@@ -395,9 +395,9 @@ const EstateMenu = () => {
 
   function navigateToRent(estate) {
     if (estate.presentRentId > 0) {
-      navigate("/abm-rent", { state: { estate, editMode: true } });
+      navigate("/rent-abm", { state: { estate, editMode: true } });
     } else {
-      navigate("/abm-rent", { state: { estate } });
+      navigate("/rent-abm", { state: { estate } });
     }
   }
 
