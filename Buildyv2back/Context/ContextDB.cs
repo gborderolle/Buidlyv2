@@ -207,9 +207,10 @@ namespace Buildyv2.Context
 
             var owner1 = new OwnerDS() { Id = 1, Name = "Mirta", Color = "violet" };
             var owner2 = new OwnerDS() { Id = 2, Name = "Gladys", Color = "orange" };
+            var owner3 = new OwnerDS() { Id = 3, Name = "Cristina", Color = "green" };
             modelBuilder.Entity<OwnerDS>().HasData(new List<OwnerDS>
             {
-                owner1,owner2
+                owner1,owner2,owner3
             });
         }
 
