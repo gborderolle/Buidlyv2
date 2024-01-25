@@ -26,6 +26,7 @@ namespace Buildyv2.Context
         public DbSet<ProvinceDS> ProvinceDS { get; set; }
         public DbSet<CountryDS> CountryDS { get; set; }
         public DbSet<OwnerDS> OwnerDS { get; set; }
+        public DbSet<Log> Log { get; set; }
 
         #endregion
 

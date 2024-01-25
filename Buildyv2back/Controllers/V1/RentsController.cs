@@ -22,10 +22,11 @@ namespace Buildyv2.Controllers.V1
         private readonly IRentRepository _rentRepository; // Servicio que contiene la lógica principal de negocio para Rents.
         private readonly IEstateRepository _estateRepository; // Servicio que contiene la lógica principal de negocio para Reports.
         private readonly IPhotoRepository _photoRepository; // Servicio que contiene la lógica principal de negocio para Reports.
+        private readonly ILogService _logService;
         private readonly ContextDB _dbContext;
         private readonly IFileStorage _fileStorage;
 
-        public RentsController(ILogger<RentsController> logger, IMapper mapper, IRentRepository rentRepository, IEstateRepository estateRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ContextDB dbContext
+        public RentsController(ILogger<RentsController> logger, IMapper mapper, IRentRepository rentRepository, IEstateRepository estateRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ILogService logService, ContextDB dbContext
         )
         : base(mapper, logger, rentRepository)
         {
@@ -34,6 +35,7 @@ namespace Buildyv2.Controllers.V1
             _estateRepository = estateRepository;
             _photoRepository = photoRepository;
             _fileStorage = fileStorage;
+            _logService = logService;
             _dbContext = dbContext;
         }
 
@@ -132,9 +134,11 @@ namespace Buildyv2.Controllers.V1
                     // Eliminar la carpeta del contenedor una sola vez
                     await _fileStorage.DeleteFolder(container);
                 }
-
                 await _rentRepository.Remove(rent);
+
                 _logger.LogInformation($"Se eliminó correctamente la renta Id:{id}.");
+                await _logService.LogAction("Rent", "Delete", $"Id:{rent.Id}.", User.Identity.Name);
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }
@@ -149,10 +153,82 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPut("{id:int}")]
+        [Consumes("multipart/form-data")] // Asegura que el método acepte multipart/form-data
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
-        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] RentCreateDTO rentCreateDTO)
+        public async Task<ActionResult<APIResponse>> Put(int id, [FromForm] RentCreateDTO rentCreateDto)
         {
-            return await Put<RentCreateDTO, RentDTO, Rent>(id, rentCreateDTO);
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
+                var estate = await _dbContext.Estate.FindAsync(rentCreateDto.EstateId);
+                if (estate == null)
+                {
+                    _logger.LogError($"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema.");
+                    _response.ErrorMessages = new List<string> { $"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound($"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema.");
+                }
+
+                using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+                {
+
+                    rentCreateDto.Warrant = Utils.ToCamelCase(str: rentCreateDto.Warrant);
+                    Rent rent = _mapper.Map<Rent>(rentCreateDto);
+                    rent.Estate = estate;
+                    rent.Creation = DateTime.Now;
+                    rent.Update = DateTime.Now;
+
+                    // Procesamiento de inquilinos
+                    foreach (int tenantId in rentCreateDto.TenantIds)
+                    {
+                        var tenant = await _dbContext.Tenant.FindAsync(tenantId);
+                        if (tenant == null)
+                        {
+                            return NotFound($"El inquilino ID={tenantId} no existe en el sistema.");
+                        }
+                        rent.ListTenants.Add(tenant);
+                    }
+
+                    await _rentRepository.Update(rent);
+
+                    // Actualizar la propiedad
+                    estate.PresentRentId = rent.Id;
+                    estate.EstateIsRented = true;
+                    await _estateRepository.Update(estate);
+
+                    // Procesamiento de fotos
+                    if (rentCreateDto.ListPhotos != null && rentCreateDto.ListPhotos.Count > 0)
+                    {
+                        await ProcessRentPhotos(rent, rentCreateDto.ListPhotos);
+                    }
+
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation($"Se actualizó correctamente el contrato Id:{rent.Id}.");
+                    await _logService.LogAction("Rent", "Update", $"Id:{rent.Id}, Nombre (propiedad): {estate.Name}.", User.Identity.Name);
+
+                    _response.Result = _mapper.Map<RentDTO>(rent);
+                    _response.StatusCode = HttpStatusCode.Created;
+
+                    return Ok(_response);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return _response;
+            }
         }
 
         [HttpPatch("{id:int}")]
@@ -194,10 +270,10 @@ namespace Buildyv2.Controllers.V1
                 {
 
                     rentCreateDto.Warrant = Utils.ToCamelCase(rentCreateDto.Warrant);
-                    Rent modelo = _mapper.Map<Rent>(rentCreateDto);
-                    modelo.Estate = estate;
-                    modelo.Creation = DateTime.Now;
-                    modelo.Update = DateTime.Now;
+                    Rent rent = _mapper.Map<Rent>(rentCreateDto);
+                    rent.Estate = estate;
+                    rent.Creation = DateTime.Now;
+                    rent.Update = DateTime.Now;
 
                     // Procesamiento de inquilinos
                     foreach (int tenantId in rentCreateDto.TenantIds)
@@ -207,28 +283,30 @@ namespace Buildyv2.Controllers.V1
                         {
                             return NotFound($"El inquilino ID={tenantId} no existe en el sistema.");
                         }
-                        modelo.ListTenants.Add(tenant);
+                        rent.ListTenants.Add(tenant);
                     }
 
-                    await _rentRepository.Create(modelo);
+                    await _rentRepository.Create(rent);
 
                     // Actualizar la propiedad
-                    estate.PresentRentId = modelo.Id;
+                    estate.PresentRentId = rent.Id;
                     estate.EstateIsRented = true;
                     await _estateRepository.Update(estate);
 
                     // Procesamiento de fotos
                     if (rentCreateDto.ListPhotos != null && rentCreateDto.ListPhotos.Count > 0)
                     {
-                        await ProcessRentPhotos(modelo, rentCreateDto.ListPhotos);
+                        await ProcessRentPhotos(rent, rentCreateDto.ListPhotos);
                     }
 
                     await transaction.CommitAsync();
 
-                    _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
-                    _response.Result = _mapper.Map<RentDTO>(modelo);
+                    _logger.LogInformation($"Se creó correctamente el contrato Id:{rent.Id}.");
+                    await _logService.LogAction("Rent", "Create", $"Id:{rent.Id}, Nombre (propiedad): {estate.Name}.", User.Identity.Name);
+
+                    _response.Result = _mapper.Map<RentDTO>(rent);
                     _response.StatusCode = HttpStatusCode.Created;
-                    return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+                    return CreatedAtAction(nameof(Get), new { id = rent.Id }, _response);
                 }
             }
             catch (Exception ex)

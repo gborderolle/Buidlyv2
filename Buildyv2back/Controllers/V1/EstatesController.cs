@@ -25,9 +25,10 @@ namespace Buildyv2.Controllers.V1
         private readonly IWorkerRepository _workerRepository;
         private readonly ITenantRepository _tenantRepository;
         private readonly IPhotoRepository _photoRepository;
+        private readonly ILogService _logService;
         private readonly ContextDB _dbContext;
 
-        public EstatesController(ILogger<EstatesController> logger, IMapper mapper, IEstateRepository estateRepository, IReportRepository reportRepository, IJobRepository jobRepository, IRentRepository rentRepository, IWorkerRepository workerRepository, ITenantRepository tenantRepository, IPhotoRepository photoRepository, ContextDB dbContext)
+        public EstatesController(ILogger<EstatesController> logger, IMapper mapper, IEstateRepository estateRepository, IReportRepository reportRepository, IJobRepository jobRepository, IRentRepository rentRepository, IWorkerRepository workerRepository, ITenantRepository tenantRepository, IPhotoRepository photoRepository, ILogService logService, ContextDB dbContext)
         : base(mapper, logger, estateRepository)
         {
             _response = new();
@@ -38,6 +39,7 @@ namespace Buildyv2.Controllers.V1
             _workerRepository = workerRepository;
             _tenantRepository = tenantRepository;
             _photoRepository = photoRepository;
+            _logService = logService;
             _dbContext = dbContext;
         }
 
@@ -229,7 +231,9 @@ namespace Buildyv2.Controllers.V1
                     await _dbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    _logger.LogInformation($"Se eliminó correctamente la propiedad Id:{id}.");
+                    _logger.LogInformation($"Se eliminó correctamente la propiedad {estate.Name}.");
+                    await _logService.LogAction("Estate", "Delete", $"Id:{estate.Id}, Nombre: {estate.Name}.", User.Identity.Name);
+
                     _response.StatusCode = HttpStatusCode.NoContent;
                     return Ok(_response);
                 }
@@ -309,7 +313,9 @@ namespace Buildyv2.Controllers.V1
 
                 var updatedEstate = await _estateRepository.Update(estate);
 
-                _logger.LogInformation($"Se actualizó correctamente la propiedad Id:{id}.");
+                _logger.LogInformation($"Se actualizó correctamente la propiedad {estate.Name}.");
+                await _logService.LogAction("Estate", "Update", $"Id:{estate.Id}, Nombre: {estate.Name}.", User.Identity.Name);
+
                 _response.Result = _mapper.Map<EstateDTO>(updatedEstate);
                 _response.StatusCode = HttpStatusCode.OK;
 
@@ -383,21 +389,22 @@ namespace Buildyv2.Controllers.V1
 
                 estateCreateDto.Name = Utils.ToCamelCase(estateCreateDto.Name);
                 estateCreateDto.Address = Utils.ToCamelCase(estateCreateDto.Address);
-                Estate modelo = _mapper.Map<Estate>(estateCreateDto);
-                modelo.CityDS = city; // Asigna el objeto CountryDS resuelto
-                modelo.OwnerDS = owner; // Asigna el objeto CountryDS resuelto
-                modelo.Creation = DateTime.Now;
-                modelo.Update = DateTime.Now;
+                Estate estate = _mapper.Map<Estate>(estateCreateDto);
+                estate.CityDS = city; // Asigna el objeto CountryDS resuelto
+                estate.OwnerDS = owner; // Asigna el objeto CountryDS resuelto
+                estate.Creation = DateTime.Now;
+                estate.Update = DateTime.Now;
 
-                await _estateRepository.Create(modelo);
-                _logger.LogInformation($"Se creó correctamente la propiedad Id:{modelo.Id}.");
+                await _estateRepository.Create(estate);
+                _logger.LogInformation($"Se creó correctamente la propiedad {estate.Name}.");
+                await _logService.LogAction("Estate", "Create", $"Id:{estate.Id}, Nombre: {estate.Name}.", User.Identity.Name);
 
-                _response.Result = _mapper.Map<EstateDTO>(modelo);
+                _response.Result = _mapper.Map<EstateDTO>(estate);
                 _response.StatusCode = HttpStatusCode.Created;
 
                 // CreatedAtRoute -> Nombre de la ruta (del método): GetEstateById
                 // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816172#notes
-                return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+                return CreatedAtAction(nameof(Get), new { id = estate.Id }, _response);
             }
             catch (Exception ex)
             {

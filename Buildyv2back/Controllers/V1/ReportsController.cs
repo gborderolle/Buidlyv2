@@ -21,16 +21,18 @@ namespace Buildyv2.Controllers.V1
     {
         private readonly IReportRepository _reportRepository; // Servicio que contiene la lógica principal de negocio para Reports.
         private readonly IPhotoRepository _photoRepository; // Servicio que contiene la lógica principal de negocio para Reports.
+        private readonly ILogService _logService;
         private readonly ContextDB _dbContext;
         private readonly IFileStorage _fileStorage;
 
-        public ReportsController(ILogger<ReportsController> logger, IMapper mapper, IReportRepository reportRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ContextDB dbContext)
+        public ReportsController(ILogger<ReportsController> logger, IMapper mapper, IReportRepository reportRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ILogService logService, ContextDB dbContext)
         : base(mapper, logger, reportRepository)
         {
             _response = new();
             _reportRepository = reportRepository;
             _photoRepository = photoRepository;
             _fileStorage = fileStorage;
+            _logService = logService;
             _dbContext = dbContext;
         }
 
@@ -117,9 +119,11 @@ namespace Buildyv2.Controllers.V1
                     // Eliminar la carpeta del contenedor
                     await _fileStorage.DeleteFolder(container);
                 }
-
                 await _reportRepository.Remove(report);
-                _logger.LogInformation($"Se eliminó correctamente la reporte Id:{id}.");
+
+                _logger.LogInformation($"Se eliminó correctamente el reporte Id:{id}.");
+                await _logService.LogAction("Report", "Delete", $"Id:{report.Id}, Nombre: {report.Name}.", User.Identity.Name);
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }
@@ -215,6 +219,8 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 _logger.LogInformation($"Se actualizó correctamente el reporte Id:{id}.");
+                await _logService.LogAction("Report", "Update", $"Id:{report.Id}, Nombre: {report.Name}.", User.Identity.Name);
+
                 _response.Result = _mapper.Map<ReportDTO>(updatedReporter);
                 _response.StatusCode = HttpStatusCode.OK;
 
@@ -277,21 +283,22 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 reportCreateDto.Name = Utils.ToCamelCase(reportCreateDto.Name);
-                Report modelo = _mapper.Map<Report>(reportCreateDto);
-                modelo.Estate = estate;
-                modelo.Creation = DateTime.Now;
-                modelo.Update = DateTime.Now;
+                Report report = _mapper.Map<Report>(reportCreateDto);
+                report.Estate = estate;
+                report.Creation = DateTime.Now;
+                report.Update = DateTime.Now;
 
-                await _reportRepository.Create(modelo);
-                _logger.LogInformation($"Se creó correctamente el reporte Id:{modelo.Id}.");
+                await _reportRepository.Create(report);
+                _logger.LogInformation($"Se creó correctamente el reporte Id:{report.Id}.");
+                await _logService.LogAction("Report", "Create", $"Id:{report.Id}, Nombre: {report.Name}.", User.Identity.Name);
 
                 if (reportCreateDto.ListPhotos != null && reportCreateDto.ListPhotos.Count > 0)
                 {
-                    string dynamicContainer = $"uploads/reports/estate{estate.Id}/{DateTime.Now:yyyy_MM}/report{modelo.Id}";
+                    string dynamicContainer = $"uploads/reports/estate{estate.Id}/{DateTime.Now:yyyy_MM}/report{report.Id}";
                     foreach (var photoForm in reportCreateDto.ListPhotos)
                     {
                         Photo newPhoto = new();
-                        newPhoto.Report = modelo;
+                        newPhoto.Report = report;
 
                         using (var stream = new MemoryStream())
                         {
@@ -305,12 +312,12 @@ namespace Buildyv2.Controllers.V1
                     }
                 }
 
-                _response.Result = _mapper.Map<ReportDTO>(modelo);
+                _response.Result = _mapper.Map<ReportDTO>(report);
                 _response.StatusCode = HttpStatusCode.Created;
 
                 // CreatedAtRoute -> Nombre de la ruta (del método): GetEstateById
                 // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816172#notes
-                return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+                return CreatedAtAction(nameof(Get), new { id = report.Id }, _response);
             }
             catch (Exception ex)
             {

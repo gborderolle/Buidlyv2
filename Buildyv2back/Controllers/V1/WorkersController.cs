@@ -19,13 +19,15 @@ namespace Buildyv2.Controllers.V1
     public class WorkersController : CustomBaseController<Worker> // Notice <Worker> here
     {
         private readonly IWorkerRepository _workerRepository; // Servicio que contiene la lógica principal de negocio para Workers.
+        private readonly ILogService _logService;
         private readonly ContextDB _dbContext;
 
-        public WorkersController(ILogger<WorkersController> logger, IMapper mapper, IWorkerRepository workerRepository, ContextDB dbContext)
+        public WorkersController(ILogger<WorkersController> logger, IMapper mapper, IWorkerRepository workerRepository, ILogService logService, ContextDB dbContext)
         : base(mapper, logger, workerRepository)
         {
             _response = new();
             _workerRepository = workerRepository;
+            _logService = logService;
             _dbContext = dbContext;
         }
 
@@ -85,7 +87,10 @@ namespace Buildyv2.Controllers.V1
                     return NotFound($"Trabajador no encontrado ID = {id}.");
                 }
                 await _workerRepository.Remove(worker);
+
                 _logger.LogInformation($"Se eliminó correctamente el trabajador Id:{id}.");
+                await _logService.LogAction("Worker", "Delete", $"Id:{worker.Id}, Nombre: {worker.Name}.", User.Identity.Name);
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }
@@ -147,6 +152,8 @@ namespace Buildyv2.Controllers.V1
                 var updatedWorker = await _workerRepository.Update(worker);
 
                 _logger.LogInformation($"Se actualizó correctamente el trabajador Id:{id}.");
+                await _logService.LogAction("Worker", "Update", $"Id:{worker.Id}, Nombre: {worker.Name}.", User.Identity.Name);
+
                 _response.Result = _mapper.Map<EstateDTO>(updatedWorker);
                 _response.StatusCode = HttpStatusCode.OK;
 
@@ -198,19 +205,21 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 workerCreateDto.Name = Utils.ToCamelCase(workerCreateDto.Name);
-                Worker modelo = _mapper.Map<Worker>(workerCreateDto);
-                modelo.Creation = DateTime.Now;
-                modelo.Update = DateTime.Now;
+                Worker worker = _mapper.Map<Worker>(workerCreateDto);
+                worker.Creation = DateTime.Now;
+                worker.Update = DateTime.Now;
 
-                await _workerRepository.Create(modelo);
-                _logger.LogInformation($"Se creó correctamente el trabajador Id:{modelo.Id}.");
+                await _workerRepository.Create(worker);
 
-                _response.Result = _mapper.Map<WorkerDTO>(modelo);
+                _logger.LogInformation($"Se creó correctamente el trabajador Id:{worker.Id}.");
+                await _logService.LogAction("Worker", "Create", $"Id:{worker.Id}, Nombre: {worker.Name}.", User.Identity.Name);
+
+                _response.Result = _mapper.Map<WorkerDTO>(worker);
                 _response.StatusCode = HttpStatusCode.Created;
 
                 // CreatedAtRoute -> Nombre de la ruta (del método): GetCountryDSById
                 // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816172#notes
-                return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+                return CreatedAtAction(nameof(Get), new { id = worker.Id }, _response);
             }
             catch (Exception ex)
             {

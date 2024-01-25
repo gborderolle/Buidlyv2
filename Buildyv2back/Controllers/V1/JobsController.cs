@@ -21,16 +21,18 @@ namespace Buildyv2.Controllers.V1
     {
         private readonly IJobRepository _jobRepository; // Servicio que contiene la lógica principal de negocio para Jobs.
         private readonly IPhotoRepository _photoRepository; // Servicio que contiene la lógica principal de negocio para Reports.
+        private readonly ILogService _logService;
         private readonly ContextDB _dbContext;
         private readonly IFileStorage _fileStorage;
 
-        public JobsController(ILogger<JobsController> logger, IMapper mapper, IJobRepository jobRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ContextDB dbContext)
+        public JobsController(ILogger<JobsController> logger, IMapper mapper, IJobRepository jobRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ILogService logService, ContextDB dbContext)
         : base(mapper, logger, jobRepository)
         {
             _response = new();
             _jobRepository = jobRepository;
             _photoRepository = photoRepository;
             _fileStorage = fileStorage;
+            _logService = logService;
             _dbContext = dbContext;
         }
 
@@ -120,15 +122,16 @@ namespace Buildyv2.Controllers.V1
                     }
 
                 }
-
                 if (container != null)
                 {
                     // Eliminar la carpeta del contenedor una sola vez
                     await _fileStorage.DeleteFolder(container);
                 }
-
                 await _jobRepository.Remove(job);
+
                 _logger.LogInformation($"Se eliminó correctamente la obra Id:{id}.");
+                await _logService.LogAction("Job", "Delete", $"Id:{job.Id}, Nombre: {job.Name}.", User.Identity.Name);
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }
@@ -233,7 +236,9 @@ namespace Buildyv2.Controllers.V1
                     }
                 }
 
-                _logger.LogInformation($"Se actualizó correctamente La obra Id:{id}.");
+                _logger.LogInformation($"Se actualizó correctamente la obra Id:{id}.");
+                await _logService.LogAction("Job", "Update", $"Id:{job.Id}, Nombre: {job.Name}.", User.Identity.Name);
+
                 _response.Result = _mapper.Map<JobDTO>(updatedJob);
                 _response.StatusCode = HttpStatusCode.OK;
 
@@ -299,10 +304,10 @@ namespace Buildyv2.Controllers.V1
                 using (var transaction = await _dbContext.Database.BeginTransactionAsync())
                 {
                     jobCreateDto.Name = Utils.ToCamelCase(jobCreateDto.Name);
-                    Job modelo = _mapper.Map<Job>(jobCreateDto);
-                    modelo.Estate = estate;
-                    modelo.Creation = DateTime.Now;
-                    modelo.Update = DateTime.Now;
+                    Job job = _mapper.Map<Job>(jobCreateDto);
+                    job.Estate = estate;
+                    job.Creation = DateTime.Now;
+                    job.Update = DateTime.Now;
 
                     foreach (var workerId in jobCreateDto.WorkerIds)
                     {
@@ -311,18 +316,18 @@ namespace Buildyv2.Controllers.V1
                         {
                             return NotFound($"El trabajador ID={workerId} no existe en el sistema.");
                         }
-                        modelo.ListWorkers.Add(worker);
+                        job.ListWorkers.Add(worker);
                     }
 
-                    await _jobRepository.Create(modelo);
+                    await _jobRepository.Create(job);
 
                     if (jobCreateDto.ListPhotos != null && jobCreateDto.ListPhotos.Count > 0)
                     {
-                        string dynamicContainer = $"uploads/jobs/estate{estate.Id}/{DateTime.Now:yyyy_MM}/job{modelo.Id}";
+                        string dynamicContainer = $"uploads/jobs/estate{estate.Id}/{DateTime.Now:yyyy_MM}/job{job.Id}";
                         foreach (var photoForm in jobCreateDto.ListPhotos)
                         {
                             Photo newPhoto = new();
-                            newPhoto.Job = modelo;
+                            newPhoto.Job = job;
 
                             using (var stream = new MemoryStream())
                             {
@@ -338,11 +343,13 @@ namespace Buildyv2.Controllers.V1
 
                     await transaction.CommitAsync();
 
-                    _logger.LogInformation($"Se creó correctamente la obra Id:{modelo.Id}.");
-                    _response.Result = _mapper.Map<JobDTO>(modelo);
+                    _logger.LogInformation($"Se creó correctamente la obra Id:{job.Id}.");
+                    await _logService.LogAction("Job", "Create", $"Id:{job.Id}, Nombre: {job.Name}.", User.Identity.Name);
+
+                    _response.Result = _mapper.Map<JobDTO>(job);
                     _response.StatusCode = HttpStatusCode.Created;
 
-                    return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+                    return CreatedAtAction(nameof(Get), new { id = job.Id }, _response);
                 }
             }
             catch (Exception ex)

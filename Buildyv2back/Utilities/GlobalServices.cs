@@ -37,21 +37,17 @@ namespace Buildyv2.Utilities
 
         internal static string GetEmailNotificationBody(UserCredential userCredential, string? clientIP, string? clientIPCity, bool isMobile)
         {
-            string device = isMobile ? "celular" : "computadora";
+            string device = isMobile ? "Móvil" : "PC";
             string body = $"<div><strong>API Web Service</strong></div>";
             body += $"<div>Notificación de acceso a la plataforma.</div>";
             body += "<br/>";
-            body += $"<div><strong>Login user: </strong>{userCredential.Username}</div>";
+            body += $"<div><strong>Login user: </strong>{Utils.ToCamelCase(userCredential.Username)}</div>";
             body += $"<div><strong>User IP: </strong>{clientIP}</div>";
             body += $"<div><strong>User City: </strong>{clientIPCity}</div>";
             body += $"<div><strong>Dispositivo: </strong>{device}</div>";
             body += "<br/>";
-            //body += "<div><font size='2'><strong><span style='color:#e15211'>------------------------------<wbr>------------------------------<wbr>-------------</span></strong></font></div>";
-            //body += "<div><strong><span style='font-size:12pt;color:#e15211'>Accesos</span></strong></div>";
-            //body += "<div><strong><a href='www.buildy.lat' title='' target='_blank'>Dashboard</a></strong></div>";
-            //body += "<br/><br/>";
+            body += $"<div>Fecha de acceso: {GetDatetimeUruguayString()}</div>";
             body += "<div>Este es un email auto-generado, por favor no lo responda.</div>";
-            body += $"<div>Fecha creación: {GetDatetimeUruguayString()}</div>";
             return body;
         }
 

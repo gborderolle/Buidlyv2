@@ -19,13 +19,15 @@ namespace Buildyv2.Controllers.V1
     public class TenantsController : CustomBaseController<Tenant> // Notice <Tenant> here
     {
         private readonly ITenantRepository _tenantRepository; // Servicio que contiene la lógica principal de negocio para Tenants.
+        private readonly ILogService _logService;
         private readonly ContextDB _dbContext;
 
-        public TenantsController(ILogger<TenantsController> logger, IMapper mapper, ITenantRepository tenantRepository, ContextDB dbContext)
+        public TenantsController(ILogger<TenantsController> logger, IMapper mapper, ITenantRepository tenantRepository, ILogService logService, ContextDB dbContext)
         : base(mapper, logger, tenantRepository)
         {
             _response = new();
             _tenantRepository = tenantRepository;
+            _logService = logService;
             _dbContext = dbContext;
         }
 
@@ -83,7 +85,10 @@ namespace Buildyv2.Controllers.V1
                     return NotFound($"Inquilino no encontrado ID = {id}.");
                 }
                 await _tenantRepository.Remove(tenant);
+
                 _logger.LogInformation($"Se eliminó correctamente el inquilino Id:{id}.");
+                await _logService.LogAction("Tenant", "Delete", $"Id:{tenant.Id}, Nombre: {tenant.Name}.", User.Identity.Name);
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }
@@ -146,6 +151,8 @@ namespace Buildyv2.Controllers.V1
                 var updatedTenant = await _tenantRepository.Update(tenant);
 
                 _logger.LogInformation($"Se actualizó correctamente el inquilino Id:{id}.");
+                await _logService.LogAction("Tenant", "Update", $"Id:{tenant.Id}, Nombre: {tenant.Name}.", User.Identity.Name);
+
                 _response.Result = _mapper.Map<EstateDTO>(updatedTenant);
                 _response.StatusCode = HttpStatusCode.OK;
 
@@ -197,19 +204,21 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 tenantCreateDto.Name = Utils.ToCamelCase(tenantCreateDto.Name);
-                Tenant modelo = _mapper.Map<Tenant>(tenantCreateDto);
-                modelo.Creation = DateTime.Now;
-                modelo.Update = DateTime.Now;
+                Tenant tenant = _mapper.Map<Tenant>(tenantCreateDto);
+                tenant.Creation = DateTime.Now;
+                tenant.Update = DateTime.Now;
 
-                await _tenantRepository.Create(modelo);
-                _logger.LogInformation($"Se creó correctamente el inquilino Id:{modelo.Id}.");
+                await _tenantRepository.Create(tenant);
 
-                _response.Result = _mapper.Map<TenantDTO>(modelo);
+                _logger.LogInformation($"Se creó correctamente el inquilino Id:{tenant.Id}.");
+                await _logService.LogAction("Tenant", "Create", $"Id:{tenant.Id}, Nombre: {tenant.Name}.", User.Identity.Name);
+
+                _response.Result = _mapper.Map<TenantDTO>(tenant);
                 _response.StatusCode = HttpStatusCode.Created;
 
                 // CreatedAtRoute -> Nombre de la ruta (del método): GetCountryDSById
                 // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/13816172#notes
-                return CreatedAtAction(nameof(Get), new { id = modelo.Id }, _response);
+                return CreatedAtAction(nameof(Get), new { id = tenant.Id }, _response);
             }
             catch (Exception ex)
             {

@@ -32,6 +32,7 @@ namespace Buildyv2.Controllers.V1
         private readonly UserManager<BuildyUser> _userManager;
         private readonly SignInManager<BuildyUser> _signInManager;
         private readonly RoleManager<BuildyRole> _roleManager;
+        private readonly ILogService _logService;
         private readonly ContextDB _contextDB;
         private APIResponse _response;
 
@@ -45,6 +46,7 @@ namespace Buildyv2.Controllers.V1
             UserManager<BuildyUser> userManager,
             SignInManager<BuildyUser> signInManager,
             RoleManager<BuildyRole> roleManager,
+            ILogService logService,
             ContextDB dbContext
         )
         {
@@ -57,6 +59,7 @@ namespace Buildyv2.Controllers.V1
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _logService = logService;
             _contextDB = dbContext;
         }
 
@@ -186,6 +189,8 @@ namespace Buildyv2.Controllers.V1
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("Registración correcta.");
+                    await _logService.LogAction("Account", "Create", $"Username: {model.Username}, Rol: {model.UserRoleId}.", model.Username);
+
                     _response.StatusCode = HttpStatusCode.OK;
 
                     // Asignar el rol al usuario
@@ -260,6 +265,9 @@ namespace Buildyv2.Controllers.V1
                     await _userManager.RemoveFromRolesAsync(user, roles);
                     await _userManager.AddToRoleAsync(user, model.UserRoleName);
                 }
+
+                _logger.LogInformation("Usuario actualizado.");
+                await _logService.LogAction("Account", "Update", $"Username: {model.Username}, Rol: {model.UserRoleId}.", model.Username);
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = _mapper.Map<UserDTO>(user); // Mapea el usuario actualizado a un DTO si es necesario
@@ -438,14 +446,16 @@ namespace Buildyv2.Controllers.V1
             }
             var claims = new List<Claim>()
             {
-                new Claim("email", userCredential.Username)
+                new Claim("email", userCredential.Username),
+                new Claim("username", userCredential.Username),
+                new Claim(ClaimTypes.Name, userCredential.Username)
                 //new Claim("username", userCredential.Username)
             };
 
             var claimsDB = await _userManager.GetClaimsAsync(user);
             if (claimsDB != null)
             {
-                claims.AddRange(claimsDB);
+                claims.AddRange(collection: claimsDB);
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
