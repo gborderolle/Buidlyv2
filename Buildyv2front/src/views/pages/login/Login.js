@@ -33,7 +33,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
-import logo from "src/assets/images/datalexion-logo-big.png";
+import logo from "src/assets/images/Buildyv2-h.png";
 import { sygnet } from "src/assets/brand/sygnet";
 
 import classes from "./Login.module.css";
@@ -266,18 +266,6 @@ const Login = () => {
                   <CForm onSubmit={submitHandler}>
                     <h1>Dashboard</h1>
                     <p className="text-medium-emphasis">Login</p>
-                    {/* <CInputGroup className="mb-3">
-                      <CInputGroupText>
-                        <CIcon icon={cilUser} />
-                      </CInputGroupText>
-                      <CFormInput
-                        placeholder="Email"
-                        onBlur={validateEmailHandler}
-                        onChange={emailChangeHandler}
-                        value={emailState.value}
-                      />
-                    </CInputGroup> */}
-
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />

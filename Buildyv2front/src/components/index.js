@@ -7,8 +7,7 @@ import AppSidebar from "./UI/AppSidebar";
 import DocsCallout from "./docs/DocsCallout";
 import DocsLink from "./docs/DocsLink";
 import DocsExample from "./docs/DocsExample";
-import DocsExample2 from "./docs/DocsExample2";
-import DocsExample3 from "./docs/DocsExample3";
+import AppFooterMobileAdmin from "./UI/AppFooterMobileAdmin";
 
 export {
   AppBreadcrumb,
@@ -20,6 +19,5 @@ export {
   DocsCallout,
   DocsLink,
   DocsExample,
-  DocsExample2,
-  DocsExample3,
+  AppFooterMobileAdmin,
 };

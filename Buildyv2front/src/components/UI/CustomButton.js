@@ -12,7 +12,7 @@ const CustomButton = (props) => {
   };
 
   return (
-    props.userRoleNumber == props.requiredRoleNumber && (
+    props.requiredRole == props.requiredRole && (
       <CCol>
         <CButton
           type="button"
