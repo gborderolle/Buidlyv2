@@ -35,8 +35,10 @@ namespace Buildyv2.Models
 
         #region External
 
+        public int CityDSId { get; set; }
         public CityDS CityDS { get; set; }
 
+        public int OwnerDSId { get; set; }
         public OwnerDS OwnerDS { get; set; }
 
         public List<Report> ListReports { get; set; } = new();
