@@ -50,11 +50,11 @@ const routes = [
 
   { path: "/reports", name: "Reportes", element: ReportMenu },
   { path: "/report-abm", name: "Agregar reportes", element: ReportABM },
-  { path: "/view-report", name: "Ver álbum", element: ReportView },
+  { path: "/report-view", name: "Ver álbum", element: ReportView },
 
   { path: "/jobs", name: "Obras", element: JobMenu },
   { path: "/job-abm", name: "Agregar obras", element: JobABM },
-  { path: "/view-job", name: "Ver álbum", element: JobView },
+  { path: "/job-view", name: "Ver álbum", element: JobView },
 
   { path: "/tenants", name: "Inquilinos", element: TenantMenu },
   { path: "/tenant-abm", name: "Agregar inquilinos", element: TenantABM },

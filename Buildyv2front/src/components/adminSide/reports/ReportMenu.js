@@ -313,7 +313,7 @@ const ReportMenu = () => {
   }
 
   function navigateToAlbum(report) {
-    navigate("/view-report", { state: { report } });
+    navigate("/report-view", { state: { report } });
   }
 
   //#endregion Functions ***********************************

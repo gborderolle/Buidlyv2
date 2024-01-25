@@ -332,7 +332,7 @@ const JobMenu = () => {
   }
 
   function navigateToAlbum(job) {
-    navigate("/view-job", { state: { job } });
+    navigate("/job-view", { state: { job } });
   }
 
   const formatToDollars = (number) => {

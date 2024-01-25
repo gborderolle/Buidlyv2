@@ -498,7 +498,7 @@ const RentABM = () => {
               <FileUpload
                 multiple={true}
                 name="example-upload"
-                maxSize={300000}
+                maxSize={5000000}
                 onUpload={handleFileUpload}
                 label="Fotos del contrato"
               />

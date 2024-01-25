@@ -26,7 +26,10 @@ import useAPI from "../../../hooks/use-API";
 
 // redux imports
 import { useSelector, useDispatch } from "react-redux";
-import { fetchJobList, fetchEstateList } from "../../../store/generalData-actions";
+import {
+  fetchJobList,
+  fetchEstateList,
+} from "../../../store/generalData-actions";
 import { urlJob } from "../../../endpoints";
 import { authActions } from "../../../store/auth-slice";
 
@@ -439,7 +442,7 @@ const JobABM = () => {
               <FileUpload
                 multiple={true}
                 name="example-upload"
-                maxSize={300000}
+                maxSize={5000000}
                 onUpload={handleFileUpload}
                 label="Cargar fotos"
               />

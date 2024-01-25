@@ -367,7 +367,7 @@ const ReportABM = () => {
               <FileUpload
                 multiple={true}
                 name="example-upload"
-                maxSize={300000}
+                maxSize={5000000}
                 onUpload={handleFileUpload}
                 label="Cargar fotos"
               />
