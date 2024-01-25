@@ -306,9 +306,11 @@ const ReportMenu = () => {
     navigate("/report-abm", { state: { report, editMode: true } });
   }
 
-  function navigateToAlbum(report) {
-    navigate("/report-view", { state: { report } });
-  }
+  const navigateToAlbum = (report) => {
+    if (report.listPhotosURL && report.listPhotosURL.length > 0) {
+      navigate("/report-view", { state: { report } });
+    }
+  };
 
   //#endregion Functions ***********************************
 

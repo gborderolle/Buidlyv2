@@ -325,9 +325,11 @@ const JobMenu = () => {
     navigate("/job-abm", { state: { job, editMode: true } });
   }
 
-  function navigateToAlbum(job) {
-    navigate("/job-view", { state: { job } });
-  }
+  const navigateToAlbum = (job) => {
+    if (job.listPhotosURL && job.listPhotosURL.length > 0) {
+      navigate("/job-view", { state: { job } });
+    }
+  };
 
   const formatToDollars = (number) => {
     return new Intl.NumberFormat("en-US", {
