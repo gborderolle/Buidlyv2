@@ -47,7 +47,7 @@ namespace Buildyv2.Models
 
         public List<Rent> ListRents { get; set; } = new();
 
-        public int PresentRentId { get; set; } = new();
+        public int? PresentRentId { get; set; } = new();
 
         #endregion
     }

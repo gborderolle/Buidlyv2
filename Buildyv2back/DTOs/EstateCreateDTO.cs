@@ -25,7 +25,7 @@ namespace Buildyv2.DTOs
         public string GoogleMapsURL { get; set; }
         public bool EstateIsRented { get; set; }
         public string Comments { get; set; }
-        public int PresentRentId { get; set; }
+        public int? PresentRentId { get; set; }
 
         #endregion
 

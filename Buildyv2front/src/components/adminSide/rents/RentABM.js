@@ -149,8 +149,9 @@ const RentABM = () => {
       );
       if (confirmDelete) {
         await removeData(urlRent, rent.id);
-        dispatch(fetchRentsList());
-        navigate("/rents");
+        dispatch(fetchRentList());
+        dispatch(fetchEstateList());
+        navigate("/estates");
       }
     }
   };

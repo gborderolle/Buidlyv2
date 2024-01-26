@@ -113,28 +113,45 @@ namespace Buildyv2.Controllers.V1
                     _response.ErrorMessages = new List<string> { $"Renta no encontrada ID = {id}." };
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound($"Renta no encontrada ID = {id}.");
+                    return NotFound(_response);
                 }
-                string container = null;
 
-                // Eliminar las fotos asociadas
+                // Eliminar o actualizar los registros de Tenant relacionados
+                var tenants = _dbContext.Tenant.Where(t => t.RentId == id).ToList();
+                foreach (var tenant in tenants)
+                {
+                    tenant.RentId = null; // Para actualizar
+                }
+                _dbContext.SaveChanges();
+
+                // Eliminar todas las rentas asociadas al Estate de la renta que se está eliminando
+                var estateId = rent.EstateId;
+                var estate = await _dbContext.Estate.FindAsync(estateId);
+                if (estate != null)
+                {
+                    estate.PresentRentId = null;
+                    estate.EstateIsRented = false;
+                    _dbContext.Estate.Update(estate);
+                    _dbContext.SaveChanges();
+                }
+
+                // Continuar con la eliminación de Rent
+                string container = null;
                 if (rent.ListPhotos != null)
                 {
                     foreach (var photo in rent.ListPhotos)
                     {
                         container = $"uploads/rents/estate{rent.EstateId}/{photo.Creation.ToString("yyyy_MM")}/rent{rent.Id}";
                         await _fileStorage.DeleteFile(photo.URL, container);
-                        _dbContext.Photo.Remove(photo); // Asegúrate de que el contexto de la base de datos sea correcto
+                        _dbContext.Photo.Remove(photo);
                     }
                 }
 
                 if (container != null)
                 {
-                    // Eliminar la carpeta del contenedor una sola vez
                     await _fileStorage.DeleteFolder(container);
                 }
                 await _rentRepository.Remove(rent);
-
                 _logger.LogInformation($"Se eliminó correctamente la renta Id:{id}.");
                 await _logService.LogAction("Rent", "Delete", $"Id:{rent.Id}.", User.Identity.Name);
 
@@ -147,8 +164,8 @@ namespace Buildyv2.Controllers.V1
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.InternalServerError;
                 _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
             }
-            return BadRequest(_response);
         }
 
         [HttpPut("{id:int}")]
