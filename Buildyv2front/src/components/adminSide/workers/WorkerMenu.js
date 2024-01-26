@@ -31,7 +31,6 @@ const WorkerMenu = () => {
   const [selectedWorker, setSelectedWorker] = useState(null);
 
   const dispatch = useDispatch();
-  const authToken = useSelector((state) => state.auth.authToken);
 
   const [workerList, setWorkerList] = useState([]);
   const reduxWorkerList =
@@ -51,7 +50,7 @@ const WorkerMenu = () => {
     setWorkerList(sortedList);
   }, [reduxWorkerList]);
 
-  const itemsPerPage = 20;
+  const itemsPerPage = 25;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 

@@ -88,7 +88,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpDelete("{id:int}", Name = "DeleteJob")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
             try
@@ -147,7 +146,6 @@ namespace Buildyv2.Controllers.V1
 
         [HttpPut("{id:int}")]
         [Consumes("multipart/form-data")] // Asegura que el método acepte multipart/form-data
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Put(int id, [FromForm] JobCreateDTO jobCreateDto)
         {
             try
@@ -255,7 +253,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPatch("{id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Patch(int id, [FromBody] JsonPatchDocument<JobDTO> patchDto)
         {
             return await Patch<Job, JobDTO>(id, patchDto);
@@ -266,7 +263,6 @@ namespace Buildyv2.Controllers.V1
         #region Endpoints específicos
 
         [HttpPost(Name = "CreateJob")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromForm] JobCreateDTO jobCreateDto)
         {
             try

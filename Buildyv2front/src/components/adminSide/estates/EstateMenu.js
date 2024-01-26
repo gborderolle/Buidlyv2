@@ -59,7 +59,7 @@ const EstateMenu = () => {
     setEstateList(sortedList);
   }, [reduxEstateList]);
 
-  const itemsPerPage = 20;
+  const itemsPerPage = 25;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 

@@ -6,7 +6,7 @@
     public class PaginationDTO
     {
         public int Page { get; set; } = 1;
-        private int recordsPerPage = 10;
+        private int recordsPerPage = 50;
         private readonly int pageMaxSize = 50;
 
         public int RecordsPerPage

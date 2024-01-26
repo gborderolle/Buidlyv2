@@ -40,13 +40,12 @@ const ReportMenu = () => {
   const [selectedReport, setSelectedReport] = useState(null);
 
   const dispatch = useDispatch();
-  const authToken = useSelector((state) => state.auth.authToken);
 
   const [reportList, setReportList] = useState([]);
   const reduxReportList =
     useSelector((state) => state.generalData.reportList) || [];
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 

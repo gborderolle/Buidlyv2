@@ -40,12 +40,11 @@ const JobMenu = () => {
   const [selectedJob, setSelectedJob] = useState(null);
 
   const dispatch = useDispatch();
-  const authToken = useSelector((state) => state.auth.authToken);
 
   const [jobList, setJobList] = useState([]);
   const reduxJobList = useSelector((state) => state.generalData.jobList) || [];
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 

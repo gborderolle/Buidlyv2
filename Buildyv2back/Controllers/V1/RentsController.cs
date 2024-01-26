@@ -95,7 +95,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpDelete("{id:int}", Name = "DeleteRent")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
             try
@@ -154,7 +153,6 @@ namespace Buildyv2.Controllers.V1
 
         [HttpPut("{id:int}")]
         [Consumes("multipart/form-data")] // Asegura que el método acepte multipart/form-data
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Put(int id, [FromForm] RentCreateDTO rentCreateDto)
         {
             try
@@ -233,7 +231,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPatch("{id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Patch(int id, [FromBody] JsonPatchDocument<RentPatchDTO> patchDto)
         {
             return await Patch<Rent, RentPatchDTO>(id, patchDto);
@@ -244,7 +241,6 @@ namespace Buildyv2.Controllers.V1
         #region Endpoints específicos
 
         [HttpPost(Name = "CreateRent")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromForm] RentCreateDTO rentCreateDto)
         {
             try

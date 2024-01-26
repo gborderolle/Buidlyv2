@@ -72,7 +72,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpDelete("{id:int}", Name = "DeleteWorker")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
             try
@@ -105,7 +104,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] WorkerCreateDTO workerCreateDto)
         {
             try
@@ -171,7 +169,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPatch("{id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Patch(int id, [FromBody] JsonPatchDocument<WorkerPatchDTO> patchDto)
         {
             return await Patch<Worker, WorkerPatchDTO>(id, patchDto);
@@ -182,7 +179,6 @@ namespace Buildyv2.Controllers.V1
         #region Endpoints específicos
 
         [HttpPost(Name = "CreateWorker")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromBody] WorkerCreateDTO workerCreateDto)
         {
             try

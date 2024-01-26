@@ -66,7 +66,6 @@ namespace Buildyv2.Controllers.V1
         #region Endpoints genéricos
 
         [HttpGet("GetUsers")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> GetUsers([FromQuery] PaginationDTO paginationDTO)
         {
             try
@@ -88,7 +87,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpGet("GetRoles")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> GetRoles()
         {
             try

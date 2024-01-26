@@ -70,7 +70,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpDelete("{id:int}", Name = "DeleteTenant")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
             try
@@ -103,7 +102,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] TenantCreateDTO tenantCreateDto)
         {
             try
@@ -170,7 +168,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPatch("{id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Patch(int id, [FromBody] JsonPatchDocument<TenantPatchDTO> patchDto)
         {
             return await Patch<Tenant, TenantPatchDTO>(id, patchDto);
@@ -181,7 +178,6 @@ namespace Buildyv2.Controllers.V1
         #region Endpoints específicos
 
         [HttpPost(Name = "CreateTenant")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromBody] TenantCreateDTO tenantCreateDto)
         {
             try

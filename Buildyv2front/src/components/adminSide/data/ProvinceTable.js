@@ -73,7 +73,7 @@ const ProvinceTable = (props) => {
     direction: "ascending",
   });
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 

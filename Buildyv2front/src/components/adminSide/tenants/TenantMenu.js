@@ -31,7 +31,6 @@ const TenantMenu = () => {
   const [selectedTenant, setSelectedTenant] = useState(null);
 
   const dispatch = useDispatch();
-  const authToken = useSelector((state) => state.auth.authToken);
 
   const [tenantList, setTenantList] = useState([]);
   const reduxTenantList =
@@ -67,7 +66,7 @@ const TenantMenu = () => {
     setEstateList(reduxEstateList);
   }, [reduxEstateList]);
 
-  const itemsPerPage = 20;
+  const itemsPerPage = 25;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 

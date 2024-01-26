@@ -146,7 +146,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpDelete("{id:int}", Name = "DeleteEstate")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Delete([FromRoute] int id)
         {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
@@ -250,7 +249,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] EstateCreateDTO estateCreateDto)
         {
             try
@@ -333,7 +331,6 @@ namespace Buildyv2.Controllers.V1
         }
 
         [HttpPatch("{id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Patch(int id, [FromBody] JsonPatchDocument<EstatePatchDTO> patchDto)
         {
             return await Patch<Estate, EstatePatchDTO>(id, patchDto);
@@ -344,7 +341,6 @@ namespace Buildyv2.Controllers.V1
         #region Endpoints específicos
 
         [HttpPost(Name = "CreateEstate")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult<APIResponse>> Post([FromBody] EstateCreateDTO estateCreateDto)
         {
             try
