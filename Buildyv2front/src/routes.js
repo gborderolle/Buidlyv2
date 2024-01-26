@@ -43,8 +43,8 @@ const DataMenu = React.lazy(() =>
   import("./components/adminSide/data/DataMenu")
 );
 
-const LogsMenu = React.lazy(() =>
-  import("./components/adminSide/data/LogsMenu")
+const LogsTable = React.lazy(() =>
+  import("./components/adminSide/data/LogsTable")
 );
 
 const routes = [
@@ -70,7 +70,7 @@ const routes = [
 
   { path: "/data", name: "Datos base", element: DataMenu },
 
-  { path: "/logs", name: "Logs", element: LogsMenu },
+  { path: "/logs", name: "Logs", element: LogsTable },
 ];
 
 export default routes;

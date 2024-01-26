@@ -31,19 +31,7 @@ const LogsMenu = () => {
 
   //#endregion Functions ***********************************
 
-  return (
-    <CRow>
-      <CCol xs>
-        <CCard>
-          <CCardHeader>Tabla de logs</CCardHeader>
-          <CCardBody>
-            <LogsTable />
-          </CCardBody>
-        </CCard>
-        <br />
-      </CCol>
-    </CRow>
-  );
+  return <LogsTable />;
 };
 
 export default LogsMenu;
