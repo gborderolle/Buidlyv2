@@ -35,6 +35,7 @@ namespace Buildyv2.Controllers.V1
         private readonly ILogService _logService;
         private readonly ContextDB _contextDB;
         private APIResponse _response;
+        private readonly IWebHostEnvironment _environment;
 
         public AccountsController
         (
@@ -47,7 +48,8 @@ namespace Buildyv2.Controllers.V1
             SignInManager<BuildyUser> signInManager,
             RoleManager<BuildyRole> roleManager,
             ILogService logService,
-            ContextDB dbContext
+            ContextDB dbContext,
+                        IWebHostEnvironment environment
         )
         {
             _response = new();
@@ -61,6 +63,7 @@ namespace Buildyv2.Controllers.V1
             _roleManager = roleManager;
             _logService = logService;
             _contextDB = dbContext;
+            _environment = environment;
         }
 
         #region Endpoints genéricos
@@ -498,6 +501,26 @@ namespace Buildyv2.Controllers.V1
 
         private async Task SendLoginNotification(UserCredential userCredential)
         {
+            // Comprueba si el entorno es de producción
+            if (_environment.EnvironmentName != "Production")
+            {
+                return;
+            }
+
+            var user = await _userManager.FindByNameAsync(userCredential.Username);
+            if (user == null)
+            {
+                _logger.LogError("Usuario no encontrado para la notificación de inicio de sesión.");
+                return;
+            }
+
+            // Comprueba si el usuario tiene el rol de administrador
+            var userRoles = await _userManager.GetRolesAsync(user);
+            if (userRoles.Contains("Admin"))
+            {
+                return;
+            }
+
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             string? clientIP = HttpContext.Connection.RemoteIpAddress?.ToString();
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.

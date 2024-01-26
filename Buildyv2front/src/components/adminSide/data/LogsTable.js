@@ -111,6 +111,19 @@ const LogsTable = () => {
     setSortConfig({ key, direction });
   };
 
+  const formatUruguayDate = (dateString) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("es-UY", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: "America/Montevideo",
+    }).format(date);
+  };
+
   //#endregion Functions ***********************************
 
   //#region Events ***********************************
@@ -124,10 +137,6 @@ const LogsTable = () => {
   };
 
   //#endregion Events ***********************************
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentCities = logsList.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <>
@@ -199,7 +208,7 @@ const LogsTable = () => {
                           {log.data}
                         </CTableDataCell>
                         <CTableDataCell className={rowClass}>
-                          {new Date(log.creation).toLocaleString()}
+                          {formatUruguayDate(log.creation)}
                         </CTableDataCell>
                       </CTableRow>
                     );

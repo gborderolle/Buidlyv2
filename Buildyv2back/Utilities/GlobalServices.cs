@@ -6,17 +6,18 @@ namespace Buildyv2.Utilities
 {
     public static class GlobalServices
     {
-        public static DateTime GetDatetimeUruguay()
-        {
-            var nowInUruguay = SystemClock.Instance.GetCurrentInstant().InZone(DateTimeZoneProviders.Tzdb["America/Montevideo"]);
-            return nowInUruguay.ToDateTimeUnspecified();
-        }
-
         public static string GetDatetimeUruguayString()
         {
             CultureInfo culture = new("es-UY");
             var nowInUruguay = SystemClock.Instance.GetCurrentInstant().InZone(DateTimeZoneProviders.Tzdb["America/Montevideo"]);
             return nowInUruguay.ToDateTimeUnspecified().ToString("G", culture);
+        }
+
+        public static DateTime GetDatetimeUruguay()
+        {
+            CultureInfo culture = new("es-UY");
+            var nowInUruguay = SystemClock.Instance.GetCurrentInstant().InZone(DateTimeZoneProviders.Tzdb["America/Montevideo"]);
+            return nowInUruguay.ToDateTimeUnspecified();
         }
 
         internal static string NormalizeDiacritics(string attribute)
