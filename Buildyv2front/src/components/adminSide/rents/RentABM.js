@@ -477,6 +477,24 @@ const RentABM = () => {
               </CInputGroup>
               <br />
               <CInputGroup>
+                <CInputGroupText className="cardItem custom-input-group-text">
+                  Forma de pago
+                </CInputGroupText>
+                <CFormInput
+                  type="text"
+                  className="cardItem"
+                  onChange={inputChangeHandlerComments}
+                  onBlur={inputBlurHandlerComments}
+                  value={comments}
+                />
+                {inputHasErrorComments && (
+                  <CAlert color="danger" className="w-100">
+                    Entrada inválida
+                  </CAlert>
+                )}
+              </CInputGroup>
+              <br />
+              <CInputGroup>
                 <CInputGroupText>Fecha del inicio</CInputGroupText>
                 <DatePicker
                   selected={month}
@@ -499,24 +517,6 @@ const RentABM = () => {
                   value={duration}
                 />
                 {inputHasErrorDuration && (
-                  <CAlert color="danger" className="w-100">
-                    Entrada inválida
-                  </CAlert>
-                )}
-              </CInputGroup>
-              <br />
-              <CInputGroup>
-                <CInputGroupText className="cardItem custom-input-group-text">
-                  Comentarios
-                </CInputGroupText>
-                <CFormInput
-                  type="text"
-                  className="cardItem"
-                  onChange={inputChangeHandlerComments}
-                  onBlur={inputBlurHandlerComments}
-                  value={comments}
-                />
-                {inputHasErrorComments && (
                   <CAlert color="danger" className="w-100">
                     Entrada inválida
                   </CAlert>

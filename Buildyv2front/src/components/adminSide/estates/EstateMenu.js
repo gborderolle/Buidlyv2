@@ -175,6 +175,19 @@ const EstateMenu = () => {
             return sortConfig.direction === "ascending" ? 1 : -1;
           }
           return 0;
+        } else if (sortConfig.key === "rentComments") {
+          const lastRentA =
+            a.listRents?.[a.listRents.length - 1]?.comments || "";
+          const lastRentB =
+            b.listRents?.[b.listRents.length - 1]?.comments || "";
+
+          if (lastRentA.toLowerCase() < lastRentB.toLowerCase()) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (lastRentA.toLowerCase() > lastRentB.toLowerCase()) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
         } else if (sortConfig.key === "tenant") {
           // Obtiene el nombre del primer inquilino del último alquiler
           const tenantNameA =
@@ -276,6 +289,14 @@ const EstateMenu = () => {
             ? formatToDollars(
                 estate.listRents?.[estate.listRents.length - 1].monthlyValue
               )
+            : "-"}
+        </td>
+        <td
+          style={estate.id === selectedEstate?.id ? { color: "blue" } : null}
+          onClick={() => handleSelectEstate(estate)}
+        >
+          {estate.presentRentId > 0 && estate.listRents.length > 0
+            ? estate.listRents?.[estate.listRents.length - 1].comments
             : "-"}
         </td>
         <td
@@ -481,6 +502,12 @@ const EstateMenu = () => {
                       onClick={() => requestSort("monthlyValue")}
                     >
                       $Renta
+                    </th>
+                    <th
+                      className="table-header"
+                      onClick={() => requestSort("rentComments")}
+                    >
+                      Forma de pago
                     </th>
                     <th
                       className="table-header"
