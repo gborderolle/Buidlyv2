@@ -528,7 +528,7 @@ const RentABM = () => {
                 name="example-upload"
                 maxSize={5000000}
                 onUpload={handleFileUpload}
-                label="Fotos del contrato"
+                label="Subir contrato acá"
               />
               {editMode && (
                 <>
