@@ -72,7 +72,7 @@ namespace Buildyv2.Controllers.V1
             {
                 var queryable = _contextDB.BuildyUser;
                 await HttpContext.InsertParamPaginationHeader(queryable);
-                var users = await queryable.OrderBy(x => x.Email).DoPagination(paginationDTO).ToListAsync();
+                var users = await queryable.OrderBy(x => x.UserName).DoPagination(paginationDTO).ToListAsync();
                 _response.Result = users;
                 _response.StatusCode = HttpStatusCode.OK;
             }
@@ -93,6 +93,29 @@ namespace Buildyv2.Controllers.V1
             {
                 var roles = await _roleManager.Roles.ToListAsync();
                 _response.Result = roles;
+                _response.StatusCode = HttpStatusCode.OK;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return Ok(_response);
+        }
+
+
+        [HttpGet("GetLogs")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
+        public async Task<ActionResult<APIResponse>> GetLogs([FromQuery] PaginationDTO paginationDTO)
+        {
+            try
+            {
+                var queryable = _contextDB.Log;
+                await HttpContext.InsertParamPaginationHeader(queryable);
+                var logs = await queryable.OrderByDescending(x => x.Creation).DoPagination(paginationDTO).ToListAsync();
+                _response.Result = logs;
                 _response.StatusCode = HttpStatusCode.OK;
             }
             catch (Exception ex)

@@ -150,8 +150,6 @@ const WorkerMenu = () => {
   const renderWorkerRows = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-    // Cambio de filteredTenantList a sortedList
     const currentWorkers = sortedList.slice(indexOfFirstItem, indexOfLastItem);
 
     return currentWorkers.map((worker, index) => (

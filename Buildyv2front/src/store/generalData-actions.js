@@ -199,3 +199,16 @@ export const fetchUserRole = (id) => {
     }
   };
 };
+
+export const fetchLogsList = () => {
+  return async (dispatch) => {
+    try {
+      const data = await fetchApi(urlAccount + "/GetLogs");
+      if (data.result) {
+        dispatch(generalDataActions.setLogsList(data.result));
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+};

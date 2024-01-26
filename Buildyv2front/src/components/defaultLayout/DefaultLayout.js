@@ -28,6 +28,7 @@ import {
   fetchOwnerList,
   fetchUserList,
   fetchUserRoleList,
+  fetchLogsList,
 } from "../../store/generalData-actions";
 
 const DefaultLayout = () => {
@@ -89,6 +90,7 @@ const DefaultLayout = () => {
         dispatch(fetchOwnerList());
         dispatch(fetchUserList());
         dispatch(fetchUserRoleList());
+        dispatch(fetchLogsList());
       });
     };
     fetchGeneralData();

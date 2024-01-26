@@ -178,8 +178,6 @@ const JobMenu = () => {
   const renderJobRows = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-    // Cambio de filteredTenantList a sortedList
     const currentJobs = sortedList.slice(indexOfFirstItem, indexOfLastItem);
 
     return currentJobs.map((job, index) => {

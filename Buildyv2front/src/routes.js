@@ -43,6 +43,10 @@ const DataMenu = React.lazy(() =>
   import("./components/adminSide/data/DataMenu")
 );
 
+const LogsMenu = React.lazy(() =>
+  import("./components/adminSide/data/LogsMenu")
+);
+
 const routes = [
   { path: "/", exact: true, name: "Home" },
   { path: "/estates", name: "Propiedades", element: EstateMenu },
@@ -65,6 +69,8 @@ const routes = [
   { path: "/rent-abm", name: "Agregar alquiler", element: RentABM },
 
   { path: "/data", name: "Datos base", element: DataMenu },
+
+  { path: "/logs", name: "Logs", element: LogsMenu },
 ];
 
 export default routes;

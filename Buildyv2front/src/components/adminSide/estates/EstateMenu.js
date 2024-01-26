@@ -9,6 +9,7 @@ import {
   CTable,
   CPagination,
   CPaginationItem,
+  CPopover,
 } from "@coreui/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -354,16 +355,21 @@ const EstateMenu = () => {
               color={estate.googleMapsURL ? "#697588" : "lightgray"}
             />
           </button>
-          <button
-            style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
-            title={estate.ownerDS?.name || "N/A"}
+          <CPopover
+            content={estate.ownerDS?.name || "N/A"}
+            placement="top"
+            trigger={["hover", "focus"]}
           >
-            <FontAwesomeIcon
-              icon={faInfoCircle}
-              color={estate.ownerDS?.color || "lightgray"}
-            />
-          </button>
+            <button
+              style={{ border: "none", background: "none" }}
+              className={isBumped ? "bump" : ""}
+            >
+              <FontAwesomeIcon
+                icon={faInfoCircle}
+                color={estate.ownerDS?.color || "lightgray"}
+              />
+            </button>
+          </CPopover>
         </td>
       </tr>
     ));

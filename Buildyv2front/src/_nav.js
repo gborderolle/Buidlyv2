@@ -1,12 +1,13 @@
 import React from "react";
 import CIcon from "@coreui/icons-react";
 import {
+  cilHome,
   cilImage,
   cilBriefcase,
   cilPaint,
   cilPeople,
   cilStorage,
-  cilHome,
+  cilBellExclamation,
 } from "@coreui/icons";
 import { CNavItem } from "@coreui/react";
 
@@ -52,6 +53,13 @@ const _nav = [
     name: "Datos base",
     to: "/data",
     icon: <CIcon icon={cilStorage} customClassName="nav-icon" />,
+  },
+  {
+    roles: ["Admin"],
+    component: CNavItem,
+    name: "Logs",
+    to: "/logs",
+    icon: <CIcon icon={cilBellExclamation} customClassName="nav-icon" />,
   },
 ];
 

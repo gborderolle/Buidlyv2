@@ -183,7 +183,6 @@ const TenantMenu = () => {
   const renderTenantRows = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
     const currentTenants = sortedList.slice(indexOfFirstItem, indexOfLastItem);
 
     return currentTenants.map((tenant, index) => {

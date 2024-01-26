@@ -178,8 +178,6 @@ const ReportMenu = () => {
   const renderReportRows = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-    // Cambio de filteredTenantList a sortedList
     const currentReports = sortedList.slice(indexOfFirstItem, indexOfLastItem);
 
     return currentReports.map((report, index) => {
