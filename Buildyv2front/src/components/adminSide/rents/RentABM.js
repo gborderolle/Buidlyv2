@@ -17,6 +17,10 @@ import {
   CCardBody,
   CCardFooter,
   CFormCheck,
+  CDropdown,
+  CDropdownItem,
+  CDropdownToggle,
+  CDropdownMenu,
 } from "@coreui/react";
 import useInput from "../../../hooks/use-input";
 import useAPI from "../../../hooks/use-API";
@@ -59,7 +63,6 @@ const RentABM = () => {
 
   // DDLs
   const [inputHasErrorTenant, setInputHasErrorTenant] = useState(false);
-  const [selectedTenants, setSelectedTenants] = useState([]);
 
   const monthString = rent?.month;
   const monthDate = monthString ? new Date(monthString) : new Date();
@@ -88,6 +91,15 @@ const RentABM = () => {
 
   // Redux
   const tenantList = useSelector((state) => state.generalData.tenantList);
+
+  const defaultTenant =
+    rent?.listTenants?.length > 0
+      ? tenantList.find((tenant) => tenant.id === rent.listTenants[0].id)
+      : null;
+
+  const [ddlSelectedTenant, setDdlSelectedTenant] = useState(
+    defaultTenant || null
+  );
 
   const {
     value: monthlyValue,
@@ -173,14 +185,6 @@ const RentABM = () => {
         }));
         setLoadedPhotos(existingPhotos);
       }
-      if (rent?.listTenants) {
-        const initialTenants = rent.listTenants.map((tenant) => ({
-          id: tenant.id,
-          name: tenant.name,
-          phone1: tenant.phone1, // Asegúrate de incluir aquí todas las propiedades necesarias
-        }));
-        setSelectedTenants(initialTenants);
-      }
       if (rent?.datetime_monthInit) {
         const parsedDate = new Date(rent.datetime_monthInit);
         if (!isNaN(parsedDate)) {
@@ -204,7 +208,8 @@ const RentABM = () => {
     event.preventDefault();
 
     // Verificar si se ha seleccionado al menos un inquilino
-    if (selectedTenants.length === 0) {
+    const inputIsValidTenant = ddlSelectedTenant !== null;
+    if (!inputIsValidTenant) {
       setInputHasErrorTenant(true);
       return;
     }
@@ -241,9 +246,13 @@ const RentABM = () => {
         formData.append("Comments", comments);
         formData.append("EstateId", estate.id);
 
-        selectedTenants.forEach((tenant) => {
-          formData.append("TenantIds", tenant.id);
-        });
+        if (ddlSelectedTenant) {
+          formData.append("TenantIds", ddlSelectedTenant.id);
+        }
+
+        // selectedTenants.forEach((tenant) => {
+        //   formData.append("TenantIds", tenant.id);
+        // });
 
         console.log("Archivos cargados:", loadedPhotos);
         for (var pair of formData.entries()) {
@@ -265,15 +274,8 @@ const RentABM = () => {
     }
   };
 
-  // Este método se llama cuando se selecciona o se deselecciona un inquilino en el formulario. Se encarga de actualizar el estado de los inquilinos seleccionados.
-  const handleSelectCheckboxTenant = (event, tenant) => {
-    if (event.target.checked) {
-      setSelectedTenants((prevTenants) => [...prevTenants, tenant]);
-    } else {
-      setSelectedTenants((prevTenants) =>
-        prevTenants.filter((t) => t.id !== tenant.id)
-      );
-    }
+  const handleSelectDdlTenant = (item) => {
+    setDdlSelectedTenant(item);
   };
 
   //#endregion Events ***********************************
@@ -314,7 +316,9 @@ const RentABM = () => {
   };
 
   function navigateToTenant() {
-    navigate("/tenant-abm", { state: { from: "RentABM" } });
+    navigate("/tenant-abm", {
+      state: { from: "RentABM", estate: estate },
+    });
   }
 
   //#endregion Functions ***********************************
@@ -362,45 +366,29 @@ const RentABM = () => {
                   }}
                 >
                   <CInputGroupText className="cardItem custom-input-group-text">
-                    Inquilinos
+                    Inquilino
                   </CInputGroupText>
-                  <div
-                    style={{
-                      border: "1px solid lightgray",
-                      padding: "10px",
-                      borderRadius: "5px",
-                      minWidth: "50%",
-                      minHeight: "37px",
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "left",
-                      fontSize: "12px",
-                      flexGrow: 1,
-                      borderColor: "violet",
-                    }}
-                  >
-                    {tenantList.map((tenant) => (
-                      <CFormCheck
-                        key={tenant.id}
-                        id={`tenant-${tenant.id}`}
-                        label={`${tenant.name}`}
-                        checked={selectedTenants.some(
-                          (t) => t.id === tenant.id
-                        )}
-                        onChange={(event) =>
-                          handleSelectCheckboxTenant(event, tenant)
-                        }
-                        style={{
-                          color: "#0d6efd",
-                          fontWeight: "bold",
-                          cursor: "pointer",
-                          marginLeft: "0.5px",
-                          marginRight: "5px",
-                          minHeight: "0",
-                        }}
-                      />
-                    ))}
-                  </div>
+                  <CDropdown>
+                    <CDropdownToggle id="ddlTenant" color="secondary">
+                      {ddlSelectedTenant
+                        ? ddlSelectedTenant.name
+                        : "Seleccionar"}
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      {tenantList &&
+                        tenantList.length > 0 &&
+                        tenantList.map((tenant) => (
+                          <CDropdownItem
+                            key={tenant.id}
+                            onClick={() => handleSelectDdlTenant(tenant)}
+                            style={{ cursor: "pointer" }}
+                            value={tenant.id}
+                          >
+                            {tenant.id}: {tenant.name}
+                          </CDropdownItem>
+                        ))}
+                    </CDropdownMenu>
+                  </CDropdown>
                   <CButton
                     color="dark"
                     style={{ marginLeft: "10px" }}

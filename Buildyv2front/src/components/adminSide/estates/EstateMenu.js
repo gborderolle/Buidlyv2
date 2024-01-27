@@ -507,7 +507,7 @@ const EstateMenu = () => {
                       className="table-header"
                       onClick={() => requestSort("rentComments")}
                     >
-                      Forma de pago
+                      Forma
                     </th>
                     <th
                       className="table-header"

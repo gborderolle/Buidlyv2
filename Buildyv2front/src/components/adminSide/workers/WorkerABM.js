@@ -32,6 +32,7 @@ const WorkerABM = () => {
   const worker = location.state?.worker;
   const editMode = location.state?.editMode ? location.state?.editMode : false;
   const fromJobABM = location.state?.from === "JobABM";
+  const job = location.state?.job;
 
   const [isValidForm, setIsValidForm] = useState(true);
   const {
@@ -122,7 +123,11 @@ const WorkerABM = () => {
   );
 
   const handleCancel = () => {
-    navigate("/workers"); // Reemplaza con la ruta deseada
+    if (fromJobABM) {
+      navigate("/job-abm", { state: { job: job } });
+    } else {
+      navigate("/workers"); // La ruta por defecto en caso de que no venga de RentABM
+    }
   };
 
   const handleDelete = async () => {
@@ -181,7 +186,7 @@ const WorkerABM = () => {
       //if (isSuccess) {
       setTimeout(() => {
         if (fromJobABM) {
-          navigate("/job-abm"); // Asegúrate de que esta es la ruta correcta para RentABM
+          navigate("/job-abm", { state: { job: job } });
         } else {
           navigate("/workers"); // La ruta por defecto en caso de que no venga de RentABM
         }

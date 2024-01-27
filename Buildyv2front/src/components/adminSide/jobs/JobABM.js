@@ -287,7 +287,7 @@ const JobABM = () => {
   };
 
   function navigateToWorker() {
-    navigate("/worker-abm", { state: { from: "JobABM" } });
+    navigate("/worker-abm", { state: { from: "JobABM", job: job } });
   }
 
   //#endregion Functions ***********************************

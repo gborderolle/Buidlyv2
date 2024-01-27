@@ -32,6 +32,7 @@ const TenantABM = () => {
   const tenant = location.state?.tenant;
   const editMode = location.state?.editMode ? location.state?.editMode : false;
   const fromRentABM = location.state?.from === "RentABM";
+  const estate = location.state?.estate;
 
   const [isValidForm, setIsValidForm] = useState(true);
   const {
@@ -136,7 +137,11 @@ const TenantABM = () => {
   );
 
   const handleCancel = () => {
-    navigate("/tenants"); // Reemplaza con la ruta deseada
+    if (fromRentABM) {
+      navigate("/rent-abm", { state: { estate: estate } });
+    } else {
+      navigate("/tenants"); // La ruta por defecto en caso de que no venga de RentABM
+    }
   };
 
   const handleDelete = async () => {
@@ -211,7 +216,7 @@ const TenantABM = () => {
       //if (isSuccess) {
       setTimeout(() => {
         if (fromRentABM) {
-          navigate("/rent-abm"); // Asegúrate de que esta es la ruta correcta para RentABM
+          navigate("/rent-abm", { state: { estate: estate } });
         } else {
           navigate("/tenants"); // La ruta por defecto en caso de que no venga de RentABM
         }

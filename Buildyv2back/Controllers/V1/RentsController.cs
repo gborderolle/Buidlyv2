@@ -284,6 +284,7 @@ namespace Buildyv2.Controllers.V1
                 {
 
                     rentCreateDto.Warrant = Utils.ToCamelCase(rentCreateDto.Warrant);
+                    rentCreateDto.Comments = Utils.ToCamelCase(str: rentCreateDto.Comments);
                     Rent rent = _mapper.Map<Rent>(rentCreateDto);
                     rent.Estate = estate;
                     rent.Creation = DateTime.Now;
