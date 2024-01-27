@@ -22,7 +22,6 @@ namespace Buildyv2.DTOs
 
         public decimal? LabourCost { get; set; }
 
-        //public List<Photo> ListPhotos { get; set; }
         public List<string> ListPhotosURL { get; set; }
 
         #endregion

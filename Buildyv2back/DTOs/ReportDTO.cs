@@ -19,7 +19,6 @@ namespace Buildyv2.DTOs
         public string Comments { get; set; }
 
         // Uniques
-        //public List<Photo> ListPhotos { get; set; }
         public List<string> ListPhotosURL { get; set; }
 
         #endregion

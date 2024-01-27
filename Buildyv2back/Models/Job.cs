@@ -28,6 +28,9 @@ namespace Buildyv2.Models
 
         public decimal? LabourCost { get; set; }
 
+        /// <summary>
+        /// 1-N
+        /// </summary>
         public List<Photo> ListPhotos { get; set; }
 
         #endregion

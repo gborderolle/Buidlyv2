@@ -30,7 +30,7 @@ namespace Buildyv2.Models
         public bool RentIsEnded { get; set; }
 
         /// <summary>
-        /// Fotos del contrato
+        /// 1-N
         /// </summary>
         public List<Photo> ListPhotos { get; set; }
 

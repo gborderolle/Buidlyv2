@@ -34,6 +34,7 @@ namespace Buildyv2.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            // 1..N
             modelBuilder.Entity<Report>()
                 .HasMany(r => r.ListPhotos)
                 .WithOne(p => p.Report)
