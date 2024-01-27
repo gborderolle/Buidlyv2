@@ -12,21 +12,26 @@ import {
 } from "@coreui/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faEye, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-
-import useBumpEffect from "../../../utils/useBumpEffect";
+import {
+  faPlus,
+  faRefresh,
+  faEye,
+  faPaperPlane,
+} from "@fortawesome/free-solid-svg-icons";
 
 // redux imports
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, batch } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
-import { fetchTenantList } from "../../../store/generalData-actions";
+import {
+  fetchTenantList,
+  fetchEstateList,
+} from "../../../store/generalData-actions";
 
 import "./TenantMenu.css";
 
 const TenantMenu = () => {
   //#region Consts ***********************************
 
-  const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTenant, setSelectedTenant] = useState(null);
 
@@ -125,13 +130,22 @@ const TenantMenu = () => {
     setCurrentPage(pageNumber);
   };
 
-  const bumpHandler = () => {
-    triggerBump();
+  const addHandler = () => {
     dispatch(fetchTenantList());
 
     setTimeout(() => {
       navigate("/tenant-abm");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
+  };
+
+  const updateHandler = () => {
+    const fetchGeneralData = async () => {
+      batch(() => {
+        dispatch(fetchTenantList());
+        dispatch(fetchEstateList());
+      });
+    };
+    fetchGeneralData();
   };
 
   const requestSort = (key) => {
@@ -249,7 +263,6 @@ const TenantMenu = () => {
             <button
               onClick={() => navigateToTenant(tenant)}
               style={{ border: "none", background: "none" }}
-              className={isBumped ? "bump" : ""}
               title="Ver detalles"
             >
               <FontAwesomeIcon icon={faEye} color="#697588" />
@@ -257,7 +270,6 @@ const TenantMenu = () => {
             <button
               onClick={() => sendWhatsApp(tenant.phone1)}
               style={{ border: "none", background: "none" }}
-              className={isBumped ? "bump" : ""}
               title="Contactar por WhatsApp"
             >
               <FontAwesomeIcon icon={faPaperPlane} color="#697588" />
@@ -357,11 +369,16 @@ const TenantMenu = () => {
               />
               &nbsp;
               <button
-                onClick={bumpHandler}
+                onClick={addHandler}
                 style={{ border: "none", background: "none" }}
-                className={isBumped ? "bump" : ""}
               >
                 <FontAwesomeIcon icon={faPlus} color="#697588" />
+              </button>
+              <button
+                onClick={updateHandler}
+                style={{ border: "none", background: "none", float: "right" }}
+              >
+                <FontAwesomeIcon icon={faRefresh} color="#697588" />{" "}
               </button>
             </div>
           </div>

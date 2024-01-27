@@ -15,6 +15,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
+  faRefresh,
   faEye,
   faPaintRoller,
   faNewspaper,
@@ -24,19 +25,20 @@ import {
   faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
-import useBumpEffect from "../../../utils/useBumpEffect";
-
 // redux imports
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, batch } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
-import { fetchEstateList } from "../../../store/generalData-actions";
+import {
+  fetchEstateList,
+  fetchRentList,
+  fetchTenantList,
+} from "../../../store/generalData-actions";
 
 import "./EstateMenu.css";
 
 const EstateMenu = () => {
   //#region Consts ***********************************
 
-  const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEstate, setSelectedEstate] = useState(null);
 
@@ -139,13 +141,23 @@ const EstateMenu = () => {
     setCurrentPage(pageNumber);
   };
 
-  const bumpHandler = () => {
-    triggerBump();
+  const addHandler = () => {
     dispatch(fetchEstateList());
 
     setTimeout(() => {
       navigate("/estate-abm");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
+  };
+
+  const updateHandler = () => {
+    const fetchGeneralData = async () => {
+      batch(() => {
+        dispatch(fetchEstateList());
+        dispatch(fetchRentList());
+        dispatch(fetchTenantList());
+      });
+    };
+    fetchGeneralData();
   };
 
   const requestSort = (key) => {
@@ -309,7 +321,6 @@ const EstateMenu = () => {
           <button
             onClick={() => navigateToEstate(estate)}
             style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
             title="Ver propiedad"
           >
             <FontAwesomeIcon icon={faEye} color="#697588" />
@@ -317,7 +328,6 @@ const EstateMenu = () => {
           <button
             onClick={() => navigateToRent(estate)}
             style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
             title={
               estate.presentRentId > 0 ? "Ver alquiler" : "Agregar alquiler"
             }
@@ -330,7 +340,6 @@ const EstateMenu = () => {
           <button
             onClick={() => navigateToJobs(estate)}
             style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
             title="Ver obras"
           >
             <FontAwesomeIcon
@@ -345,7 +354,6 @@ const EstateMenu = () => {
           <button
             onClick={() => navigateToReports(estate)}
             style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
             title="Ver reportes"
           >
             <FontAwesomeIcon
@@ -381,10 +389,7 @@ const EstateMenu = () => {
             placement="top"
             trigger={["hover", "focus"]}
           >
-            <button
-              style={{ border: "none", background: "none" }}
-              className={isBumped ? "bump" : ""}
-            >
+            <button style={{ border: "none", background: "none" }}>
               <FontAwesomeIcon
                 icon={faInfoCircle}
                 color={estate.ownerDS?.color || "lightgray"}
@@ -441,6 +446,8 @@ const EstateMenu = () => {
 
   //#region Events ***********************************
 
+  //#endregion Events ***********************************
+
   return (
     <>
       <CCard className="mb-4">
@@ -463,11 +470,16 @@ const EstateMenu = () => {
               />
               &nbsp;
               <button
-                onClick={bumpHandler}
+                onClick={addHandler}
                 style={{ border: "none", background: "none" }}
-                className={isBumped ? "bump" : ""}
               >
                 <FontAwesomeIcon icon={faPlus} color="#697588" />
+              </button>
+              <button
+                onClick={updateHandler}
+                style={{ border: "none", background: "none", float: "right" }}
+              >
+                <FontAwesomeIcon icon={faRefresh} color="#697588" />{" "}
               </button>
             </div>
           </div>

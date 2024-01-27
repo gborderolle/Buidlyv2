@@ -14,17 +14,19 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
+  faRefresh,
   faEye,
   faCamera,
   faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
-import useBumpEffect from "../../../utils/useBumpEffect";
-
 // redux imports
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, batch } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
-import { fetchReportList } from "../../../store/generalData-actions";
+import {
+  fetchReportList,
+  fetchEstateList,
+} from "../../../store/generalData-actions";
 
 import "./ReportMenu.css";
 
@@ -35,7 +37,6 @@ const ReportMenu = () => {
   const estate = location.state?.estate;
   const listMode = location.state?.listMode ? location.state?.listMode : false;
 
-  const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedReport, setSelectedReport] = useState(null);
 
@@ -123,13 +124,22 @@ const ReportMenu = () => {
     setCurrentPage(pageNumber);
   };
 
-  const bumpHandler = () => {
-    triggerBump();
+  const addHandler = () => {
     dispatch(fetchReportList());
 
     setTimeout(() => {
       navigate("/report-abm");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
+  };
+
+  const updateHandler = () => {
+    const fetchGeneralData = async () => {
+      batch(() => {
+        dispatch(fetchReportList());
+        dispatch(fetchEstateList());
+      });
+    };
+    fetchGeneralData();
   };
 
   const requestSort = (key) => {
@@ -242,7 +252,6 @@ const ReportMenu = () => {
             <button
               onClick={() => navigateToReport(report)}
               style={{ border: "none", background: "none" }}
-              className={isBumped ? "bump" : ""}
               title="Ver detalles"
             >
               <FontAwesomeIcon icon={faEye} color="#697588" />
@@ -250,7 +259,6 @@ const ReportMenu = () => {
             <button
               onClick={() => navigateToAlbum(report)}
               style={{ border: "none", background: "none" }}
-              className={isBumped ? "bump" : ""}
               title="Ver álbum"
             >
               <FontAwesomeIcon
@@ -338,11 +346,16 @@ const ReportMenu = () => {
               />
               &nbsp;
               <button
-                onClick={bumpHandler}
+                onClick={addHandler}
                 style={{ border: "none", background: "none" }}
-                className={isBumped ? "bump" : ""}
               >
                 <FontAwesomeIcon icon={faPlus} color="#697588" />
+              </button>
+              <button
+                onClick={updateHandler}
+                style={{ border: "none", background: "none", float: "right" }}
+              >
+                <FontAwesomeIcon icon={faRefresh} color="#697588" />{" "}
               </button>
             </div>
           </div>

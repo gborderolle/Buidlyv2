@@ -43,6 +43,10 @@ const DataMenu = React.lazy(() =>
   import("./components/adminSide/data/DataMenu")
 );
 
+const MapDashboard = React.lazy(() =>
+  import("./components/adminSide/maps/MapDashboard")
+);
+
 const LogsTable = React.lazy(() =>
   import("./components/adminSide/data/LogsTable")
 );
@@ -67,6 +71,8 @@ const routes = [
   { path: "/worker-abm", name: "Agregar trabajadores", element: WorkerABM },
 
   { path: "/rent-abm", name: "Agregar alquiler", element: RentABM },
+
+  { path: "/map", name: "Mapa", element: MapDashboard },
 
   { path: "/data", name: "Datos base", element: DataMenu },
 

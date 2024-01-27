@@ -8,6 +8,7 @@ import {
   cilPeople,
   cilStorage,
   cilBellExclamation,
+  cilMap,
 } from "@coreui/icons";
 import { CNavItem } from "@coreui/react";
 
@@ -18,6 +19,13 @@ const _nav = [
     name: "Propiedades",
     to: "/estates",
     icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
+  },
+  {
+    roles: ["Admin", "User"],
+    component: CNavItem,
+    name: "Mapa",
+    to: "/map",
+    icon: <CIcon icon={cilMap} customClassName="nav-icon" />,
   },
   {
     roles: ["Admin", "User"],

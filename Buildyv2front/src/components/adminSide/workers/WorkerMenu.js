@@ -12,12 +12,15 @@ import {
 } from "@coreui/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faEye, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-
-import useBumpEffect from "../../../utils/useBumpEffect";
+import {
+  faPlus,
+  faRefresh,
+  faEye,
+  faPaperPlane,
+} from "@fortawesome/free-solid-svg-icons";
 
 // redux imports
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, batch } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
 import { fetchWorkerList } from "../../../store/generalData-actions";
 
@@ -26,7 +29,6 @@ import "./WorkerMenu.css";
 const WorkerMenu = () => {
   //#region Consts ***********************************
 
-  const [isBumped, triggerBump] = useBumpEffect();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedWorker, setSelectedWorker] = useState(null);
 
@@ -109,13 +111,21 @@ const WorkerMenu = () => {
     setCurrentPage(pageNumber);
   };
 
-  const bumpHandler = () => {
-    triggerBump();
+  const addHandler = () => {
     dispatch(fetchWorkerList());
 
     setTimeout(() => {
       navigate("/worker-abm");
     }, 200); // Asegúrate de que este tiempo coincida o sea ligeramente mayor que la duración de tu animación
+  };
+
+  const updateHandler = () => {
+    const fetchGeneralData = async () => {
+      batch(() => {
+        dispatch(fetchWorkerList());
+      });
+    };
+    fetchGeneralData();
   };
 
   const requestSort = (key) => {
@@ -206,7 +216,6 @@ const WorkerMenu = () => {
           <button
             onClick={() => navigateToProperty(worker)}
             style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
             title="Ver detalles"
           >
             <FontAwesomeIcon icon={faEye} color="#697588" />
@@ -214,7 +223,6 @@ const WorkerMenu = () => {
           <button
             onClick={() => sendWhatsApp(worker.phone)}
             style={{ border: "none", background: "none" }}
-            className={isBumped ? "bump" : ""}
             title="Contactar por WhatsApp"
           >
             <FontAwesomeIcon icon={faPaperPlane} color="#697588" />
@@ -301,11 +309,16 @@ const WorkerMenu = () => {
               />
               &nbsp;
               <button
-                onClick={bumpHandler}
+                onClick={addHandler}
                 style={{ border: "none", background: "none" }}
-                className={isBumped ? "bump" : ""}
               >
                 <FontAwesomeIcon icon={faPlus} color="#697588" />
+              </button>
+              <button
+                onClick={updateHandler}
+                style={{ border: "none", background: "none", float: "right" }}
+              >
+                <FontAwesomeIcon icon={faRefresh} color="#697588" />{" "}
               </button>
             </div>
           </div>
