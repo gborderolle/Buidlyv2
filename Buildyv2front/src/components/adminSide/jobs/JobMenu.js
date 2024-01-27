@@ -23,7 +23,10 @@ import {
 // redux imports
 import { useDispatch, useSelector, batch } from "react-redux";
 import { authActions } from "../../../store/auth-slice";
-import { fetchJobList, fetchWorkerList } from "../../../store/generalData-actions";
+import {
+  fetchJobList,
+  fetchWorkerList,
+} from "../../../store/generalData-actions";
 
 import "./JobMenu.css";
 
@@ -69,6 +72,11 @@ const JobMenu = () => {
   //#endregion Consts ***********************************
 
   //#region Hooks ***********************************
+
+  // Scroll to top of the page on startup
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const sortJobs = (jobs) => {

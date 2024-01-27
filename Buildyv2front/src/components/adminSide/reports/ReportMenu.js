@@ -74,6 +74,11 @@ const ReportMenu = () => {
 
   //#region Hooks ***********************************
 
+  // Scroll to top of the page on startup
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     const sortReports = (reports) => {
       return reports.sort((a, b) => {

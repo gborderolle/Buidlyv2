@@ -8,6 +8,7 @@ import {
   cilPaint,
   cilPeople,
   cilHome,
+  cilMap,
 } from "@coreui/icons";
 
 import CustomButton from "./CustomButton";
@@ -22,6 +23,12 @@ const AppFooterMobileAdmin = (props) => {
       icon: cilHome,
       color: "info",
       path: "/estates",
+    },
+    {
+      title: "Mapa",
+      icon: cilMap,
+      color: "info",
+      path: "/map",
     },
     {
       title: "Reportes",
@@ -55,13 +62,15 @@ const AppFooterMobileAdmin = (props) => {
         {buttonsConfig.map((button, index) => {
           const isActive = location.pathname === button.path;
           return (
-            <CustomButton
-              key={index}
-              icon={button.icon}
-              color={isActive ? "active" : "dark"}
-              path={button.path}
-              userRoleNumber={props.userRole}
-            />
+            <div className={classes.footerButton} key={index}>
+              {" "}
+              <CustomButton
+                icon={button.icon}
+                color={isActive ? "active" : "dark"}
+                path={button.path}
+                userRoleNumber={props.userRole}
+              />
+            </div>
           );
         })}
       </CRow>

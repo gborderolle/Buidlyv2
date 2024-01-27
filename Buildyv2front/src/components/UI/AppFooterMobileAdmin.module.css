@@ -11,8 +11,19 @@
 }
 
 .buttonContainer {
-  width: 100%;
-  margin: auto;
+  display: flex;
+  flex-wrap: wrap; /* Permite a los elementos pasar a la siguiente línea si no hay espacio */
+  justify-content: center; /* Centra los elementos */
+  align-items: center; /* Alinea los elementos verticalmente */
+  gap: 6px; /* Espacio entre los botones */
+}
+
+.footerButton {
+  flex: 1 0 auto; /* Flexibilidad de crecimiento, sin encogimiento y base auto */
+  max-width: 50px; /* Máximo ancho para cada botón, ajusta según necesidad */
+  padding: 3px; /* Reduce el padding para hacer los botones más pequeños */
+  text-align: center; /* Asegura que el texto esté centrado */
+  /* Agrega más estilos según tus necesidades */
 }
 
 .customButton {
@@ -21,7 +32,7 @@
   color: white;
   border: none;
   border-radius: 5px;
-  height: 50px;
+  height: 40px;
 }
 
 body {

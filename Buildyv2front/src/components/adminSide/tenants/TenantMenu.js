@@ -99,6 +99,11 @@ const TenantMenu = () => {
 
   //#region Hooks ***********************************
 
+  // Scroll to top of the page on startup
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const filteredTenantList = tenantList.filter((tenant) => {
     const match1 = tenant.name
       ? tenant.name.toLowerCase().includes(searchTerm.toLowerCase())

@@ -27,8 +27,8 @@ import {
   fetchProvinceList,
 } from "../../../store/generalData-actions";
 
-import "./MapDashboard.css";
-import classes from "./EstateMap.module.css";
+import "./MapMenu.css";
+import classes from "./Map.module.css";
 
 // Componente Popup personalizado
 const CustomPopup = ({ estate, rentList }) => {
@@ -96,7 +96,7 @@ const findedIcon = L.icon({
   iconSize: [20, 30],
 });
 
-const MapDashboard = () => {
+const MapMenu = () => {
   //#region Consts ***********************************
 
   // redux init
@@ -180,6 +180,11 @@ const MapDashboard = () => {
   //#endregion Consts ***********************************
 
   //#region Hooks ***********************************
+
+  // Scroll to top of the page on startup
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // redux gets
   useEffect(() => {
@@ -375,4 +380,4 @@ const MapDashboard = () => {
   );
 };
 
-export default MapDashboard;
+export default MapMenu;

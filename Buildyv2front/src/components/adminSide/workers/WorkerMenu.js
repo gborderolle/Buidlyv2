@@ -80,6 +80,11 @@ const WorkerMenu = () => {
 
   //#region Hooks ***********************************
 
+  // Scroll to top of the page on startup
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const filteredWorkerList = workerList.filter((worker) => {
     const match1 = worker.name
       ? worker.name.toLowerCase().includes(searchTerm.toLowerCase())

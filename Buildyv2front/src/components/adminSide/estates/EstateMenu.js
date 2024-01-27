@@ -92,6 +92,11 @@ const EstateMenu = () => {
 
   //#region Hooks ***********************************
 
+  // Scroll to top of the page on startup
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const filteredEstateList = estateList.filter((estate) => {
     const match1 = estate.name
       ? estate.name.toLowerCase().includes(searchTerm.toLowerCase())
