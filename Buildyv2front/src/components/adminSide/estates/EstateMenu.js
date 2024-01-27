@@ -44,6 +44,7 @@ const EstateMenu = () => {
 
   const dispatch = useDispatch();
 
+  // redux gets
   const [estateList, setEstateList] = useState([]);
   const reduxEstateList =
     useSelector((state) => state.generalData.estateList) || [];
