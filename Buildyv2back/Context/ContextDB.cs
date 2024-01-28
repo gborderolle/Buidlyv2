@@ -54,8 +54,8 @@ namespace Buildyv2.Context
             // Clase: https://www.udemy.com/course/construyendo-web-apis-restful-con-aspnet-core/learn/lecture/20660148#notes
             // Generar GUID: https://guidgenerator.com/online-guid-generator.aspx
             // ---------------- Usuarios ---------------------------------------------
-            var rolAdminId = "bef4cbd4-1f2b-472f-a1e2-e1a901f6808c";
             var userAdminId = "c2ee6493-5a73-46f3-a3f2-46d1d11d7176";
+            var rolAdminId = "bef4cbd4-1f2b-472f-a1e2-e1a901f6808c";
 
             var userUserId = "e0765c93-676c-4199-b7ee-d7877c471821";
             var rolUserId = "bef4cbd4-1f2b-472f-a3f2-e1a901f6811c";
