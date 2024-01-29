@@ -64,6 +64,7 @@ const JobABM = () => {
   const [loadedPhotos, setLoadedPhotos] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [estateJobCount, setEstateJobCount] = useState(0);
 
   // redux
   const dispatch = useDispatch();
@@ -174,6 +175,10 @@ const JobABM = () => {
     borderColor: "violet",
   };
 
+  const getJobCountForEstate = (estate) => {
+    return estate.listJobs?.length;
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -244,7 +249,10 @@ const JobABM = () => {
 
   const handleSelectDdlEstate = (item) => {
     setDdlSelectedEstate(item);
+    const jobCount = getJobCountForEstate(item);
+    setEstateJobCount(jobCount);
   };
+
   const handleSelectDdlWorker = (item) => {
     setDdlSelectedWorker(item);
   };
@@ -350,6 +358,8 @@ const JobABM = () => {
                       ))}
                   </CDropdownMenu>
                 </CDropdown>
+                <CInputGroupText>{estateJobCount} obras</CInputGroupText>
+                {/*  */}
                 {inputHasErrorEstate && (
                   <CAlert color="danger" className="w-100">
                     Entrada inválida

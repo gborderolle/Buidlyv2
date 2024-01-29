@@ -63,6 +63,7 @@ const ReportABM = () => {
   const [loadedPhotos, setLoadedPhotos] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [estateReportCount, setEstateReportCount] = useState(0);
 
   // redux
   const dispatch = useDispatch();
@@ -147,6 +148,10 @@ const ReportABM = () => {
     borderColor: "violet",
   };
 
+  const getReportCountForEstate = (estate) => {
+    return estate.listReports?.length;
+  };
+
   //#endregion Const ***********************************
 
   //#region Hooks ***********************************
@@ -215,6 +220,8 @@ const ReportABM = () => {
 
   const handleSelectDdlEstate = (item) => {
     setDdlSelectedEstate(item);
+    const reportCount = getReportCountForEstate(item);
+    setEstateReportCount(reportCount);
   };
 
   //#endregion Events ***********************************
@@ -315,7 +322,7 @@ const ReportABM = () => {
                       ))}
                   </CDropdownMenu>
                 </CDropdown>
-
+                <CInputGroupText>{estateReportCount} reportes</CInputGroupText>
                 {/*  */}
                 {inputHasErrorEstate && (
                   <CAlert color="danger" className="w-100">

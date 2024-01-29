@@ -50,8 +50,8 @@ const JobMenu = () => {
   const [pageCount, setPageCount] = useState(0);
 
   const [sortConfig, setSortConfig] = useState({
-    key: "address",
-    direction: "ascending",
+    key: "month",
+    direction: "descending",
   });
 
   //#region RUTA PROTEGIDA
