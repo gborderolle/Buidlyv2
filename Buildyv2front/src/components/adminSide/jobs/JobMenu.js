@@ -171,6 +171,17 @@ const JobMenu = () => {
             return sortConfig.direction === "ascending" ? 1 : -1;
           }
           return 0;
+        } else if (sortConfig.key === "listPhotosURL") {
+          const photoURLA = a.listPhotosURL?.length || "";
+          const photoURLB = b.listPhotosURL?.length || "";
+
+          if (photoURLA < photoURLB) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (photoURLA > photoURLB) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
         } else {
           // Ordenamiento para las demás propiedades
           if (a[sortConfig.key] < b[sortConfig.key]) {

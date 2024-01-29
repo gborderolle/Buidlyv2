@@ -161,8 +161,8 @@ const ReportMenu = () => {
     if (sortConfig.key !== null) {
       sortableList.sort((a, b) => {
         if (sortConfig.key === "listPhotosURL") {
-          const photoURLA = a.listPhotos?.[0]?.URL || "";
-          const photoURLB = b.listPhotos?.[0]?.URL || "";
+          const photoURLA = a.listPhotosURL?.length || "";
+          const photoURLB = b.listPhotosURL?.length || "";
 
           if (photoURLA < photoURLB) {
             return sortConfig.direction === "ascending" ? -1 : 1;
