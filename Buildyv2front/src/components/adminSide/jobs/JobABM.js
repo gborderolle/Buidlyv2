@@ -345,7 +345,7 @@ const JobABM = () => {
                           style={{ cursor: "pointer" }}
                           value={estate.id}
                         >
-                          {estate.id}: {estate.name} ({estate.cityDS?.name})
+                          {estate.id}: {estate.address} ({estate.name})
                         </CDropdownItem>
                       ))}
                   </CDropdownMenu>
