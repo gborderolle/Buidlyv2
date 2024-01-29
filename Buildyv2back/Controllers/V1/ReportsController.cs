@@ -257,15 +257,6 @@ namespace Buildyv2.Controllers.V1
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(ModelState);
                 }
-                if (await _reportRepository.Get(v => v.Name.ToLower() == reportCreateDto.Name.ToLower()) != null)
-                {
-                    _logger.LogError($"El nombre {reportCreateDto.Name} ya existe en el sistema");
-                    _response.ErrorMessages = new List<string> { $"El nombre {reportCreateDto.Name} ya existe en el sistema." };
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    ModelState.AddModelError("NameAlreadyExists", $"El nombre {reportCreateDto.Name} ya existe en el sistema.");
-                    return BadRequest(ModelState);
-                }
 
                 var estate = await _dbContext.Estate.FindAsync(reportCreateDto.EstateId);
                 if (estate == null)

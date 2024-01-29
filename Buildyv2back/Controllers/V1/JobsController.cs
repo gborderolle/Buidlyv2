@@ -276,16 +276,6 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(ModelState);
                 }
 
-                if (await _jobRepository.Get(v => v.Name.ToLower() == jobCreateDto.Name.ToLower()) != null)
-                {
-                    _logger.LogError($"El nombre {jobCreateDto.Name} ya existe en el sistema");
-                    _response.ErrorMessages = new List<string> { $"El nombre {jobCreateDto.Name} ya existe en el sistema." };
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    ModelState.AddModelError("NameAlreadyExists", $"El nombre {jobCreateDto.Name} ya existe en el sistema.");
-                    return BadRequest(ModelState);
-                }
-
                 var estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
                 if (estate == null)
                 {
