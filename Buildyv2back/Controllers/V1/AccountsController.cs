@@ -430,36 +430,7 @@ namespace Buildyv2.Controllers.V1
 
         #endregion
 
-        #region Endpoints Biometric Auth
-
-        [HttpGet("auth/challenge")]
-        public IActionResult GetAuthChallenge()
-        {
-            var challenge = GenerateSecureRandomString();
-            // Guardar el challenge en algún lugar, como la sesión del usuario
-            HttpContext.Session.SetString("WebAuthnChallenge", challenge);
-
-            return Ok(new { Challenge = challenge });
-        }
-
-        [HttpPost("validateBiometricAuth")]
-        public async Task<IActionResult> ValidateBiometricAuth([FromBody] BiometricCredentialModel model)
-        {
-            // Aquí debes implementar la lógica para validar la credencial
-            // Esta es una operación compleja y depende de tu proveedor de WebAuthn y de las librerías que estés utilizando
-            return Ok(); // O manejar errores según sea necesario
-        }
-
-        #endregion
-
         #region Private methods
-
-        private string GenerateSecureRandomString()
-        {
-            var bytes = new byte[32];
-            RandomNumberGenerator.Fill(bytes); // Llena el array con valores aleatorios seguros
-            return Convert.ToBase64String(bytes);
-        }
 
         private async Task<AuthenticationResponse> TokenSetup(UserCredential userCredential)
         {
@@ -610,20 +581,6 @@ namespace Buildyv2.Controllers.V1
         public class UpdateUserRoleModel
         {
             public string Name { get; set; }
-        }
-
-        public class BiometricCredentialModel
-        {
-            public string Id { get; set; }
-            public string RawId { get; set; }
-            public BiometricCredentialResponse Response { get; set; }
-            public string Type { get; set; }
-
-            public class BiometricCredentialResponse
-            {
-                public string AttestationObject { get; set; }
-                public string ClientDataJSON { get; set; }
-            }
         }
 
         #endregion

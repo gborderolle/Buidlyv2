@@ -92,8 +92,6 @@ const Login = () => {
   const [isMobile] = useState(isMobileDevice());
   const [errorMessage, setErrorMessage] = useState("");
 
-  const [supportsBiometrics, setSupportsBiometrics] = useState(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -137,88 +135,12 @@ const Login = () => {
     dispatch(authActions.resetAuthState());
   }, []);
 
-  useEffect(() => {
-    if (isMobileDevice()) {
-      if (navigator.credentials && navigator.credentials.create) {
-        // Comprueba si el navegador soporta la API de credenciales
-        setSupportsBiometrics(true);
-      }
-    }
-  }, []);
-
   //#endregion Hooks
 
   //#region Functions
 
-  const handleBiometricAuth = async () => {
-    if (supportsBiometrics) {
-      try {
-        // Obtener challenge del servidor
-        const challengeResponse = await fetch(urlAccountBiometricChallenge);
-        const challengeData = await challengeResponse.json();
-
-        const challengeArray = new Uint8Array(challengeData.challenge);
-        const userIdArray = new Uint8Array(userId); // Convierte el userId a Uint8Array
-
-        const publicKey = {
-          challenge: challengeArray,
-          rp: { name: "Nombre de tu aplicación" },
-          user: {
-            id: userIdArray,
-            name: "nombre_de_usuario",
-            displayName: "Nombre de Usuario",
-          },
-          pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-          // Añade aquí las demás propiedades según la documentación de WebAuthn
-        };
-
-        const credential = await navigator.credentials.create({ publicKey });
-        const credentialToSend = convertCredentialToServerFormat(credential);
-
-        // Enviar la credencial al servidor para validarla
-        const validateResponse = await fetch(urlAccountBiometricValidate, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(credentialToSend),
-        });
-
-        if (validateResponse.ok) {
-          // Proceder con el inicio de sesión exitoso
-          // Por ejemplo, almacenar el token de autenticación y redirigir al usuario
-        } else {
-          setErrorMessage("Error en la autenticación biométrica.");
-        }
-      } catch (error) {
-        console.error("Error en la autenticación biométrica:", error);
-        setErrorMessage("Error en la autenticación biométrica.");
-      }
-    }
-  };
-
-  function convertCredentialToServerFormat(credential) {
-    return {
-      id: credential.id,
-      rawId: bufferToBase64(credential.rawId),
-      response: {
-        attestationObject: bufferToBase64(
-          credential.response.attestationObject
-        ),
-        clientDataJSON: bufferToBase64(credential.response.clientDataJSON),
-      },
-      type: credential.type,
-    };
-  }
-
-  function bufferToBase64(buffer) {
-    return btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)));
-  }
-
   const usernameChangeHandler = (event) => {
     dispatchUsername({ type: "USER_INPUT", val: event.target.value });
-  };
-
-  const emailChangeHandler = (event) => {
-    dispatchEmail({ type: "USER_INPUT", val: event.target.value });
   };
 
   const passwordChangeHandler = (event) => {
@@ -227,10 +149,6 @@ const Login = () => {
 
   const validateUsernameHandler = () => {
     dispatchUsername({ type: "INPUT_BLUR" });
-  };
-
-  const validateEmailHandler = () => {
-    dispatchEmail({ type: "INPUT_BLUR" });
   };
 
   const validatePasswordHandler = () => {
@@ -314,16 +232,6 @@ const Login = () => {
                           )}
                           &nbsp;Login
                         </CButton>
-                        {supportsBiometrics && (
-                          <CButton
-                            color="primary"
-                            onClick={handleBiometricAuth}
-                            className="px-4"
-                            style={{ marginLeft: "10px" }}
-                          >
-                            Huella Digital
-                          </CButton>
-                        )}
                       </CCol>
                     </CRow>
                   </CForm>
