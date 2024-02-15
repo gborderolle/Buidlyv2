@@ -554,6 +554,8 @@ namespace Buildyv2.Controllers.V1
             public string? zip { get; set; }
         }
 
+        #endregion Email
+
         public class RegisterModel
         {
             public string Username { get; set; }
@@ -582,8 +584,6 @@ namespace Buildyv2.Controllers.V1
         {
             public string Name { get; set; }
         }
-
-        #endregion
 
         #endregion
 
