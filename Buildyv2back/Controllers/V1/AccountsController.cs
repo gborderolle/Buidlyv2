@@ -206,8 +206,8 @@ namespace Buildyv2.Controllers.V1
                 var user = new BuildyUser
                 {
                     UserName = model.Username,
-                    Email = model.Email,
                     Name = model.Name,
+                    Email = model.Email,
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

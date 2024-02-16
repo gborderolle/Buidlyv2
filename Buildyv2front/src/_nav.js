@@ -2,13 +2,13 @@ import React from "react";
 import CIcon from "@coreui/icons-react";
 import {
   cilHome,
+  cilMap,
   cilImage,
-  cilBriefcase,
   cilPaint,
   cilPeople,
+  cilBriefcase,
   cilStorage,
   cilBellExclamation,
-  cilMap,
 } from "@coreui/icons";
 import { CNavItem } from "@coreui/react";
 
