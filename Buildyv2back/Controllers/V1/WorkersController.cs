@@ -153,7 +153,7 @@ namespace Buildyv2.Controllers.V1
                 _logger.LogInformation($"Se actualizó correctamente el trabajador Id:{id}.");
                 await _logService.LogAction("Worker", "Update", $"Id:{worker.Id}, Nombre: {worker.Name}.", User.Identity.Name);
 
-                _response.Result = _mapper.Map<EstateDTO>(updatedWorker);
+                _response.Result = _mapper.Map<WorkerDTO>(updatedWorker);
                 _response.StatusCode = HttpStatusCode.OK;
 
                 return Ok(_response);
