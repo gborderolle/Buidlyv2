@@ -37,7 +37,7 @@ const AppContent = () => {
   };
 
   return (
-    <CContainer lg>
+    <CContainer fluid>
       <Suspense fallback={<CSpinner color="primary" />}>
         <Routes>
           {renderRoutes()}
