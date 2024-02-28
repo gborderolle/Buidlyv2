@@ -1,4 +1,7 @@
 {
-  "editor.formatOnSave": true,
-  "notebook.formatOnSave.enabled": true
+    "editor.formatOnSave": true,
+    "notebook.formatOnSave.enabled": true,
+    "appService.preDeployTask": "publish",
+    "appService.deploySubpath": "bin\\Release\\net7.0\\win-x64",
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/231cb65d-2cec-453c-80d5-4248c9432831/resourceGroups/buildy-gborderolle/providers/Microsoft.Web/sites/buildy-gborderolle"
 }
