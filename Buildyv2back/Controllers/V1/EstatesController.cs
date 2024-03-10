@@ -255,6 +255,14 @@ namespace Buildyv2.Controllers.V1
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
                 if (id <= 0)
                 {
                     _logger.LogError($"Datos de entrada inválidos.");
@@ -266,7 +274,7 @@ namespace Buildyv2.Controllers.V1
 
                 // 1..n
                 var includes = new List<IncludePropertyConfiguration<Estate>>
-            {
+                {
                  new IncludePropertyConfiguration<Estate>
                     {
                         IncludeExpression = b => b.CityDS
@@ -288,7 +296,6 @@ namespace Buildyv2.Controllers.V1
                         IncludeExpression = b => b.ListRents
                     }
                 };
-
                 var estate = await _estateRepository.Get(v => v.Id == id, includes: includes);
                 if (estate == null)
                 {
@@ -299,9 +306,6 @@ namespace Buildyv2.Controllers.V1
                     return NotFound(_response);
                 }
 
-                // estate = _mapper.Map(estateCreateDto, estate);
-
-                // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
                 estate.Name = Utils.ToCamelCase(estateCreateDto.Name);
                 estate.Address = Utils.ToCamelCase(estateCreateDto.Address);
                 estate.Comments = Utils.ToCamelCase(estateCreateDto.Comments);
@@ -390,8 +394,8 @@ namespace Buildyv2.Controllers.V1
                 estateCreateDto.Address = Utils.ToCamelCase(estateCreateDto.Address);
                 estateCreateDto.Comments = Utils.ToCamelCase(estateCreateDto.Comments);
                 Estate estate = _mapper.Map<Estate>(estateCreateDto);
-                estate.CityDS = city; // Asigna el objeto CountryDS resuelto
-                estate.OwnerDS = owner; // Asigna el objeto CountryDS resuelto
+                estate.CityDS = city;
+                estate.OwnerDS = owner;
                 estate.Creation = DateTime.Now;
                 estate.Update = DateTime.Now;
 

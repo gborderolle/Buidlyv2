@@ -106,6 +106,14 @@ namespace Buildyv2.Controllers.V1
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
                 if (id <= 0)
                 {
                     _logger.LogError($"Datos de entrada inválidos.");
@@ -117,7 +125,7 @@ namespace Buildyv2.Controllers.V1
 
                 // 1..n
                 var includes = new List<IncludePropertyConfiguration<Tenant>>
-            {
+                {
                  new IncludePropertyConfiguration<Tenant>
                     {
                         IncludeExpression = b => b.Rent
@@ -134,7 +142,6 @@ namespace Buildyv2.Controllers.V1
                     return NotFound(_response);
                 }
 
-                // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
                 tenant.Name = Utils.ToCamelCase(tenantCreateDto.Name);
                 tenant.Comments = Utils.ToCamelCase(tenantCreateDto.Comments);
                 tenant.Phone1 = tenantCreateDto.Phone1;
@@ -142,10 +149,9 @@ namespace Buildyv2.Controllers.V1
                 tenant.Email = tenantCreateDto.Email;
                 tenant.IdentityDocument = tenantCreateDto.IdentityDocument;
                 tenant.Comments = tenantCreateDto.Comments;
-                tenant.Update = DateTime.Now;
-
                 tenant.RentId = tenantCreateDto.RentId;
                 tenant.Rent = await _dbContext.Rent.FindAsync(tenantCreateDto.RentId);
+                tenant.Update = DateTime.Now;
 
                 var updatedTenant = await _tenantRepository.Update(tenant);
 

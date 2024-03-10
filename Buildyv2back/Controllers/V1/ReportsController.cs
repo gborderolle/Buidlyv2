@@ -142,6 +142,14 @@ namespace Buildyv2.Controllers.V1
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
                 if (id <= 0)
                 {
                     _logger.LogError($"Datos de entrada inválidos.");
@@ -153,17 +161,16 @@ namespace Buildyv2.Controllers.V1
 
                 // 1..n
                 var includes = new List<IncludePropertyConfiguration<Report>>
-            {
-                    new IncludePropertyConfiguration<Report>
-                    {
-                        IncludeExpression = b => b.Estate
-                    },
-                    new IncludePropertyConfiguration<Report>
-                    {
-                        IncludeExpression = b => b.ListPhotos
-                    },
-            };
-
+                {
+                        new IncludePropertyConfiguration<Report>
+                        {
+                            IncludeExpression = b => b.Estate
+                        },
+                        new IncludePropertyConfiguration<Report>
+                        {
+                            IncludeExpression = b => b.ListPhotos
+                        },
+                };
                 var report = await _reportRepository.Get(v => v.Id == id, includes: includes);
                 if (report == null)
                 {
@@ -173,7 +180,6 @@ namespace Buildyv2.Controllers.V1
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
-
                 var estate = await _dbContext.Estate.FindAsync(reportCreateDto.EstateId);
                 if (estate == null)
                 {
@@ -185,15 +191,13 @@ namespace Buildyv2.Controllers.V1
                     return BadRequest(ModelState);
                 }
 
-                // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
                 report.Name = Utils.ToCamelCase(reportCreateDto.Name);
                 report.Comments = Utils.ToCamelCase(reportCreateDto.Comments);
                 report.Month = reportCreateDto.Month;
                 report.Comments = reportCreateDto.Comments;
-                report.Update = DateTime.Now;
-
                 report.EstateId = reportCreateDto.EstateId;
                 report.Estate = await _dbContext.Estate.FindAsync(reportCreateDto.EstateId);
+                report.Update = DateTime.Now;
 
                 var updatedReporter = await _reportRepository.Update(report);
 
@@ -257,7 +261,6 @@ namespace Buildyv2.Controllers.V1
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(ModelState);
                 }
-
                 var estate = await _dbContext.Estate.FindAsync(reportCreateDto.EstateId);
                 if (estate == null)
                 {

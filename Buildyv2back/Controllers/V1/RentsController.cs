@@ -182,6 +182,23 @@ namespace Buildyv2.Controllers.V1
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(ModelState);
                 }
+                if (id <= 0)
+                {
+                    _logger.LogError($"Datos de entrada inválidos.");
+                    _response.ErrorMessages = new List<string> { $"Datos de entrada inválidos." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+                var rent = await _rentRepository.Get(v => v.Id == id);
+                if (rent == null)
+                {
+                    _logger.LogError($"Renta no encontrada ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Renta no encontrada ID = {id}" };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound(_response);
+                }
                 var estate = await _dbContext.Estate.FindAsync(rentCreateDto.EstateId);
                 if (estate == null)
                 {
@@ -192,24 +209,12 @@ namespace Buildyv2.Controllers.V1
                     return NotFound($"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema.");
                 }
 
-                var rent = await _rentRepository.Get(v => v.Id == id);
-                if (rent == null)
-                {
-                    _logger.LogError($"Renta no encontrada ID = {id}.");
-                    _response.ErrorMessages = new List<string> { $"Renta no encontrada ID = {id}" };
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
-                }
-
                 rent.Warrant = Utils.ToCamelCase(str: rentCreateDto.Warrant);
                 rent.Comments = Utils.ToCamelCase(str: rentCreateDto.Comments);
                 rent.MonthlyValue = rentCreateDto.MonthlyValue;
                 rent.Datetime_monthInit = rentCreateDto.Datetime_monthInit;
                 rent.Duration = rentCreateDto.Duration;
                 rent.RentIsEnded = rentCreateDto.RentIsEnded;
-
-                rent.Creation = DateTime.Now;
                 rent.Update = DateTime.Now;
 
                 // Procesamiento de inquilinos
@@ -223,13 +228,7 @@ namespace Buildyv2.Controllers.V1
                     rent.ListTenants.Add(tenant);
                 }
 
-                await _rentRepository.Update(rent);
                 var updatedRent = await _rentRepository.Update(rent);
-
-                // Actualizar la propiedad
-                // estate.PresentRentId = rent.Id;
-                // estate.EstateIsRented = true;
-                // await _estateRepository.Update(estate);
 
                 // Procesamiento de fotos
                 if (rentCreateDto.ListFiles != null && rentCreateDto.ListFiles.Count > 0)
@@ -342,6 +341,10 @@ namespace Buildyv2.Controllers.V1
             }
         }
 
+        #endregion
+
+        #region Private methods
+
         private async Task ProcessRentFiles(Rent rent, IEnumerable<IFormFile> files)
         {
             string dynamicContainer = $"uploads/rents/estate{rent.EstateId}/{DateTime.Now:yyyy_MM}/rent{rent.Id}";
@@ -370,9 +373,6 @@ namespace Buildyv2.Controllers.V1
             await _dbContext.SaveChangesAsync(); // Guarda los cambios en la base de datos al finalizar el procesamiento
         }
 
-        #endregion
-
-        #region Private methods
 
         #endregion
 

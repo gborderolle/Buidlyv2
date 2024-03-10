@@ -108,6 +108,14 @@ namespace Buildyv2.Controllers.V1
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
                 if (id <= 0)
                 {
                     _logger.LogError($"Datos de entrada inválidos.");
@@ -119,7 +127,7 @@ namespace Buildyv2.Controllers.V1
 
                 // 1..n
                 var includes = new List<IncludePropertyConfiguration<Worker>>
-            {
+                {
                  new IncludePropertyConfiguration<Worker>
                     {
                         IncludeExpression = b => b.Job
@@ -136,17 +144,15 @@ namespace Buildyv2.Controllers.V1
                     return NotFound(_response);
                 }
 
-                // No usar AutoMapper para mapear todo el objeto, sino actualizar campo por campo
                 worker.Name = Utils.ToCamelCase(workerCreateDto.Name);
                 worker.Comments = Utils.ToCamelCase(workerCreateDto.Comments);
                 worker.Phone = workerCreateDto.Phone;
                 worker.Email = workerCreateDto.Email;
                 worker.IdentityDocument = workerCreateDto.IdentityDocument;
                 worker.Comments = workerCreateDto.Comments;
-                worker.Update = DateTime.Now;
-
                 worker.JobId = workerCreateDto.JobId;
                 worker.Job = await _dbContext.Job.FindAsync(workerCreateDto.JobId);
+                worker.Update = DateTime.Now;
 
                 var updatedWorker = await _workerRepository.Update(worker);
 

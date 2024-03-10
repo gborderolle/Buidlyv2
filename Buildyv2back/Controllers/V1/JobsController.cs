@@ -150,6 +150,14 @@ namespace Buildyv2.Controllers.V1
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Ocurrió un error en el servidor.");
+                    _response.ErrorMessages = new List<string> { $"Ocurrió un error en el servidor." };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(ModelState);
+                }
                 if (id <= 0)
                 {
                     _logger.LogError($"Datos de entrada inválidos.");
@@ -171,9 +179,9 @@ namespace Buildyv2.Controllers.V1
                 }
 
                 var job = await _jobRepository.Get(v => v.Id == id, includes: new List<IncludePropertyConfiguration<Job>> {
-            new IncludePropertyConfiguration<Job> { IncludeExpression = b => b.ListWorkers },
-            new IncludePropertyConfiguration<Job> { IncludeExpression = b => b.ListPhotos }
-        });
+                    new IncludePropertyConfiguration<Job> { IncludeExpression = b => b.ListWorkers },
+                    new IncludePropertyConfiguration<Job> { IncludeExpression = b => b.ListPhotos }
+                });
 
                 if (job == null)
                 {
@@ -189,9 +197,9 @@ namespace Buildyv2.Controllers.V1
                 job.Month = jobCreateDto.Month;
                 job.LabourCost = jobCreateDto.LabourCost;
                 job.Comments = jobCreateDto.Comments;
-                job.Update = DateTime.Now;
                 job.EstateId = jobCreateDto.EstateId;
                 job.Estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
+                job.Update = DateTime.Now;
 
                 if (jobCreateDto.WorkerIds != null)
                 {
@@ -275,7 +283,6 @@ namespace Buildyv2.Controllers.V1
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(ModelState);
                 }
-
                 var estate = await _dbContext.Estate.FindAsync(jobCreateDto.EstateId);
                 if (estate == null)
                 {
