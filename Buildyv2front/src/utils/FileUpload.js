@@ -69,37 +69,46 @@ const FilePreview = ({ data, onRemove, onUpload }) => {
   const loadData = (data) => {
     if (!data) return;
 
-    const reader = new FileReader();
-    const fileType = data.type.match("text")
-      ? "text"
+    const fileType = data.type.match("application/pdf")
+      ? "pdf"
       : data.type.match("image")
       ? "image"
-      : data.type;
+      : "other";
 
-    reader.onload = (e) => {
-      setSrc(e.target.result);
-      setType(fileType);
-      setLoading(false);
-    };
-
-    if (fileType === "text") {
-      reader.readAsText(data);
-    } else if (fileType === "image") {
+    if (fileType === "image") {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSrc(e.target.result);
+        setType("image");
+        setLoading(false);
+      };
       reader.readAsDataURL(data);
+    } else if (fileType === "application/pdf") {
+      // Para PDF, podrías mostrar un icono o el propio PDF embebido si es necesario
+      setType("pdf");
+      setSrc("/path/to/default/pdf-icon.png"); // Ruta a un ícono de PDF o lo que prefieras
+      setLoading(false);
     } else {
+      // Otros tipos de archivos pueden ser manejados aquí
       setSrc(false);
+      setType("other");
+      setLoading(false);
     }
   };
 
   const loadingDisplay = loading ? "loading data..." : null;
   const uploading = data.loading ? <Loader /> : null;
 
+  // En FilePreview, ajustar la renderización según el tipo de archivo
   const preview =
     !loading && !data.loading ? (
       type === "text" ? (
         <pre className={styles.preview}>{src}</pre>
       ) : type === "image" ? (
         <img alt="preview" src={src} className={styles.imagePreview} />
+      ) : type === "pdf" ? (
+        // Mostrar un ícono de PDF, o incluso el PDF embebido según tu elección
+        <img alt="PDF icon" src={src} className={styles.imagePreview} />
       ) : (
         <pre className={styles.preview}>no preview</pre>
       )
@@ -144,10 +153,22 @@ const FileUpload = ({ maxSize, name, multiple, label, onUpload }) => {
     const newFiles = e.target.files || e.dataTransfer.files; // Obtener los archivos seleccionados
 
     // Asegúrate de que los archivos no excedan el tamaño máximo
-    const validFiles = [...newFiles].filter((file) => file.size <= maxSize);
+    const validFiles = Array.from(newFiles).filter(
+      (file) => !maxSize || file.size <= maxSize
+    );
 
     // Actualiza el estado fileList con los nuevos archivos, además de los ya existentes
-    setFileList((currentFiles) => [...currentFiles, ...validFiles]);
+    setFileList((currentFiles) => [
+      ...currentFiles,
+      ...validFiles.map((file) => ({
+        ...file,
+        loading: false,
+        // Incorporamos una propiedad adicional para manejar la URL de previsualización de manera condicional más adelante
+        previewUrl: file.type.startsWith("image/")
+          ? URL.createObjectURL(file)
+          : null,
+      })),
+    ]);
 
     // Llama al callback onUpload con los nuevos archivos
     onUpload(validFiles);

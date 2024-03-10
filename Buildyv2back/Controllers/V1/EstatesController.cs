@@ -25,10 +25,11 @@ namespace Buildyv2.Controllers.V1
         private readonly IWorkerRepository _workerRepository;
         private readonly ITenantRepository _tenantRepository;
         private readonly IPhotoRepository _photoRepository;
+        private readonly IFileRepository _fileRepository;
         private readonly ILogService _logService;
         private readonly ContextDB _dbContext;
 
-        public EstatesController(ILogger<EstatesController> logger, IMapper mapper, IEstateRepository estateRepository, IReportRepository reportRepository, IJobRepository jobRepository, IRentRepository rentRepository, IWorkerRepository workerRepository, ITenantRepository tenantRepository, IPhotoRepository photoRepository, ILogService logService, ContextDB dbContext)
+        public EstatesController(ILogger<EstatesController> logger, IMapper mapper, IEstateRepository estateRepository, IReportRepository reportRepository, IJobRepository jobRepository, IRentRepository rentRepository, IWorkerRepository workerRepository, ITenantRepository tenantRepository, IPhotoRepository photoRepository, ILogService logService, ContextDB dbContext, IFileRepository fileRepository)
         : base(mapper, logger, estateRepository)
         {
             _response = new();
@@ -39,6 +40,7 @@ namespace Buildyv2.Controllers.V1
             _workerRepository = workerRepository;
             _tenantRepository = tenantRepository;
             _photoRepository = photoRepository;
+            _fileRepository = fileRepository;
             _logService = logService;
             _dbContext = dbContext;
         }
@@ -79,7 +81,7 @@ namespace Buildyv2.Controllers.V1
                     new ThenIncludePropertyConfiguration<Estate>
                     {
                         IncludeExpression = b => b.ListRents,
-                        ThenIncludeExpression = ab => ((Rent)ab).ListPhotos
+                        ThenIncludeExpression = ab => ((Rent)ab).ListFiles
                     },
                     new ThenIncludePropertyConfiguration<Estate>
                     {
@@ -134,7 +136,7 @@ namespace Buildyv2.Controllers.V1
                     new ThenIncludePropertyConfiguration<Estate>
                     {
                         IncludeExpression = b => b.ListRents,
-                        ThenIncludeExpression = ab => ((Rent)ab).ListPhotos
+                        ThenIncludeExpression = ab => ((Rent)ab).ListFiles
                     },
                     new ThenIncludePropertyConfiguration<Estate>
                     {
@@ -202,11 +204,11 @@ namespace Buildyv2.Controllers.V1
                             await _tenantRepository.Update(tenant);
                         }
 
-                        var photosRelatedToRent = await _photoRepository.FindPhotosByRentId(rent.Id);
-                        foreach (var photo in photosRelatedToRent)
+                        var filesRelatedToRent = await _fileRepository.FindFilesByRentId(rent.Id);
+                        foreach (var file in filesRelatedToRent)
                         {
-                            photo.RentId = null; // o asignar a otro JobId según tu lógica de negocio
-                            await _photoRepository.Update(photo);
+                            file.RentId = null; // o asignar a otro JobId según tu lógica de negocio
+                            await _fileRepository.Update(file);
                         }
 
                         await _rentRepository.Remove(rent);

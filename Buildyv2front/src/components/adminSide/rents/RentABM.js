@@ -68,7 +68,7 @@ const RentABM = () => {
   const monthDate = monthString ? new Date(monthString) : new Date();
   const [month, setMonth] = useState(monthDate);
 
-  const [loadedPhotos, setLoadedPhotos] = useState([]);
+  const [loadedFiles, setLoadedFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -178,12 +178,12 @@ const RentABM = () => {
 
   useEffect(() => {
     if (editMode) {
-      if (rent?.listPhotos) {
-        const existingPhotos = rent.listPhotos.map((url) => ({
+      if (rent?.listFiles) {
+        const existingFiles = rent.listFiles.map((url) => ({
           url, // URL de la foto existente
           isExisting: true, // Marca para identificar que es una foto ya existente
         }));
-        setLoadedPhotos(existingPhotos);
+        setLoadedFiles(existingFiles);
       }
       if (rent?.datetime_monthInit) {
         const parsedDate = new Date(rent.datetime_monthInit);
@@ -233,8 +233,8 @@ const RentABM = () => {
       try {
         // Subir cada foto en loadedPhotos
         const formData = new FormData();
-        loadedPhotos.forEach((photo, index) => {
-          formData.append(`ListPhotos`, photo.file); // Aquí no uses índice en el nombre del campo
+        loadedFiles.forEach((file, index) => {
+          formData.append(`ListFiles`, file.file); // Aquí no uses índice en el nombre del campo
         });
 
         // Agrega otros campos del formulario a formData
@@ -248,15 +248,6 @@ const RentABM = () => {
 
         if (ddlSelectedTenant) {
           formData.append("TenantIds", ddlSelectedTenant.id);
-        }
-
-        // selectedTenants.forEach((tenant) => {
-        //   formData.append("TenantIds", tenant.id);
-        // });
-
-        console.log("Archivos cargados:", loadedPhotos);
-        for (var pair of formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
         }
 
         await uploadData(formData, urlRent, editMode, rent?.id);
@@ -284,7 +275,7 @@ const RentABM = () => {
 
   // Esta función se llama cuando se cargan nuevos archivos
   const handleFileUpload = (newFiles) => {
-    setLoadedPhotos((currentFiles) => [
+    setLoadedFiles((currentFiles) => [
       ...currentFiles,
       ...newFiles.map((file) => ({
         file,
@@ -294,23 +285,50 @@ const RentABM = () => {
     ]);
   };
 
-  // Modificar la función de renderizado para manejar fotos existentes
-  const renderPhotoPreviews = () => {
+  const renderFilePreviews = () => {
     return (
       <div style={{ display: "flex", overflowX: "auto", gap: "10px" }}>
-        {loadedPhotos.map((photo, index) => (
-          <div
-            key={index}
-            style={{ flex: "0 0 auto" }}
-            onClick={() => openModal(photo.url ? photo.url.url : "")}
-          >
-            <img
-              src={photo.url ? photo.url.url : "/placeholder-image-url"}
-              alt={`Foto ${index}`}
-              style={{ width: "100px", height: "100px", cursor: "pointer" }}
-            />
-          </div>
-        ))}
+        {loadedFiles.map((file, index) => {
+          // Suponiendo que file.name contiene el nombre del archivo, incluida la extensión
+          const extension = file?.url?.url
+            ? file?.url?.url.split(".").pop().toLowerCase()
+            : "";
+          const isImage = ["jpg", "jpeg", "png", "gif"].includes(extension);
+
+          return (
+            <div key={index} style={{ flex: "0 0 auto" }}>
+              {isImage ? (
+                <img
+                  src={
+                    file?.url?.url ? file?.url?.url : "/placeholder-image-url"
+                  }
+                  alt={`Archivo ${index}`}
+                  style={{ width: "100px", height: "100px", cursor: "pointer" }}
+                  onClick={() =>
+                    openModal(file?.url?.url ? file?.url?.url : "")
+                  }
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "1px solid #ccc",
+                  }}
+                  onClick={() =>
+                    openModal(file?.url?.url ? file?.url?.url : "")
+                  }
+                >
+                  Archivo
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -522,7 +540,7 @@ const RentABM = () => {
               {editMode && (
                 <>
                   <br />
-                  <div>{renderPhotoPreviews()}</div>
+                  <div>{renderFilePreviews()}</div>
                   <Modal
                     appElement={document.getElementById("root")}
                     isOpen={isModalOpen}

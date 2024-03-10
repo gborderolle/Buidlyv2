@@ -21,19 +21,19 @@ namespace Buildyv2.Controllers.V1
     {
         private readonly IRentRepository _rentRepository; // Servicio que contiene la lógica principal de negocio para Rents.
         private readonly IEstateRepository _estateRepository; // Servicio que contiene la lógica principal de negocio para Reports.
-        private readonly IPhotoRepository _photoRepository; // Servicio que contiene la lógica principal de negocio para Reports.
+        private readonly IFileRepository _fileRepository; // Servicio que contiene la lógica principal de negocio para Reports.
         private readonly ILogService _logService;
         private readonly ContextDB _dbContext;
         private readonly IFileStorage _fileStorage;
 
-        public RentsController(ILogger<RentsController> logger, IMapper mapper, IRentRepository rentRepository, IEstateRepository estateRepository, IPhotoRepository photoRepository, IFileStorage fileStorage, ILogService logService, ContextDB dbContext
+        public RentsController(ILogger<RentsController> logger, IMapper mapper, IRentRepository rentRepository, IEstateRepository estateRepository, IFileStorage fileStorage, ILogService logService, ContextDB dbContext, IFileRepository fileRepository
         )
         : base(mapper, logger, rentRepository)
         {
             _response = new();
             _rentRepository = rentRepository;
             _estateRepository = estateRepository;
-            _photoRepository = photoRepository;
+            _fileRepository = fileRepository;
             _fileStorage = fileStorage;
             _logService = logService;
             _dbContext = dbContext;
@@ -52,7 +52,7 @@ namespace Buildyv2.Controllers.V1
                     },
                     new IncludePropertyConfiguration<Rent>
                     {
-                        IncludeExpression = b => b.ListPhotos
+                        IncludeExpression = b => b.ListFiles
                     },
                     new IncludePropertyConfiguration<Rent>
                     {
@@ -84,7 +84,7 @@ namespace Buildyv2.Controllers.V1
                     },
                     new IncludePropertyConfiguration<Rent>
                     {
-                        IncludeExpression = b => b.ListPhotos
+                        IncludeExpression = b => b.ListFiles
                     },
                     new IncludePropertyConfiguration<Rent>
                     {
@@ -103,7 +103,7 @@ namespace Buildyv2.Controllers.V1
         {
             new IncludePropertyConfiguration<Rent>
             {
-                IncludeExpression = j => j.ListPhotos
+                IncludeExpression = j => j.ListFiles
             }
         });
 
@@ -137,13 +137,13 @@ namespace Buildyv2.Controllers.V1
 
                 // Continuar con la eliminación de Rent
                 string container = null;
-                if (rent.ListPhotos != null)
+                if (rent.ListFiles != null)
                 {
-                    foreach (var photo in rent.ListPhotos)
+                    foreach (var file in rent.ListFiles)
                     {
-                        container = $"uploads/rents/estate{rent.EstateId}/{photo.Creation.ToString("yyyy_MM")}/rent{rent.Id}";
-                        await _fileStorage.DeleteFile(photo.URL, container);
-                        _dbContext.Photo.Remove(photo);
+                        container = $"uploads/rents/estate{rent.EstateId}/{file.Creation.ToString("yyyy_MM")}/rent{rent.Id}";
+                        await _fileStorage.DeleteFile(file.URL, container);
+                        _dbContext.File.Remove(file);
                     }
                 }
 
@@ -192,50 +192,58 @@ namespace Buildyv2.Controllers.V1
                     return NotFound($"La propiedad ID={rentCreateDto.EstateId} no existe en el sistema.");
                 }
 
-                using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+                var rent = await _rentRepository.Get(v => v.Id == id);
+                if (rent == null)
                 {
-
-                    rentCreateDto.Warrant = Utils.ToCamelCase(str: rentCreateDto.Warrant);
-                    rentCreateDto.Comments = Utils.ToCamelCase(str: rentCreateDto.Comments);
-                    Rent rent = _mapper.Map<Rent>(rentCreateDto);
-                    rent.Estate = estate;
-                    rent.Creation = DateTime.Now;
-                    rent.Update = DateTime.Now;
-
-                    // Procesamiento de inquilinos
-                    foreach (int tenantId in rentCreateDto.TenantIds)
-                    {
-                        var tenant = await _dbContext.Tenant.FindAsync(tenantId);
-                        if (tenant == null)
-                        {
-                            return NotFound($"El inquilino ID={tenantId} no existe en el sistema.");
-                        }
-                        rent.ListTenants.Add(tenant);
-                    }
-
-                    await _rentRepository.Update(rent);
-
-                    // Actualizar la propiedad
-                    estate.PresentRentId = rent.Id;
-                    estate.EstateIsRented = true;
-                    await _estateRepository.Update(estate);
-
-                    // Procesamiento de fotos
-                    if (rentCreateDto.ListPhotos != null && rentCreateDto.ListPhotos.Count > 0)
-                    {
-                        await ProcessRentPhotos(rent, rentCreateDto.ListPhotos);
-                    }
-
-                    await transaction.CommitAsync();
-
-                    _logger.LogInformation($"Se actualizó correctamente el contrato Id:{rent.Id}.");
-                    await _logService.LogAction("Rent", "Update", $"Id:{rent.Id}, Nombre (propiedad): {estate.Name}.", User.Identity.Name);
-
-                    _response.Result = _mapper.Map<RentDTO>(rent);
-                    _response.StatusCode = HttpStatusCode.Created;
-
-                    return Ok(_response);
+                    _logger.LogError($"Renta no encontrada ID = {id}.");
+                    _response.ErrorMessages = new List<string> { $"Renta no encontrada ID = {id}" };
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound(_response);
                 }
+
+                rent.Warrant = Utils.ToCamelCase(str: rentCreateDto.Warrant);
+                rent.Comments = Utils.ToCamelCase(str: rentCreateDto.Comments);
+                rent.MonthlyValue = rentCreateDto.MonthlyValue;
+                rent.Datetime_monthInit = rentCreateDto.Datetime_monthInit;
+                rent.Duration = rentCreateDto.Duration;
+                rent.RentIsEnded = rentCreateDto.RentIsEnded;
+
+                rent.Creation = DateTime.Now;
+                rent.Update = DateTime.Now;
+
+                // Procesamiento de inquilinos
+                foreach (int tenantId in rentCreateDto.TenantIds)
+                {
+                    var tenant = await _dbContext.Tenant.FindAsync(tenantId);
+                    if (tenant == null)
+                    {
+                        return NotFound($"El inquilino ID={tenantId} no existe en el sistema.");
+                    }
+                    rent.ListTenants.Add(tenant);
+                }
+
+                await _rentRepository.Update(rent);
+                var updatedRent = await _rentRepository.Update(rent);
+
+                // Actualizar la propiedad
+                // estate.PresentRentId = rent.Id;
+                // estate.EstateIsRented = true;
+                // await _estateRepository.Update(estate);
+
+                // Procesamiento de fotos
+                if (rentCreateDto.ListFiles != null && rentCreateDto.ListFiles.Count > 0)
+                {
+                    await ProcessRentFiles(updatedRent, rentCreateDto.ListFiles);
+                }
+
+                _logger.LogInformation($"Se actualizó correctamente el contrato Id:{rent.Id}.");
+                await _logService.LogAction("Rent", "Update", $"Id:{rent.Id}, Nombre (propiedad): {estate.Name}.", User.Identity.Name);
+
+                _response.Result = _mapper.Map<RentDTO>(updatedRent);
+                _response.StatusCode = HttpStatusCode.Created;
+
+                return Ok(_response);
             }
             catch (Exception ex)
             {
@@ -309,9 +317,9 @@ namespace Buildyv2.Controllers.V1
                     await _estateRepository.Update(estate);
 
                     // Procesamiento de fotos
-                    if (rentCreateDto.ListPhotos != null && rentCreateDto.ListPhotos.Count > 0)
+                    if (rentCreateDto.ListFiles != null && rentCreateDto.ListFiles.Count > 0)
                     {
-                        await ProcessRentPhotos(rent, rentCreateDto.ListPhotos);
+                        await ProcessRentFiles(rent, rentCreateDto.ListFiles);
                     }
 
                     await transaction.CommitAsync();
@@ -334,21 +342,32 @@ namespace Buildyv2.Controllers.V1
             }
         }
 
-        private async Task ProcessRentPhotos(Rent rent, IEnumerable<IFormFile> photos)
+        private async Task ProcessRentFiles(Rent rent, IEnumerable<IFormFile> files)
         {
             string dynamicContainer = $"uploads/rents/estate{rent.EstateId}/{DateTime.Now:yyyy_MM}/rent{rent.Id}";
-            foreach (var photoForm in photos)
+            foreach (var fileForm in files)
             {
-                Photo newPhoto = new() { Rent = rent };
+                var extension = Path.GetExtension(fileForm.FileName).ToLower();
                 using (var stream = new MemoryStream())
                 {
-                    await photoForm.CopyToAsync(stream);
+                    await fileForm.CopyToAsync(stream);
                     var content = stream.ToArray();
-                    var extension = Path.GetExtension(photoForm.FileName);
-                    newPhoto.URL = await _fileStorage.SaveFile(content, extension, dynamicContainer, photoForm.ContentType);
+                    string url = await _fileStorage.SaveFile(content, extension, dynamicContainer, fileForm.ContentType);
+
+                    var file = new File1
+                    {
+                        URL = url,
+                        Rent = rent,
+                        Creation = DateTime.Now,
+                        Update = DateTime.Now
+                    };
+                    await _fileRepository.Create(file);
+
+                    rent.ListFiles.Add(file);
+                    await _rentRepository.Update(rent);
                 }
-                await _photoRepository.Create(newPhoto);
             }
+            await _dbContext.SaveChangesAsync(); // Guarda los cambios en la base de datos al finalizar el procesamiento
         }
 
         #endregion

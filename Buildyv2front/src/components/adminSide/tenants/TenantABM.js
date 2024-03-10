@@ -205,8 +205,6 @@ const TenantABM = () => {
       Comments: comments,
     };
 
-    console.log("dataToUpload:", dataToUpload);
-
     // Intentar enviar los datos
     try {
       await uploadData(dataToUpload, urlTenant, editMode, tenant?.id);

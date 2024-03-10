@@ -32,7 +32,7 @@ namespace Buildyv2.Models
         /// <summary>
         /// 1-N
         /// </summary>
-        public List<Photo> ListPhotos { get; set; }
+        public List<File1> ListFiles { get; set; }
 
         #endregion
 

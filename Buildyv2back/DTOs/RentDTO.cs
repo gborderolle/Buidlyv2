@@ -26,7 +26,7 @@ namespace Buildyv2.DTOs
 
         public bool RentIsEnded { get; set; }
 
-        public List<string> ListPhotosURL { get; set; }
+        public List<string> ListFilesURL { get; set; }
 
         #endregion
 

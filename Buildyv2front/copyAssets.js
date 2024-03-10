@@ -12,5 +12,4 @@ const destinationPath = path.join(
 
 fs.copyFile(sourcePath, destinationPath, (err) => {
   if (err) throw err;
-  console.log("Archivo de imagen copiado exitosamente.");
 });

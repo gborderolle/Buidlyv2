@@ -177,8 +177,6 @@ const WorkerABM = () => {
       Comments: comments.trim() !== "" ? comments : null, // Asigna null si el campo está vacío
     };
 
-    console.log("dataToUpload:", dataToUpload);
-
     try {
       await uploadData(dataToUpload, urlWorker, editMode, worker?.id);
       dispatch(fetchWorkerList());

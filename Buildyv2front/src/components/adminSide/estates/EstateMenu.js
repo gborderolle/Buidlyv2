@@ -85,7 +85,6 @@ const EstateMenu = () => {
 
   const handleSelectEstate = (estate) => {
     setSelectedEstate(estate);
-    console.log("Estate seleccionado:", estate);
   };
 
   //#endregion Consts ***********************************

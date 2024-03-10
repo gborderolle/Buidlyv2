@@ -18,6 +18,7 @@ namespace Buildyv2.Context
         public DbSet<Estate> Estate { get; set; }
         public DbSet<Job> Job { get; set; }
         public DbSet<Photo> Photo { get; set; }
+        public DbSet<File1> File { get; set; }
         public DbSet<Rent> Rent { get; set; }
         public DbSet<Report> Report { get; set; }
         public DbSet<Tenant> Tenant { get; set; }

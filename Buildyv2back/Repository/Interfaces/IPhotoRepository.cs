@@ -1,5 +1,4 @@
 ﻿using Buildyv2.Models;
-using Buildyv2.Repository.Interfaces;
 
 namespace Buildyv2.Repository.Interfaces
 {
@@ -11,7 +10,6 @@ namespace Buildyv2.Repository.Interfaces
         IQueryable<Photo> GetAllQueryable();
         Task<List<Photo>> FindPhotosByJobId(int jobId);
         Task<List<Photo>> FindPhotosByReportId(int reportId);
-        Task<List<Photo>> FindPhotosByRentId(int rentId);
 
     }
 }

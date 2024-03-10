@@ -198,11 +198,6 @@ const ReportABM = () => {
         formData.append("Comments", comments);
         formData.append("EstateId", ddlSelectedEstate.id);
 
-        console.log("Archivos cargados:", loadedPhotos);
-        for (var pair of formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
-        }
-
         await uploadData(formData, urlReport, editMode, report?.id);
         dispatch(fetchReportList());
         dispatch(fetchEstateList());

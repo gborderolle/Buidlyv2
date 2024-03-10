@@ -317,7 +317,6 @@ const TenantMenu = () => {
     }
     // En caso de que el número no tenga 8 o 9 dígitos, muestra un mensaje de error
     else {
-      console.log("Número de teléfono inválido para WhatsApp");
       return;
     }
 

@@ -64,13 +64,13 @@ namespace Buildyv2.Utilities
               .ReverseMap();
 
             CreateMap<Rent, RentDTO>()
-                         .ForMember(destinationMember: dest => dest.ListPhotosURL, opt => opt.MapFrom(src => src.ListPhotos.Select(photo => photo.URL).ToList()))
-                       .ReverseMap();
+                .ForMember(destinationMember: dest => dest.ListFilesURL, opt => opt.MapFrom(src => src.ListFiles.Select(file => file.URL).ToList()))
+                .ReverseMap();
 
             CreateMap<RentCreateDTO, Rent>()
               .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorar Id ya que es generado por la base de datos
               .ForMember(dest => dest.ListTenants, opt => opt.Ignore()) // Ignorar porque lo agrego a mano en el Controller
-              .ForMember(dest => dest.ListPhotos, opt => opt.Ignore()) // Ignorar porque lo agrego a mano en el Controller
+              .ForMember(dest => dest.ListFiles, opt => opt.Ignore()) // Ignorar porque lo agrego a mano en el Controller
               .ReverseMap();
 
             CreateMap<Job, JobDTO>()

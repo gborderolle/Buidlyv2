@@ -44,12 +44,5 @@ namespace Buildyv2.Repository
                                    .ToListAsync();
         }
 
-        public async Task<List<Photo>> FindPhotosByRentId(int rentId)
-        {
-            return await _dbContext.Set<Photo>() // Use Set<Worker>() instead of Workers
-                                   .Where(photo => photo.RentId == rentId)
-                                   .ToListAsync();
-        }
-
     }
 }
