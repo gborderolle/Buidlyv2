@@ -12,7 +12,6 @@
 
     <ItemGroup>
         <Content Remove="Properties\launchSettings.json" />
-        <Content Remove="Properties\launchSettingsP.json" />
     </ItemGroup>
 
     <ItemGroup>
@@ -21,7 +20,6 @@
 
     <ItemGroup>
         <_WebToolingArtifacts Remove="Properties\launchSettings.json" />
-        <_WebToolingArtifacts Remove="Properties\launchSettingsP.json" />
     </ItemGroup>
 
     <ItemGroup>
