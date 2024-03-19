@@ -32,7 +32,7 @@ namespace EmailService
             {
                 try
                 {
-                    client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);
+                    client.Connect(_emailConfig.SmtpServer, _emailConfig.SmtpPort, true);
                     client.AuthenticationMechanisms.Remove("XOAUTH2");
                     client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
                     client.Send(mailMessage);
@@ -56,7 +56,7 @@ namespace EmailService
             {
                 try
                 {
-                    await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port, true);
+                    await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.SmtpPort, true);
                     client.AuthenticationMechanisms.Remove("XOAUTH2");
                     await client.AuthenticateAsync(_emailConfig.UserName, _emailConfig.Password);
                     await client.SendAsync(mailMessage);

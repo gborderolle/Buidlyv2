@@ -20,7 +20,6 @@
             {
                 var fileName = Path.GetFileName(path);
                 string filePath = Path.Combine(_environment.WebRootPath, container, fileName);
-
                 if (File.Exists(filePath))
                 {
                     File.Delete(filePath);

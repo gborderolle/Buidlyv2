@@ -28,6 +28,7 @@ namespace Buildyv2.Controllers.V1
         private readonly ILogger<AccountsController> _logger; // Logger para registrar eventos. 
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
+        private readonly EmailConfiguration _emailConfiguration;
         private readonly IDetectionService _detectionService;
         private readonly UserManager<BuildyUser> _userManager;
         private readonly SignInManager<BuildyUser> _signInManager;
@@ -43,13 +44,14 @@ namespace Buildyv2.Controllers.V1
             IMapper mapper,
             IConfiguration configuration,
             IEmailSender emailSender,
+            EmailConfiguration emailConfiguration,
             IDetectionService detectionService,
             UserManager<BuildyUser> userManager,
             SignInManager<BuildyUser> signInManager,
             RoleManager<BuildyRole> roleManager,
             ILogService logService,
             ContextDB dbContext,
-                        IWebHostEnvironment environment
+            IWebHostEnvironment environment
         )
         {
             _response = new();
@@ -57,6 +59,7 @@ namespace Buildyv2.Controllers.V1
             _mapper = mapper;
             _configuration = configuration;
             _emailSender = emailSender;
+            _emailConfiguration = emailConfiguration;
             _detectionService = detectionService;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -473,7 +476,7 @@ namespace Buildyv2.Controllers.V1
         private async Task SendLoginNotification(UserCredential userCredential)
         {
             // Comprueba si el entorno es de producción
-            if (_environment.EnvironmentName != "Production")
+            if (!_environment.IsProduction())
             {
                 return;
             }
@@ -530,8 +533,11 @@ namespace Buildyv2.Controllers.V1
 
         private async Task SendAsyncEmail(UserCredential userCredential, string? clientIP, string? clientIPCity, bool isMobile)
         {
-            string emailNotificationDestination = _configuration["NotificationEmail:To"];
-            string emailNotificationSubject = _configuration["NotificationEmail:Subject"];
+            // string emailNotificationDestination = _configuration["NotificationEmail:To"];
+            // string emailNotificationSubject = _configuration["NotificationEmail:Subject"];
+            string emailNotificationDestination = _emailConfiguration.To;
+            string emailNotificationSubject = _emailConfiguration.Subject;
+
             string emailNotificationBody = GlobalServices.GetEmailNotificationBody(userCredential, clientIP, clientIPCity, isMobile);
             var message = new Message(new string[] { emailNotificationDestination }, emailNotificationSubject, emailNotificationBody);
             await _emailSender.SendEmailAsync(message);
